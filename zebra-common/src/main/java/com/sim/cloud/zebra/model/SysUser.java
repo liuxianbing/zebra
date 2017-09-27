@@ -1,10 +1,7 @@
-package com.sim.cloud.zebra.model.security;
-
-import org.springframework.cache.annotation.Cacheable;
+package com.sim.cloud.zebra.model;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.sim.cloud.zebra.model.BaseModel;
 
 /**
  * <p>
