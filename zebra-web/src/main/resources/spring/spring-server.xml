@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:task="http://www.springframework.org/schema/task"  
+xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/aop 
+         http://www.springframework.org/schema/aop/spring-aop.xsd 
+         http://www.springframework.org/schema/jdbc
+         http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/websocket
+http://www.springframework.org/schema/websocket/spring-websocket.xsd
+		 http://www.springframework.org/schema/task
+		  http://www.springframework.org/schema/task/spring-task-4.1.xsd  
+		  http://www.springframework.org/schema/cache
+    http://www.springframework.org/schema/cache/spring-cache.xsd
+         http://www.springframework.org/schema/jee
+         http://www.springframework.org/schema/jee/spring-jee.xsd">
+         
+         <context:component-scan base-package="com.sim.cloud.zebra">
+			</context:component-scan>
+	<!-- 启动AspectJ支持-->
+   <aop:aspectj-autoproxy   proxy-target-class="true" />
+   <!-- 
+	<context:component-scan scope-resolver="com.dabanjia.dc.lantern.util.DefaultControllerResolver" 
+	  base-package="com.dabanjia.dc.lantern.web" >
+		<context:include-filter type="annotation"
+			expression="org.aspectj.lang.annotation.Aspect" />
+	</context:component-scan>
+	
+<bean id="socketHandler" class="com.dabanjia.dc.lantern.websocket.WebSocketHandler"/>
+<websocket:handlers>
+    <websocket:mapping path="/homeWebSockJs" handler="socketHandler"/>
+    <websocket:handshake-interceptors>
+        <bean class="com.dabanjia.dc.lantern.websocket.HandshakeInterceptor"/>
+    </websocket:handshake-interceptors>
+    <websocket:sockjs/>
+</websocket:handlers>
+<bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
+    <property name="maxTextMessageBufferSize" value="8192"/>
+    <property name="maxBinaryMessageBufferSize" value="8192"/>
+</bean>
+ -->
+	
+ 
+   
+	<!-- 基于Annotation的映射方式 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+		
+    
+		
+		<import resource="classpath:spring/mvc-view-config.xml" />
+		</beans>
+		

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Application context definition for PetClinic Datasource. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         	http://www.springframework.org/schema/tx   
+	     http://www.springframework.org/schema/tx/spring-tx.xsd   
+	        http://www.springframework.org/schema/aop 
+         http://www.springframework.org/schema/aop/spring-aop.xsd 
+         	http://www.springframework.org/schema/websocket
+http://www.springframework.org/schema/websocket/spring-websocket.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/jdbc
+         http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+          http://www.springframework.org/schema/task
+		  http://www.springframework.org/schema/task/spring-task-4.1.xsd  
+		  http://www.springframework.org/schema/cache 
+		  http://www.springframework.org/schema/cache/spring-cache.xsd
+         http://www.springframework.org/schema/jee
+         http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+	<context:component-scan base-package="com.sim.cloud.zebra.model.*">
+		<context:include-filter type="annotation"
+			expression="org.aspectj.lang.annotation.Aspect" />
+	</context:component-scan>
+	<context:component-scan base-package="com.sim.cloud.zebra.mapper">
+		<context:include-filter type="annotation"
+			expression="org.aspectj.lang.annotation.Aspect" />
+	</context:component-scan>
+	<context:component-scan base-package="com.sim.cloud.zebra.service">
+		<context:include-filter type="annotation"
+			expression="org.aspectj.lang.annotation.Aspect" />
+	</context:component-scan>
+<!-- 
+	<task:annotation-driven scheduler="taskScheduler"
+		mode="proxy" />
+	<task:scheduler id="taskScheduler" pool-size="10" />
+	 -->
+	   <tx:annotation-driven   proxy-target-class="true" />
+
+    <!--扫描缓存注解-->
+    <cache:annotation-driven/>
+
+
+	<!-- 配置基础dataSource -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url"
+			value="jdbc:mysql://rm-2zefpf9i7i12er10po.mysql.rds.aliyuncs.com:3306/dc_ar?characterEncoding=utf-8" />
+		<property name="username" value="data_center" />
+		<property name="password" value="Meiwu365" />
+
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="5" />
+		<property name="minIdle" value="3" />
+		<property name="maxActive" value="20" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="60000" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
+		<!-- 配置监控统计拦截的filters -->
+		<property name="removeAbandoned" value="true" /> <!-- 打开removeAbandoned功能 -->
+		<property name="removeAbandonedTimeout" value="1800" /> <!-- 1800秒，也就是30分钟 -->
+		<property name="logAbandoned" value="true" /> <!-- 关闭abanded连接时输出错误日志 -->
+		<property name="filters" value="stat,log4j" />
+		<property name="connectionProperties" value="druid.stat.slowSqlMillis=5000" />
+	</bean>
+	<bean id="log-filter" class="com.alibaba.druid.filter.logging.Log4jFilter">
+		<property name="statementExecutableSqlLogEnable" value="true" />
+	</bean>
+
+	<bean id="druid-stat-interceptor"
+		class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor">
+	</bean>
+
+	<bean id="druid-stat-pointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut"
+		scope="prototype">
+		<property name="patterns">
+			<list>
+				<value>com.sim.cloud.zebra.service.*</value>
+				<value>com.sim.cloud.zebra.dao.*</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+
+		<!-- 使用xml配置，自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath:com/sim/cloud/zebra/mapper/xml/*.xml"></property>
+		<property name="typeAliasesPackage" value="com.sim.cloud.zebra.mapper" />
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+		
+		<property name="plugins">
+            <array>
+                <!-- 分页插件配置 -->
+                <bean id="paginationInterceptor" class="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
+                </bean>
+            </array>
+        </property>
+	    <!-- 全局配置注入 -->
+	    <property name="globalConfig" ref="globalConfig" />
+	    
+	</bean>
+	
+	<bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+	    <!--
+			AUTO->`0`("数据库ID自增")
+		 	INPUT->`1`(用户输入ID")
+			ID_WORKER->`2`("全局唯一ID")
+			UUID->`3`("全局唯一ID")
+			 <property name="idType" value="0" />
+		-->
+	   
+	    <property name="idType" value="0" />
+	    
+	    <property name="dbType" value="mysql" />
+	    <property name="dbColumnUnderline" value="true" />
+		<!--
+			MYSQL->`mysql`
+			ORACLE->`oracle`
+			DB2->`db2`
+			H2->`h2`
+			HSQL->`hsql`
+			SQLITE->`sqlite`
+			POSTGRE->`postgresql`
+			SQLSERVER2005->`sqlserver2005`
+			SQLSERVER->`sqlserver`
+		-->
+		<!-- Oracle需要添加该项 -->
+	    <!-- <property name="dbType" value="oracle" /> -->
+	    <!-- 全局表为下划线命名设置 true -->
+	    <!-- <property name="dbColumnUnderline" value="true" /> -->
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 使用mapper注解方式 自动扫描接口注解 -->
+		<property name="basePackage" value="com.sim.cloud.zebra.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- 自定义切面配置start -->
+	<bean id="proxy" class="com.sim.cloud.zebra.aspect.LanternProxy">
+	</bean>
+	
+	<aop:config>
+		<!-- 设置自定义的切面 -->
+		<aop:pointcut id="pc"
+			expression="execution(* com.sim.cloud.zebra.service.*.*(..))" />
+		<aop:aspect ref="proxy">
+			<aop:before pointcut-ref="pc" method="breforPerformance" />
+			<aop:after pointcut-ref="pc" method="afterPerformance" />
+			<aop:around pointcut-ref="pc" method="aroundMethod" />
+		</aop:aspect>
+	</aop:config>
+	<!-- 自定义切面配置 end -->
+
+	<!-- 事务配置 start -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource">
+		</property>
+	</bean>
+
+	<tx:advice id="txadvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="transfer*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="change*" propagation="REQUIRED" />
+			<tx:method name="do*" propagation="REQUIRED" />
+			
+			<tx:method name="add*" propagation="REQUIRED"/>
+            <tx:method name="append*" propagation="REQUIRED"/>
+            <tx:method name="modify*" propagation="REQUIRED"/>
+            <tx:method name="edit*" propagation="REQUIRED"/>
+            <tx:method name="remove*" propagation="REQUIRED"/>
+            <tx:method name="repair" propagation="REQUIRED"/>
+
+            <tx:method name="get*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="find*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="load*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="search*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="datagrid*" propagation="REQUIRED" read-only="true"/>
+            
+			<tx:method name="*" propagation="REQUIRED" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:pointcut
+			expression="execution(* com.sim.cloud.zebra.service.*.*(..))"
+			id="txpointcut" />
+		<aop:advisor advice-ref="txadvice" pointcut-ref="txpointcut" />
+	</aop:config>
+
+	<!-- 事务配置 end -->
+
+
+	<!-- 基于Ehcache 开始 -->
+	<bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:configLocation="classpath:spring/ehcache.xml" />
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cacheManager-ref="ehcacheManager" />
+	<!-- Ehcache 结束 -->
+	<!--设置缓存管理器end -->
+	  <!--性能监控开始-->
+    <bean id="performanceMonitor"
+          class="org.springframework.aop.interceptor.PerformanceMonitorInterceptor">
+    </bean>
+    <!-- 性能监控的切面配置 -->
+    <aop:config>
+        <aop:pointcut id="allServiceMethods"
+                      expression="execution(* com.sim.cloud.zebra.service.*.*(..))"/>
+        <aop:advisor pointcut-ref="allServiceMethods" advice-ref="performanceMonitor"
+                     order="2"/>
+    </aop:config>
+    <!--性能监控结束-->
+    	<!-- 热加载 
+    <bean class="com.baomidou.mybatisplus.spring.MybatisMapperRefresh">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+       <property name="mapperLocations" value="classpath:com/sim/cloud/zebra/dao/xml/*.xml"></property>
+        <constructor-arg name="enabled" value="true"/>
+    </bean>
+-->
+</beans>
