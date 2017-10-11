@@ -131,7 +131,6 @@ http://www.springframework.org/schema/websocket/spring-websocket.xsd
 		-->
 	   
 	    <property name="idType" value="0" />
-	    
 	    <property name="dbType" value="mysql" />
 	    <property name="dbColumnUnderline" value="true" />
 		<!--

@@ -106,7 +106,7 @@ http://www.springframework.org/schema/websocket/spring-websocket.xsd
 
 		<!-- 使用xml配置，自动扫描mapping.xml文件 -->
 		<property name="mapperLocations" value="classpath:com/sim/cloud/zebra/mapper/xml/*.xml"></property>
-		<property name="typeAliasesPackage" value="com.sim.cloud.zebra.mapper" />
+		<property name="typeAliasesPackage" value="com.sim.cloud.zebra.model" />
 		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
 		
 		<property name="plugins">

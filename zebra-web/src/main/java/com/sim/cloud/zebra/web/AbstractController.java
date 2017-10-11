@@ -1,6 +1,7 @@
 package com.sim.cloud.zebra.web;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.DateFormat;
 import com.sim.cloud.zebra.common.util.HttpCode;
 import com.sim.cloud.zebra.common.util.InstanceUtil;
@@ -72,6 +74,19 @@ public abstract class AbstractController {
 	protected ResponseEntity<ModelMap> setModelMap(ModelMap modelMap, HttpCode code) {
 		return setModelMap(modelMap, code, null);
 	}
+	/**
+	 * 从request获取参数 转化为Map类型
+	 * @return
+	 */
+	protected Map<String,Object> extractFromRequest(){
+		 Map<String,Object> res=new HashMap<>();
+		 request.getParameterMap().entrySet().stream().forEach(m->{
+			 res.put(m.getKey(), m.getValue());
+		 });
+		 return res;
+	}
+	
+	
 
 	/** 设置响应代码 */
 	protected ResponseEntity<ModelMap> setModelMap(ModelMap modelMap, HttpCode code, Object data) {

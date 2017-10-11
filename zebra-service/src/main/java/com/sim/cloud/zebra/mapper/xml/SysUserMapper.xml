@@ -8,7 +8,8 @@
 		SELECT id FROM sys_user
 		<where>
 			<if test="cm.keyword != null">
-				and (userName like CONCAT('%',#{cm.keyword},'%')  or email like CONCAT('%',#{cm.keyword},'%'))
+				and (userName like CONCAT('%',#{cm.keyword},'%') or account like CONCAT('%',#{cm.keyword},'%')
+				 or phone like CONCAT('%',#{cm.keyword},'%'))
 			</if>
 		</where>
 		ORDER BY id DESC

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.druid.util.StringUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -48,33 +49,39 @@ public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<Bas
 		List<T> list = getBaseMapper().selectMutiTablePage(page, InstanceUtil.transBean2Map(param));
 		page.setRecords(list);
 	}
+	
+	private int getFromMap(Map<String, Object> params,String key){
+		try {
+			return Integer.parseInt(params.get(key).toString());
+		} catch (Exception e) {
+		}
+		return 10;
+	}
 
 	/** 分页查询 */
 	public Page<Long> getPage(Map<String, Object> params) {
-		Integer current = 1;
-		Integer size = 10;
-		String orderBy = "id";
-		if (DataUtil.isNotEmpty(params.get("pageNum"))) {
-			current = Integer.valueOf(params.get("pageNum").toString());
-		}
-		if (DataUtil.isNotEmpty(params.get("pageIndex"))) {
-			current = Integer.valueOf(params.get("pageIndex").toString());
-		}
-		if (DataUtil.isNotEmpty(params.get("pageSize"))) {
-			size = Integer.valueOf(params.get("pageSize").toString());
-		}
+		    String orderBy = null;
+		    boolean asc=false;
+		    int pageNum = 1;
+		    int pageSize = getFromMap(params,"iDisplayLength");
+		    if (params.get("iDisplayStart") != null) {
+		      int start = Integer.parseInt(params.get("iDisplayStart").toString());
+		      pageNum = start / pageSize + 1;
+		    }
+		    
+		    if (getFromMap(params,"iSortingCols")==1  && params.get("iSortCol_0")!=null) {
+		          String sortNum =  params.get("iSortCol_0").toString();
+		          String sortField = "mDataProp_" + sortNum;
+		          orderBy=params.get(sortField).toString();
+		          asc=  params.get("sSortDir_0").toString().equals("asc");
+		        }
+		    
 		if (DataUtil.isNotEmpty(params.get("orderBy"))) {
 			orderBy = (String) params.get("orderBy");
 			params.remove("orderBy");
 		}
-		if (size == -1) {
-			Page<Long> page = new Page<Long>();
-			page.setOrderByField(orderBy);
-			page.setAsc(false);
-			return page;
-		}
-		Page<Long> page = new Page<Long>(current, size, orderBy);
-		page.setAsc(false);
+		Page<Long> page = new Page<Long>(pageNum, pageSize, orderBy);
+		page.setAsc(asc);
 		return page;
 	}
 

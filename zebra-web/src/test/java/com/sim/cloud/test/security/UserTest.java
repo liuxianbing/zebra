@@ -23,6 +23,20 @@ public class UserTest {
 	@Autowired
 	SysUserService sysUserService;
 	
+	 @Test
+	  public void testPage() throws InterruptedException{
+		 SysUser user=new SysUser();
+		 user.setId(1l);
+		 Page<SysUser> page=new Page<>(1,5);
+		  EntityWrapper<SysUser> wrapper=new EntityWrapper<SysUser>(user);
+		 // wrapper.between("id", 5, 8);
+		  //page.setOrderByField("id");
+		  page.setAsc(false);
+		 sysUserService.queryMutiTablePage(page,user);
+		  System.out.println(page.getRecords());
+		  System.out.println(page.getTotal());
+	}
+	
 
 	 @Test
 	  public void testMutiPage() throws InterruptedException{
