@@ -210,7 +210,7 @@ public class XssFilter implements Filter {
 
 		// 判断黑名单
 		String[] inj_stra = { "script", "mid", "master", "truncate", "insert", "select", "delete", "update", "declare",
-				"iframe", "'", "onreadystatechange", "alert", "atestu", "xss", ";", "'", "\"", "<", ">", "(", ")", ",",
+				"iframe", "'", "onreadystatechange", "alert", "atestu", "xss", ";", "'", "\"", "<", ">", "(", ")",
 				"\\", "svg", "confirm", "prompt", "onload", "onmouseover", "onfocus", "onerror" };
 
 		str = str.toLowerCase(); // sql不区分大小写

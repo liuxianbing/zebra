@@ -8,6 +8,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.sim.cloud.zebra.common.util.DateUtil;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.service.SysUserService;
 
@@ -23,6 +24,22 @@ public class UserTest {
 	@Autowired
 	SysUserService sysUserService;
 	
+	
+	 @Test
+	  public void testAdd() throws InterruptedException{
+//		 for(int i=10;i<30;i++){
+//		 SysUser user=new SysUser();
+//		 user.setAccount("lxb2"+i);
+//		 user.setUserName("lxb2..."+i);
+//		 user.setPhone("1888888882"+i);
+//		 user.setEmail("ddd@233.com"+i);
+//		 user.setAddress("ffffffff2"+i);
+//		 user.setPasswd("ggggggggg2"+i);
+//		 user.setCreateTime(DateUtil.getDateTime());
+//		 sysUserService.insert(user);
+//		 }
+	}
+	 
 	 @Test
 	  public void testPage() throws InterruptedException{
 		 SysUser user=new SysUser();

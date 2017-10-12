@@ -215,10 +215,10 @@ http://www.springframework.org/schema/websocket/spring-websocket.xsd
 	<!-- 事务配置 end -->
 
 
-	<!-- 基于Ehcache 开始 -->
+	<!-- 基于Ehcache 开始 
 	<bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:configLocation="classpath:spring/ehcache.xml" />
 	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cacheManager-ref="ehcacheManager" />
-	<!-- Ehcache 结束 -->
+	-->
 	<!--设置缓存管理器end -->
 	  <!--性能监控开始-->
     <bean id="performanceMonitor"

@@ -12,6 +12,17 @@
 <script src="${pageContext.request.contextPath}/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/plugins/lte/js/adminlte.min.js"></script>
 
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/assets/plugins/bootstrap-toastr/toastr.min.js"></script>
+
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/assets/plugins/json2.js"></script>
+	
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/assets/plugins/select2/js/select2.full.min.js"></script>
+	
+<script src="${pageContext.request.contextPath}/assets/scripts/spider.js"></script>
+
 <script>
 if (typeof String.prototype.startsWith != 'function'){   
     String.prototype.startsWith = function (str){  
@@ -23,13 +34,31 @@ if (typeof String.prototype.startsWith != 'function'){
        return this.slice(-str.length) == str;  
     };  
   }  
+  var href=window.location.href;
+  href=href.substring(0,href.lastIndexOf('/'));
 $.each( $(".sidebar-menu").find('a'), function(i, n){
-	if($(this).attr('href').endsWith('/index')){
+	var inhref=$(this).attr('href').substring(0,$(this).attr('href').lastIndexOf('/'));
+	if(href.endsWith(inhref)){
 		$(this).parent().addClass('active');
-		if($(this).parent().parent().hasClass('treeview-menu')){
-			$(this).parent().parent().addClass('active');
+		if($(this).parent().parent().parent().hasClass('treeview')){
+			$(this).parent().parent().parent().addClass('active');
 		}
 	}
 });
 
+//列表页面点击事件
+$('#table_list').on('click', ' tbody tr', function () {	
+	if($(this).find('td').length==1){
+		return;
+	}
+   if ( $(this).hasClass('row_selected') ) {		   
+		$(this).removeClass('row_selected');
+		$(".btn_table").find('.btn').not(".btn-success").addClass("disabled");
+	}else {				 
+		oTable.$('tr.row_selected').removeClass('row_selected');
+		$(this).addClass('row_selected');
+		$(".btn_table").find('.btn').removeClass("disabled");
+		selectData=oTable.fnGetData(oTable.$(this)[0]);
+	}	
+});
 </script>

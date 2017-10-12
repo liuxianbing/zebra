@@ -1,5 +1,6 @@
 package com.sim.cloud.zebra.core;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -15,6 +16,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.sim.cloud.zebra.common.util.BeanHump;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.DataUtil;
 import com.sim.cloud.zebra.common.util.InstanceUtil;
@@ -68,7 +70,6 @@ public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<Bas
 		      int start = Integer.parseInt(params.get("iDisplayStart").toString());
 		      pageNum = start / pageSize + 1;
 		    }
-		    
 		    if (getFromMap(params,"iSortingCols")==1  && params.get("iSortCol_0")!=null) {
 		          String sortNum =  params.get("iSortCol_0").toString();
 		          String sortField = "mDataProp_" + sortNum;
@@ -80,7 +81,7 @@ public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<Bas
 			orderBy = (String) params.get("orderBy");
 			params.remove("orderBy");
 		}
-		Page<Long> page = new Page<Long>(pageNum, pageSize, orderBy);
+		Page<Long> page = new Page<Long>(pageNum, pageSize, BeanHump.camelToUnderline(orderBy));
 		page.setAsc(asc);
 		return page;
 	}

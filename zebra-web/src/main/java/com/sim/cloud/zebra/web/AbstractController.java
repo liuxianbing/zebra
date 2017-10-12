@@ -1,6 +1,5 @@
 package com.sim.cloud.zebra.web;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,17 +13,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.InitBinder;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.sim.cloud.zebra.common.util.DataTableParameter;
-import com.sim.cloud.zebra.common.util.DateFormat;
 import com.sim.cloud.zebra.common.util.HttpCode;
 import com.sim.cloud.zebra.common.util.InstanceUtil;
 import com.sim.cloud.zebra.common.util.JackSonUtil;
@@ -42,6 +35,11 @@ import com.sim.cloud.zebra.model.SysUser;
 public abstract class AbstractController {
 	protected final Logger logger = LogManager.getLogger();
 
+	protected static final Map<String, String> SUCCESS = new HashMap<String, String>();
+	
+	static{
+		SUCCESS.put("result", "success");
+	}
 	// 线程安全
 	@Autowired
 	protected HttpServletRequest request;
@@ -55,10 +53,10 @@ public abstract class AbstractController {
 		return request.getSession();
 	}
 
-	@InitBinder
-	protected void initBinder(WebDataBinder binder) {
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(new DateFormat(), true));
-	}
+//	@InitBinder
+//	protected void initBinder(WebDataBinder binder) {
+//		binder.registerCustomEditor(Date.class, new CustomDateEditor(new DateFormat(), true));
+//	}
 
 	/** 设置成功响应代码 */
 	protected ResponseEntity<ModelMap> setSuccessModelMap(ModelMap modelMap) {
@@ -80,10 +78,29 @@ public abstract class AbstractController {
 	 */
 	protected Map<String,Object> extractFromRequest(){
 		 Map<String,Object> res=new HashMap<>();
-		 request.getParameterMap().entrySet().stream().forEach(m->{
-			 res.put(m.getKey(), m.getValue());
+		 request.getParameterMap().entrySet().stream().
+		 filter(f->f.getValue()!=null && StringUtils.isNotBlank(f.getValue().toString()))
+		 .forEach(m->{
+			 if(m.getValue()!=null && m.getValue().length==1){
+				 res.put(m.getKey(), m.getValue()[0]);
+			 }else{
+				 res.put(m.getKey(), m.getValue());
+			 }
 		 });
-		 return res;
+		 System.out.println(res);
+		 Map<String,Object> res2=new HashMap<>();
+		 res.entrySet().stream().filter(e->{
+			 if(!(e.getValue() instanceof String[])){
+				 if(StringUtils.isBlank(e.getValue().toString())){
+					 return false;
+				 }
+			 }
+			 return true;
+		 }).forEach(e->{
+			 res2.put(e.getKey(), e.getValue());
+		 });
+		 System.out.println(res);
+		 return res2;
 	}
 	
 	
@@ -123,7 +140,7 @@ public abstract class AbstractController {
 		return ResponseEntity.ok(modelMap);
 	}
 
-	/** 异常处理 */
+	/** 异常处理 
 	@ExceptionHandler(Exception.class)
 	public void exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception ex)
 			throws Exception {
@@ -138,8 +155,11 @@ public abstract class AbstractController {
 			modelMap.put("msg", msg.length() > 100 ? "系统走神了,请稍候再试." : msg);
 		}
 		response.setContentType("application/json;charset=UTF-8");
+		System.out.println("exceptionHandler--------------");
 		modelMap.put("timestamp", System.currentTimeMillis());
-		logger.info("RESPONSE : " + JackSonUtil.getObjectMapper().writeValueAsString(modelMap));
+		ex.printStackTrace();
+		logger.info("RESPONSE-exceptionHandler : " + JackSonUtil.getObjectMapper().writeValueAsString(modelMap));
 		response.getOutputStream().write(JackSonUtil.getObjectMapper().writeValueAsBytes(modelMap));
 	}
+	*/
 }

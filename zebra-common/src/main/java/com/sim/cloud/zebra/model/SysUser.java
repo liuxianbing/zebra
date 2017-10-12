@@ -1,13 +1,11 @@
 package com.sim.cloud.zebra.model;
 
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 /**
  * <p>
  * 用户管理
  * </p>
- *
  * @author liuxianbing
  * @since 2017-02-15
  */
@@ -15,38 +13,53 @@ import com.baomidou.mybatisplus.annotations.TableName;
 public class SysUser extends BaseModel {
 
 	private static final long serialVersionUID = 3821528241569575012L;
-	public static final int able = 0; // 账户启用
-	public static final int disable = 1; // 账户禁用
+	public static final int able = 1; // 账户启用
+	public static final int disable = 0; // 账户禁用
 	public static final String COMMON_PWD = "123456a";
 
 	private String userName;
 	private String passwd;
 	private String email;
-	private String department;
+	private String phone;
+	private String address;
+	private String account;
+	private String remark;//备注
 
-	private String creator = SYSTEM_CREATOR;// 创建者
+	private Integer state = SysUser.able;// 用户的状态
 
-	private int state = SysUser.able;// 用户的状态
-
-	/** 前端页面传递 **/
-	@TableField(exist = false)
-	private transient String roles;// 管理员的角色
-
-	public String getCreator() {
-		return creator;
+	
+	public String getRemark() {
+		return remark;
 	}
 
-	public void setCreator(String creator) {
-		this.creator = creator;
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
-	public String getRoles() {
-		return roles;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setRoles(String roles) {
-		this.roles = roles;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
 
 	public String getPasswd() {
 		return passwd;
@@ -72,25 +85,13 @@ public class SysUser extends BaseModel {
 		this.email = email;
 	}
 
-	public String getDepartment() {
-		return department;
-	}
 
-	public void setDepartment(String department) {
-		this.department = department;
-	}
-
-	public int getState() {
+	public Integer getState() {
 		return state;
 	}
 
-	public void setState(int state) {
+	public void setState(Integer state) {
 		this.state = state;
 	}
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", userName=" + userName + ", passwd=" + passwd + ", email=" + email + ", department="
-				+ department + ", state=" + state + "]";
-	}
 }

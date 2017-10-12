@@ -19,7 +19,7 @@ public interface BaseMapper<T> extends com.baomidou.mybatisplus.mapper.BaseMappe
 
 	List<Long> selectIdPage(@Param("cm") Map<String, Object> params);
 
-	List<Long> selectIdPage(RowBounds rowBounds, @Param("cm") Map<String, Object> params);
+	List<Long> selectIdPage(Pagination rowBounds, @Param("cm") Map<String, Object> params);
 
 	List<T> selectMutiTablePage(Pagination pagination, Map<String, Object> params);
 

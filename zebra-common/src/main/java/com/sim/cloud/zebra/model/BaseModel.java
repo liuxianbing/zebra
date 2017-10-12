@@ -3,49 +3,36 @@ package com.sim.cloud.zebra.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.enums.IdType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sim.cloud.zebra.common.util.DateUtil;
 
 @SuppressWarnings("serial")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class BaseModel implements Serializable {
 
-	public static final String SYSTEM_CREATOR = "sys";
-
-	public static final String COMPANY = "C";
-	public static final String USER = "U";
-
 	@TableId(value = "id")
 	protected Long id;
-	@TableField("enable")
-	protected Integer enable;
-	@TableField("remark")
-	protected String remark;
-	protected Date createTime;
-	protected Date updateTime;
+	protected String createTime;
+	protected String updateTime=DateUtil.getDateTime();
 
-	protected String creator = SYSTEM_CREATOR;// 创建者
-	protected String updateBy;
+	protected Long parentId;// 创建者
 
-	public String getUpdateBy() {
-		return updateBy;
-	}
-
-	public void setUpdateBy(String updateBy) {
-		this.updateBy = updateBy;
-	}
 
 	@TableField(exist = false)
 	protected String keyword;
 
-	public String getCreator() {
-		return creator;
+
+	
+	public Long getParentId() {
+		return parentId;
 	}
 
-	public void setCreator(String creator) {
-		this.creator = creator;
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
 	}
 
 	/**
@@ -63,40 +50,15 @@ public abstract class BaseModel implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return the enable
-	 */
-	public Integer getEnable() {
-		return enable;
-	}
 
-	/**
-	 * @param enable
-	 *            the enable to set
-	 */
-	public void setEnable(Integer enable) {
-		this.enable = enable;
-	}
-
-	/**
-	 * @return the remark
-	 */
-	public String getRemark() {
-		return remark;
-	}
-
-	/**
-	 * @param remark
-	 *            the remark to set
-	 */
-	public void setRemark(String remark) {
-		this.remark = remark == null ? null : remark.trim();
-	}
 
 	/**
 	 * @return the createTime
 	 */
-	public Date getCreateTime() {
+	public String getCreateTime() {
+		if(StringUtils.isNotBlank(createTime) && createTime.endsWith(".0")){
+			createTime=createTime.substring(0, createTime.length()-2);
+		}
 		return createTime;
 	}
 
@@ -104,14 +66,17 @@ public abstract class BaseModel implements Serializable {
 	 * @param createTime
 	 *            the createTime to set
 	 */
-	public void setCreateTime(Date createTime) {
+	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
 	}
 
 	/**
 	 * @return the updateTime
 	 */
-	public Date getUpdateTime() {
+	public String getUpdateTime() {
+		if(StringUtils.isNotBlank(updateTime) && updateTime.endsWith(".0")){
+			updateTime=updateTime.substring(0, updateTime.length()-2);
+		}
 		return updateTime;
 	}
 
@@ -119,7 +84,7 @@ public abstract class BaseModel implements Serializable {
 	 * @param updateTime
 	 *            the updateTime to set
 	 */
-	public void setUpdateTime(Date updateTime) {
+	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
 	}
 

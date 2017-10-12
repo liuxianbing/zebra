@@ -12,6 +12,8 @@ public class SysEvent extends BaseModel {
 	private String title;
 
 	private String requestUri;
+	
+	private String remark;
 
 	@TableField("parameters")
 	private String parameters;
@@ -27,6 +29,17 @@ public class SysEvent extends BaseModel {
 
 	@TableField(exist = false)
 	private String userName;
+	
+	
+
+	
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 
 	/**
 	 * @return the value of sys_event.title_
@@ -193,12 +206,10 @@ public class SysEvent extends BaseModel {
 				&& (this.getUserAgent() == null ? other.getUserAgent() == null
 						: this.getUserAgent().equals(other.getUserAgent()))
 				&& (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-				&& (this.getEnable() == null ? other.getEnable() == null : this.getEnable().equals(other.getEnable()))
 				&& (this.getCreateTime() == null ? other.getCreateTime() == null
 						: this.getCreateTime().equals(other.getCreateTime()))
 				&& (this.getUpdateTime() == null ? other.getUpdateTime() == null
-						: this.getUpdateTime().equals(other.getUpdateTime()))
-				&& (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()));
+						: this.getUpdateTime().equals(other.getUpdateTime()));
 	}
 
 	/**
@@ -215,10 +226,8 @@ public class SysEvent extends BaseModel {
 		result = prime * result + ((getClientHost() == null) ? 0 : getClientHost().hashCode());
 		result = prime * result + ((getUserAgent() == null) ? 0 : getUserAgent().hashCode());
 		result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
-		result = prime * result + ((getEnable() == null) ? 0 : getEnable().hashCode());
 		result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
 		result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
-		result = prime * result + ((getRemark() == null) ? 0 : getRemark().hashCode());
 		return result;
 	}
 }

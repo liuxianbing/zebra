@@ -36,7 +36,7 @@
 				<property name="nextInterceptor">
 					<array>
 						<bean class="com.sim.cloud.zebra.interceptor.MaliciousRequestInterceptor">
-							<property name="minRequestIntervalTime" value="300" />
+							<property name="minRequestIntervalTime" value="100" />
 							<property name="maxMaliciousTimes" value="0" />
 						</bean>
 					</array>
@@ -50,8 +50,8 @@
 		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
 	</bean>
 
-<!-- 
-	<bean class="com.dabanjia.dc.lantern.util.CustomSimpleMappingExceptionResolver">
+<!--  -->
+	<bean class="com.sim.cloud.zebra.web.CustomSimpleMappingExceptionResolver">
 		<property name="warnLogCategory" value="warn" />
 		<property name="exceptionMappings">
 			<props>
@@ -59,7 +59,7 @@
 			</props>
 		</property>
 	</bean>
- -->
+
  
 	<bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
