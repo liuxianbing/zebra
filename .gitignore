@@ -1,5 +1,7 @@
+.gitignore
 *.class
 .project
 .settings
 .classpath
 target
+bin
