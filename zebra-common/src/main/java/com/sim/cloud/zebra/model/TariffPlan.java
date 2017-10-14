@@ -11,20 +11,26 @@ public class TariffPlan extends BaseModel {
 	 */
 	private static final long serialVersionUID = -4083531698000494926L;
 	private String name;
-	private Integer type;
+	private Integer type;//1:共享 0:独享
 	private Integer flow;//流量
 	private Float cost;
 	private Integer versionId;//版本
 	private Integer planId;//计划ID
-	private String licenseKey;//账号license
+	private String account;//账号license
+	private String carrier;
 	
 	
-	
-	public String getLicenseKey() {
-		return licenseKey;
+	public String getCarrier() {
+		return carrier;
 	}
-	public void setLicenseKey(String licenseKey) {
-		this.licenseKey = licenseKey;
+	public void setCarrier(String carrier) {
+		this.carrier = carrier;
+	}
+	public String getAccount() {
+		return account;
+	}
+	public void setAccount(String account) {
+		this.account = account;
 	}
 	public Integer getVersionId() {
 		return versionId;

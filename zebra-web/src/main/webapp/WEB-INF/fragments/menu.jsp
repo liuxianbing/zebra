@@ -51,7 +51,7 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">修改账号</a>
+                  <a href="${ctx }/user/account" class="btn btn-default btn-flat">修改账号</a>
                 </div>
                 <div class="pull-right">
                   <a href="#" class="btn btn-default btn-flat">退出</a>
@@ -136,7 +136,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="${ctx }/user/list"><i class="fa fa-circle-o"></i> 用户管理</a></li>
-            <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Morris</a></li>
+            <li><a href="${ctx }/user/account"><i class="fa fa-circle-o"></i> 账号设置</a></li>
             <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> Flot</a></li>
             <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> Inline charts</a></li>
           </ul>
@@ -144,13 +144,13 @@
         <li class="treeview">
           <a href="#">
             <i class="fa fa-laptop"></i>
-            <span>UI Elements1</span>
+            <span>资费管理</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/UI/general.html"><i class="fa fa-circle-o"></i> General</a></li>
+            <li><a href="${ctx }/tariffplan/list"><i class="fa fa-circle-o"></i> 资费计划</a></li>
             <li><a href="pages/UI/icons.html"><i class="fa fa-circle-o"></i> Icons</a></li>
             <li><a href="pages/UI/buttons.html"><i class="fa fa-circle-o"></i> Buttons</a></li>
             <li><a href="pages/UI/sliders.html"><i class="fa fa-circle-o"></i> Sliders</a></li>

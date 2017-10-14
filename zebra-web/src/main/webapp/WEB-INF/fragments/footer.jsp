@@ -23,6 +23,10 @@
 	
 <script src="${pageContext.request.contextPath}/assets/scripts/spider.js"></script>
 
+<script
+	src="${pageContext.request.contextPath}/assets/plugins/bootbox/bootbox.min.js"
+	type="text/javascript"></script>
+
 <script>
 if (typeof String.prototype.startsWith != 'function'){   
     String.prototype.startsWith = function (str){  
@@ -36,16 +40,29 @@ if (typeof String.prototype.startsWith != 'function'){
   }  
   var href=window.location.href;
   href=href.substring(0,href.lastIndexOf('/'));
-$.each( $(".sidebar-menu").find('a'), function(i, n){
-	var inhref=$(this).attr('href').substring(0,$(this).attr('href').lastIndexOf('/'));
-	if(href.endsWith(inhref)){
-		$(this).parent().addClass('active');
-		if($(this).parent().parent().parent().hasClass('treeview')){
-			$(this).parent().parent().parent().addClass('active');
+  
+  var find=false;
+  $.each( $(".sidebar-menu").find('a'), function(i, n){
+		var inhref=$(this).attr('href');
+		if(window.location.href.endsWith(inhref)){
+			find=true;
+			$(this).parent().addClass('active');
+			if($(this).parent().parent().parent().hasClass('treeview')){
+				$(this).parent().parent().parent().addClass('active');
+			}
 		}
-	}
-});
-
+	});
+  if(!find){
+		$.each( $(".sidebar-menu").find('a'), function(i, n){
+			var inhref=$(this).attr('href').substring(0,$(this).attr('href').lastIndexOf('/'));
+			if(href.endsWith(inhref)){
+				$(this).parent().addClass('active');
+				if($(this).parent().parent().parent().hasClass('treeview')){
+					$(this).parent().parent().parent().addClass('active');
+				}
+			}
+		});
+  }
 //列表页面点击事件
 $('#table_list').on('click', ' tbody tr', function () {	
 	if($(this).find('td').length==1){

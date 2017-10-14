@@ -45,8 +45,7 @@
 				<p class="btn_table">
 				    <button type="button"   class="btn  margin btn-success">创建用户</button>
 				    <button type="button"  class="btn  margin btn-primary disabled">更改用户</button>
-				    <button type="button" class="btn  margin btn-info disabled">用户详细</button>
-				    <button type="button"  class="btn  margin btn-danger disabled">删除用户</button>、
+				    <button type="button" class="btn  margin btn-info disabled">用户认证</button>
 				<p>
 				<table id="table_list" class="table table-bordered table-hover">
 				</table>
@@ -94,7 +93,10 @@
 		oTable=SP.loadTableInfo($("#table_list"),options,$("#searchform"));
 	}
 	
-	  $('.btn_table').on('click', 'button', function () {
+	 $('.btn_table').find('button').on('click', function () {
+				 if($(this).hasClass('disabled')){
+					  return;
+				  }
 		        if($(this).hasClass('btn-success')){
 		        	if(selectData){
 		        		window.location.href='${ctx}/user/add?id='+selectData.id;
@@ -103,6 +105,8 @@
 		        	}
 		        }else if($(this).hasClass('btn-primary')){
 		        	window.location.href='${ctx}/user/add?id='+selectData.id;
+		        } else if($(this).hasClass('btn-info')){
+		        	window.location.href='${ctx}/user/auth?uid='+selectData.id+"&cid="+selectData.cid;
 		        }
 			});
 	

@@ -24,10 +24,26 @@ public class SysUser extends BaseModel {
 	private String address;
 	private String account;
 	private String remark;//备注
+	private Long cid;//企业ID
 
 	private Integer state = SysUser.able;// 用户的状态
+	protected Long parentId;// 创建者
+	public Long getParentId() {
+		return parentId;
+	}
 
-	
+	public Long getCid() {
+		return cid;
+	}
+
+	public void setCid(Long cid) {
+		this.cid = cid;
+	}
+
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
+
 	public String getRemark() {
 		return remark;
 	}

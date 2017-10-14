@@ -1,5 +1,7 @@
 package com.sim.cloud.zebra.common.util;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,4 +64,6 @@ public interface Constants {
 		 */
 		static final String UN_STATS = "N";
 	}
+	
+	static final List<String> CARRIER=Arrays.asList("中国联通".split(","));
 }

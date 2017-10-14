@@ -15,15 +15,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.HttpCode;
 import com.sim.cloud.zebra.common.util.InstanceUtil;
-import com.sim.cloud.zebra.common.util.JackSonUtil;
 import com.sim.cloud.zebra.common.util.WebUtil;
-import com.sim.cloud.zebra.exception.BaseException;
-import com.sim.cloud.zebra.exception.IllegalParameterException;
 import com.sim.cloud.zebra.model.SysUser;
 
 /**
@@ -43,6 +39,9 @@ public abstract class AbstractController {
 	// 线程安全
 	@Autowired
 	protected HttpServletRequest request;
+	
+	@Autowired
+	protected HttpServletResponse response;
 
 	// /** 获取当前用户Id */
 	protected SysUser getCurrUser() {
