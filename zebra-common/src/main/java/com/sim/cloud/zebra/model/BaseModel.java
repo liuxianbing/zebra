@@ -19,21 +19,11 @@ public abstract class BaseModel implements Serializable {
 	protected String createTime;
 	protected String updateTime=DateUtil.getDateTime();
 
-	protected Long parentId;// 创建者
 
 
 	@TableField(exist = false)
 	protected String keyword;
 
-
-	
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
 
 	/**
 	 * @return the id

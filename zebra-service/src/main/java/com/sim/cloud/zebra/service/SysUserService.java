@@ -18,7 +18,6 @@ import com.sim.cloud.zebra.model.SysUser;
  */
 @Service
 @Transactional
-@CacheConfig(cacheNames = "sysUser")
 public class SysUserService extends AbstractService<SysUserMapper, SysUser> {
 
 	public List<SysUser> selectUsers(SysUser users) {

@@ -37,7 +37,7 @@
 					<array>
 						<bean class="com.sim.cloud.zebra.interceptor.MaliciousRequestInterceptor">
 							<property name="minRequestIntervalTime" value="100" />
-							<property name="maxMaliciousTimes" value="0" />
+							<property name="maxMaliciousTimes" value="100" />
 						</bean>
 					</array>
 				</property>

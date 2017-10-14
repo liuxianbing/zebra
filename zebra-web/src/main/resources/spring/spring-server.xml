@@ -27,6 +27,9 @@ http://www.springframework.org/schema/websocket/spring-websocket.xsd
 			</context:component-scan>
 	<!-- 启动AspectJ支持-->
    <aop:aspectj-autoproxy   proxy-target-class="true" />
+   
+    <task:annotation-driven scheduler="taskScheduler" mode="proxy"/>    
+       <task:scheduler id="taskScheduler" pool-size="10"/> 
    <!-- 
 	<context:component-scan scope-resolver="com.dabanjia.dc.lantern.util.DefaultControllerResolver" 
 	  base-package="com.dabanjia.dc.lantern.web" >

@@ -11,8 +11,15 @@ public class PackageUser  extends BaseModel{
 	private Float cost;
 	private Integer planId;
 	private Integer term;//1月 2月。24月
+	private String remark;//备注
 	
 	
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 	public Integer getUid() {
 		return uid;
 	}
