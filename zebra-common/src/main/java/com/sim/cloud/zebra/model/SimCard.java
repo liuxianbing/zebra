@@ -8,6 +8,7 @@ public class SimCard  extends BaseModel{
 
 	private static final long serialVersionUID = -3969900141839401630L;
 	private String phone;
+	private String iccid;//ICCID信息
 	private Long cid;
 	private int type;
 	private int netType;//网络状态
@@ -20,8 +21,15 @@ public class SimCard  extends BaseModel{
 	private String lastSyncTime;//最近同步时间
 	private Integer creator;//创建人ID
 	private Integer state;//1:可用 0:删除
-	private String licenseKey;//账号license
+	private String account;//账号license
 	private String carrier;//运营商
+	
+	public String getIccid() {
+		return iccid;
+	}
+	public void setIccid(String iccid) {
+		this.iccid = iccid;
+	}
 	public String getPhone() {
 		return phone;
 	}
@@ -100,11 +108,12 @@ public class SimCard  extends BaseModel{
 	public void setState(Integer state) {
 		this.state = state;
 	}
-	public String getLicenseKey() {
-		return licenseKey;
+	
+	public String getAccount() {
+		return account;
 	}
-	public void setLicenseKey(String licenseKey) {
-		this.licenseKey = licenseKey;
+	public void setAccount(String account) {
+		this.account = account;
 	}
 	public String getCarrier() {
 		return carrier;
