@@ -1,4 +1,4 @@
-package com.simclouds.unicom.jasper.test;
+package com.simclouds.unicom.jasper.soap;
 
 import java.util.List;
 import java.util.Map;
