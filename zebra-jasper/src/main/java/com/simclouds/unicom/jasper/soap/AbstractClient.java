@@ -17,6 +17,8 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.log4j.Logger;
+
 import com.sun.xml.wss.ProcessingContext;
 import com.sun.xml.wss.XWSSProcessor;
 import com.sun.xml.wss.XWSSProcessorFactory;
@@ -31,6 +33,8 @@ import com.sun.xml.wss.impl.callback.UsernameCallback;
  *
  */
 public abstract class AbstractClient {
+	private static Logger log = Logger.getLogger(AbstractClient.class);
+	
     static final String NAMESPACE_URI = "http://api.jasperwireless.com/ws/schema";
     static final String PREFIX = "jws";
     static final String TERMINAL_API = "/ws/service/terminal";

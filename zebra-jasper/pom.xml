@@ -18,6 +18,12 @@
         </dependency>
         
         <dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+        
+        <dependency>
 			<groupId>com.simcloud</groupId>
 			<artifactId>zebra-common</artifactId>
 			<version>${project.version}</version>
@@ -63,9 +69,9 @@
             <groupId>javax.xml.crypto</groupId>
             <artifactId>xmldsig</artifactId>
             <version>1.0</version>
-        </dependency> -->
+        </dependency>
 
-        <!-- <dependency>
+        <dependency>
             <groupId>com.sun.xml.wss</groupId>
             <artifactId>xws-security</artifactId>
             <version>3.0</version>

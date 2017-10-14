@@ -7,7 +7,10 @@ import java.util.Map;
 
 import javax.xml.soap.SOAPException;
 
+import org.apache.log4j.Logger;
+
 import com.simclouds.unicom.jasper.soap.TerminalClient;
+import com.sun.xml.wss.XWSSecurityException;
 
 /**
  * Jasper API Client
@@ -17,17 +20,15 @@ import com.simclouds.unicom.jasper.soap.TerminalClient;
  * @since 2017-09-26 10:58
  */
 public class JasperClient {
+	private static Logger log = Logger.getLogger(JasperClient.class);
+	
 	private static TerminalClient terminalClient = null;
 	
     private static Map<String, JasperClient> jasperClientMap = new HashMap<String, JasperClient>();
     
-    private JasperClient(String licenseKey, String username, String password) throws SOAPException, MalformedURLException {
-    	try {
-    		terminalClient = new TerminalClient(licenseKey, username, password);
-    		
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
+    // client
+    private JasperClient(String licenseKey, String username, String password) throws MalformedURLException, SOAPException, XWSSecurityException {
+    	terminalClient = new TerminalClient(licenseKey, username, password);
     }
     
     /**
@@ -40,12 +41,16 @@ public class JasperClient {
      * @throws SOAPException 
      * @throws MalformedURLException 
      */
-    public static JasperClient getInstance(String licenseKey, String username, String password) throws MalformedURLException, SOAPException {
+    public static JasperClient getInstance(String licenseKey, String username, String password) {
     	JasperClient jasperClient = jasperClientMap.get(licenseKey);
     	if (jasperClient == null) {
-    		jasperClient = new JasperClient(licenseKey, username, password);
-    		
-    		jasperClientMap.put(licenseKey, jasperClient);
+    		try {
+    			jasperClient = new JasperClient(licenseKey, username, password);
+    			
+    			jasperClientMap.put(licenseKey, jasperClient);
+        	} catch (Exception e) {
+        		log.error("create jasper client failed", e);
+        	}
     	}
     	
     	return jasperClient;
@@ -53,12 +58,17 @@ public class JasperClient {
     
     /**
      * get terminals
+     * 
+     * @param startTime
+     *  format: 2008-08-26T00:00:00Z
+     *  
+     * @return
      */
-    public List<String> getTerminals() {
+    public List<String> getTerminals(String startTime) {
     	try {
-			return terminalClient.getModifiedTerminals();
+			return terminalClient.getModifiedTerminals(startTime);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("get terminal list failed", e);
 		}
     	
     	return null;
@@ -69,11 +79,11 @@ public class JasperClient {
      * 
      * @param iccid
      */
-    public Map<String, String> getTerminalDetails(String iccid) {
+    public List<Map<String, String>> getTerminalDetails(String[] iccids) {
     	try {
-    		return terminalClient.getTerminalDetails(iccid);
+    		return terminalClient.getTerminalDetails(iccids);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("get terminal detail failed", e);
 		}
     	
     	return null;
@@ -88,7 +98,7 @@ public class JasperClient {
     	try {
     		return terminalClient.getSessionInfo(iccid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("get terminal session info failed", e);
 		}
     	
     	return null;
@@ -98,14 +108,16 @@ public class JasperClient {
      * edit terminal
      * 
      * @param iccid
-     * @param changeType
+     * @param changeType 
+     * 	3: terminal status
+     *  4: ratePlan
      * @param targetValue
      */
     public Boolean editTerminal(String iccid, String changeType, String targetValue) {
     	try {
     		return terminalClient.editTerminal(iccid, changeType, targetValue);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("edit terminal failed", e);
 		}
     	
     	return false;

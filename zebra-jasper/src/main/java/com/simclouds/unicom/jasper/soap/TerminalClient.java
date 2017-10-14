@@ -17,6 +17,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -29,6 +30,7 @@ import com.sun.xml.wss.XWSSecurityException;
  *
  */
 public class TerminalClient extends AbstractClient {
+	private static Logger log = Logger.getLogger(TerminalClient.class);
 	
     /**
      * Constructor which initializes Soap Connection, messagefactory and ProcessorFactory
@@ -50,8 +52,18 @@ public class TerminalClient extends AbstractClient {
      * @return SOAPMessage
      * @throws SOAPException
      */
-    private SOAPMessage createGetModifiedTerminalsRequest() throws SOAPException {
+    private SOAPMessage createGetModifiedTerminalsRequest(String startTime) throws SOAPException {
         SOAPMessage message = this.createBaseRequest(TERMINAL_API, "GetModifiedTerminals");
+        
+        if (startTime != null) {
+        	SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+            SOAPBodyElement terminalRequestElement = (SOAPBodyElement) message.getSOAPBody().getFirstChild();
+            
+            // startTime
+            Name startTimeName = envelope.createName("since", PREFIX, NAMESPACE_URI);
+            SOAPElement startTimeElement = terminalRequestElement.addChildElement(startTimeName);
+            startTimeElement.setValue(startTime);
+        }
         
         return message;
     }
@@ -80,8 +92,8 @@ public class TerminalClient extends AbstractClient {
      * @throws IOException 
      * @throws XWSSecurityException 
      */
-    public List<String> getModifiedTerminals() throws SOAPException, IOException, XWSSecurityException {
-    	SOAPMessage request = createGetModifiedTerminalsRequest();
+    public List<String> getModifiedTerminals(String startTime) throws SOAPException, IOException, XWSSecurityException {
+    	SOAPMessage request = createGetModifiedTerminalsRequest(startTime);
         request = secureMessage(request, username, password);
         
         SOAPConnection connection = connectionFactory.createConnection();
@@ -91,9 +103,7 @@ public class TerminalClient extends AbstractClient {
         	return writeGetModifiedTerminalsResponse(response);
         } else {
             SOAPFault fault = response.getSOAPBody().getFault();
-            System.err.println("Received SOAP Fault");
-            System.err.println("SOAP Fault Code :" + fault.getFaultCode());
-            System.err.println("SOAP Fault String :" + fault.getFaultString());
+            log.error("Method: getModifiedTerminals Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
         
         return null;
@@ -106,17 +116,20 @@ public class TerminalClient extends AbstractClient {
      * @return SOAPMessage
      * @throws SOAPException
      */
-    private SOAPMessage createGetTerminalDetailsRequest(String iccid) throws SOAPException {
+    private SOAPMessage createGetTerminalDetailsRequest(String[] iccids) throws SOAPException {
     	SOAPMessage message = this.createBaseRequest(TERMINAL_API, "GetTerminalDetails");
         
         SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
         SOAPBodyElement terminalRequestElement = (SOAPBodyElement) message.getSOAPBody().getFirstChild();
         
-        Name iccids = envelope.createName("iccids", PREFIX, NAMESPACE_URI);
-        SOAPElement iccidsElement = terminalRequestElement.addChildElement(iccids);
-        Name iccidName = envelope.createName("iccid", PREFIX, NAMESPACE_URI);
-        SOAPElement iccidElement = iccidsElement.addChildElement(iccidName);
-        iccidElement.setValue(iccid);
+        Name iccidsName = envelope.createName("iccids", PREFIX, NAMESPACE_URI);
+        SOAPElement iccidsElement = terminalRequestElement.addChildElement(iccidsName);
+        
+        for (String iccid : iccids) {
+        	Name iccidName = envelope.createName("iccid", PREFIX, NAMESPACE_URI);
+            SOAPElement iccidElement = iccidsElement.addChildElement(iccidName);
+            iccidElement.setValue(iccid);
+        }
         
         return message;
     }
@@ -127,9 +140,9 @@ public class TerminalClient extends AbstractClient {
      * @param message
      * @throws SOAPException
      */
-    private Map<String, String> writeGetTerminalDetailsResponse(SOAPMessage message) throws SOAPException {
-    	Map<String, String> detailMap = new HashMap<String, String>();
-    	
+    private List<Map<String, String>> writeGetTerminalDetailsResponse(SOAPMessage message) throws SOAPException {
+    	List<Map<String, String>> detailsList = new ArrayList<Map<String, String>>();
+    
         SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
         Name terminalResponseName = envelope.createName("GetTerminalDetailsResponse", PREFIX, NAMESPACE_URI);
         SOAPBodyElement terminalResponseElement = (SOAPBodyElement) message
@@ -138,16 +151,24 @@ public class TerminalClient extends AbstractClient {
         Name terminals = envelope.createName("terminals", PREFIX, NAMESPACE_URI);
         Name terminal = envelope.createName("terminal", PREFIX, NAMESPACE_URI);
         SOAPBodyElement terminalsElement = (SOAPBodyElement) terminalResponseElement.getChildElements(terminals).next();
-        SOAPBodyElement terminalElement = (SOAPBodyElement) terminalsElement.getChildElements(terminal).next();
+        //SOAPBodyElement terminalElement = (SOAPBodyElement) terminalsElement.getChildElements(terminal).next();
         
-        NodeList list = terminalElement.getChildNodes();
-        Node n = null;
-        for (int i = 0; i < list.getLength(); i ++) {
-            n = list.item(i);
-            detailMap.put(n.getLocalName(), n.getTextContent());
+        Iterator<SOAPBodyElement> itr = terminalsElement.getChildElements(terminal);
+        while ( itr.hasNext()) {
+        	Map<String, String> detailMap = new HashMap<String, String>();
+        	
+            SOAPBodyElement terminalElement = itr.next();
+            NodeList list = terminalElement.getChildNodes();
+            Node n = null;
+            for (int i = 0; i < list.getLength(); i ++) {
+                n = list.item(i);
+                detailMap.put(n.getLocalName(), n.getTextContent());
+            }
+            
+            detailsList.add(detailMap);
         }
 
-        return detailMap;
+        return detailsList;
     }
 
     /**
@@ -159,8 +180,8 @@ public class TerminalClient extends AbstractClient {
      * @throws XWSSecurityException
      * @throws Exception
      */
-    public Map<String, String> getTerminalDetails(String iccid) throws SOAPException, IOException, XWSSecurityException, Exception {
-        SOAPMessage request = createGetTerminalDetailsRequest(iccid);
+    public List<Map<String, String>> getTerminalDetails(String[] iccids) throws SOAPException, IOException, XWSSecurityException, Exception {
+        SOAPMessage request = createGetTerminalDetailsRequest(iccids);
         request = secureMessage(request, username, password);
         
         SOAPConnection connection = connectionFactory.createConnection();
@@ -170,9 +191,7 @@ public class TerminalClient extends AbstractClient {
         	return writeGetTerminalDetailsResponse(response);
         } else {
             SOAPFault fault = response.getSOAPBody().getFault();
-            System.err.println("Received SOAP Fault");
-            System.err.println("SOAP Fault Code :" + fault.getFaultCode());
-            System.err.println("SOAP Fault String :" + fault.getFaultString());
+            log.error("Method: getTerminalDetails Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
         
         return null;
@@ -250,21 +269,15 @@ public class TerminalClient extends AbstractClient {
     public Map<String, String> getSessionInfo(String iccid) throws SOAPException, IOException, XWSSecurityException, Exception {
         SOAPMessage request = createGetSessionInfoRequest(iccid);
         request = secureMessage(request, username, password);
-        System.out.println("Request: ");
-        request.writeTo(System.out);
-        System.out.println("");
+        
         SOAPConnection connection = connectionFactory.createConnection();
         SOAPMessage response = connection.call(request, url);
-        System.out.println("Response: ");
-        response.writeTo(System.out);
-        System.out.println("");
+        
         if (!response.getSOAPBody().hasFault()) {
             return writeGetSessionInfoResponse(response);
         } else {
             SOAPFault fault = response.getSOAPBody().getFault();
-            System.err.println("Received SOAP Fault");
-            System.err.println("SOAP Fault Code :" + fault.getFaultCode());
-            System.err.println("SOAP Fault String :" + fault.getFaultString());
+            log.error("Method: getSessionInfo Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
         
         return null;
@@ -287,7 +300,6 @@ public class TerminalClient extends AbstractClient {
         SOAPElement iccidElement = terminalRequestElement.addChildElement(iccidName);
         iccidElement.setValue(iccid);
         
-
         Name targetValueName = envelope.createName("targetValue", PREFIX, NAMESPACE_URI);
         SOAPElement targetValueElement = terminalRequestElement.addChildElement(targetValueName);
         targetValueElement.setValue(targetValue);
@@ -295,7 +307,6 @@ public class TerminalClient extends AbstractClient {
         Name changeTypeName = envelope.createName("changeType", PREFIX, NAMESPACE_URI);
         SOAPElement changeTypeElement = terminalRequestElement.addChildElement(changeTypeName);
         changeTypeElement.setValue(changeType);
-        
         
         return message;
     }
@@ -317,18 +328,13 @@ public class TerminalClient extends AbstractClient {
         SOAPConnection connection = connectionFactory.createConnection();
         SOAPMessage response = connection.call(request, url);
         
-        //response.writeTo(System.out);
-        
         if (!response.getSOAPBody().hasFault()) {
         	return true;
         } else {
             SOAPFault fault = response.getSOAPBody().getFault();
-            System.err.println("Received SOAP Fault");
-            System.err.println("SOAP Fault Code :" + fault.getFaultCode());
-            System.err.println("SOAP Fault String :" + fault.getFaultString());
+            log.error("Method: editTerminal Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
         
         return false;
     }
 }
-
