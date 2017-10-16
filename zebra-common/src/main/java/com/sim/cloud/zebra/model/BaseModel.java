@@ -18,7 +18,9 @@ public abstract class BaseModel implements Serializable {
 	protected Long id;
 	protected String createTime;
 	protected String updateTime=DateUtil.getDateTime();
-
+    protected Long createUserId;         // 创建人ID
+    protected Integer status;            // 删除状态  0-未删除  1-删除
+    
 
 
 	@TableField(exist = false)
@@ -85,4 +87,20 @@ public abstract class BaseModel implements Serializable {
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
+
+  public Long getCreateUserId() {
+    return createUserId;
+  }
+
+  public void setCreateUserId(Long createUserId) {
+    this.createUserId = createUserId;
+  }
+
+  public Integer getStatus() {
+    return status;
+  }
+
+  public void setStatus(Integer status) {
+    this.status = status;
+  }
 }
