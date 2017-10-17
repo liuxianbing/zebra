@@ -116,7 +116,7 @@ public class TerminalClient extends AbstractClient {
      * @return SOAPMessage
      * @throws SOAPException
      */
-    private SOAPMessage createGetTerminalDetailsRequest(String[] iccids) throws SOAPException {
+    private SOAPMessage createGetTerminalDetailsRequest(List<String> iccids) throws SOAPException {
     	SOAPMessage message = this.createBaseRequest(TERMINAL_API, "GetTerminalDetails");
         
         SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
@@ -180,7 +180,7 @@ public class TerminalClient extends AbstractClient {
      * @throws XWSSecurityException
      * @throws Exception
      */
-    public List<Map<String, String>> getTerminalDetails(String[] iccids) throws SOAPException, IOException, XWSSecurityException, Exception {
+    public List<Map<String, String>> getTerminalDetails(List<String> iccids) throws SOAPException, IOException, XWSSecurityException, Exception {
         SOAPMessage request = createGetTerminalDetailsRequest(iccids);
         request = secureMessage(request, username, password);
         
@@ -272,7 +272,7 @@ public class TerminalClient extends AbstractClient {
         
         SOAPConnection connection = connectionFactory.createConnection();
         SOAPMessage response = connection.call(request, url);
-        
+        response.writeTo(System.out);
         if (!response.getSOAPBody().hasFault()) {
             return writeGetSessionInfoResponse(response);
         } else {
