@@ -9,7 +9,7 @@ public class SimCard  extends BaseModel{
 	private static final long serialVersionUID = -3969900141839401630L;
 	private String phone;
 	private String iccid;//ICCID信息
-	private Long cid;
+	private Long uid;   
 	private int type;
 	private int netType;//网络状态
 	private int objType;//设备状态
@@ -20,11 +20,12 @@ public class SimCard  extends BaseModel{
 	private String expireTime;//过期时间
 	private String lastSyncTime;//最近同步时间
 	private Integer creator;//创建人ID
-	private Integer state;//1:可用 0:删除
+	private Integer status;//0:可用 1:删除
 	private String account;//账号license
-	private String carrier;//运营商
+	private String operator;//运营商
 	
-	public String getIccid() {
+
+    public String getIccid() {
 		return iccid;
 	}
 	public void setIccid(String iccid) {
@@ -36,12 +37,7 @@ public class SimCard  extends BaseModel{
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public Long getCid() {
-		return cid;
-	}
-	public void setCid(Long cid) {
-		this.cid = cid;
-	}
+
 	public int getType() {
 		return type;
 	}
@@ -102,12 +98,7 @@ public class SimCard  extends BaseModel{
 	public void setCreator(Integer creator) {
 		this.creator = creator;
 	}
-	public Integer getState() {
-		return state;
-	}
-	public void setState(Integer state) {
-		this.state = state;
-	}
+
 	
 	public String getAccount() {
 		return account;
@@ -115,11 +106,23 @@ public class SimCard  extends BaseModel{
 	public void setAccount(String account) {
 		this.account = account;
 	}
-	public String getCarrier() {
-		return carrier;
+	public String getOperator() {
+	return operator;
+    }
+	public void setOperator(String operator) {
+	this.operator = operator;
 	}
-	public void setCarrier(String carrier) {
-		this.carrier = carrier;
-	}
+  public Long getUid() {
+    return uid;
+  }
+  public void setUid(Long uid) {
+    this.uid = uid;
+  }
+  public Integer getStatus() {
+    return status;
+  }
+  public void setStatus(Integer status) {
+    this.status = status;
+  }
 	
 }
