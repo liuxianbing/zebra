@@ -47,6 +47,16 @@ public abstract class AbstractController {
 	protected SysUser getCurrUser() {
 		return WebUtil.getCurrentUser(request);
 	}
+	/**
+	 * 判断当前用户是否管理员
+	 * @return
+	 */
+	protected boolean checkIfManager(){
+		if(getCurrUser()!=null && getCurrUser().getCreateUserId()==0l){
+			return true;
+		}
+		return false;
+	}
 	
 	protected HttpSession getHttpSession(){
 		return request.getSession();
@@ -86,7 +96,6 @@ public abstract class AbstractController {
 				 res.put(m.getKey(), m.getValue());
 			 }
 		 });
-		 System.out.println(res);
 		 Map<String,Object> res2=new HashMap<>();
 		 res.entrySet().stream().filter(e->{
 			 if(!(e.getValue() instanceof String[])){

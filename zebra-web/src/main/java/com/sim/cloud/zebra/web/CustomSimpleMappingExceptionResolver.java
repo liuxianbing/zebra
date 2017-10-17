@@ -40,8 +40,10 @@ public class CustomSimpleMappingExceptionResolver extends SimpleMappingException
         		int be=ex.getMessage().lastIndexOf("for key");
         		int en=ex.getMessage().lastIndexOf("_UNIQUE");
         		res.put("msg", "字段"+ex.getMessage().substring(be+9,en)+"取值已经存在");
-        	}else{
+        	}else if(ex.getMessage().length()>=50){
         		res.put("msg", "系统走神了,请稍候再试.");
+        	}else{
+        		res.put("msg", ex.getMessage());
         	}
           PrintWriter writer = response.getWriter();
           writer.write(JackSonUtil.getObjectMapper().writeValueAsString(res));

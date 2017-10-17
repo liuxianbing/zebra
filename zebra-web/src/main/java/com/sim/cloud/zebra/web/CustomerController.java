@@ -74,10 +74,37 @@ public class CustomerController  extends AbstractController {
 	@ApiOperation(value = "账号设置页面")
 	@RequestMapping(value = "/account", method = RequestMethod.GET)
 	public String toInfo(Model model) {
-		SysUser user=sysUserService.queryById(2l);
-		model.addAttribute("user", user);
+		model.addAttribute("user", getCurrUser());
+		Company company=new Company();
+		if(getCurrUser().getCid()!=null && getCurrUser().getCid()>0l){
+			try {
+				company=companyService.selectById(getCurrUser().getCid());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		System.out.println(company);
+		model.addAttribute("uid", getCurrUser().getId());
+		model.addAttribute("company", company);
+		
 		return "system/user_info";
 	}
+	
+	  @ApiOperation(value = "更新密码")
+	  @RequestMapping(value = "modifyPwd", produces = {"application/json"}, method = RequestMethod.POST)
+	  public @ResponseBody Map<String, String> modifyPwd(@RequestBody Map<String, Object> map) {
+	    String oldPwd = (String) map.get("oldPwd");
+	    String newPwd = (String) map.get("newPwd");
+	    oldPwd = DigestUtils.md5Hex(oldPwd);
+	    newPwd = DigestUtils.md5Hex(newPwd);
+	    if(!getCurrUser().getPasswd().equals(oldPwd)){
+	    	throw new RuntimeException("原始密码错误");
+	    }
+	    getCurrUser().setPasswd(newPwd);
+	    sysUserService.updateById( getCurrUser());
+	    return SUCCESS;
+	  }
 	
 	@ApiOperation(value = "添加客户")
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -107,12 +134,22 @@ public class CustomerController  extends AbstractController {
 	@RequestMapping(value = "/auth", method = RequestMethod.GET)
 	public String toAuth(Model model,@RequestParam String uid,@RequestParam(required=false) String cid) {
 		Company company=new Company();
-		if(StringUtils.isNotBlank(cid)){
+		if(StringUtils.isNumeric(cid)){
 			company=companyService.queryById(Long.parseLong(cid));
 		}
 		model.addAttribute("uid", uid);
 		model.addAttribute("company", company);
 		return "system/user_auth";
+	}
+	
+	@ApiOperation(value = "企业认证")
+	@RequestMapping(value = "/auth", method = RequestMethod.POST)
+	public @ResponseBody Map<String, String> auth(@RequestBody Company company) {
+		companyService.saveAuthInfo(company);
+		if(!checkIfManager()){
+			getCurrUser().setCid(company.getId());
+		}
+		return SUCCESS;
 	}
 	
 	/**
@@ -131,7 +168,7 @@ public class CustomerController  extends AbstractController {
 		   String url="auth_business";//PropertiesUtil.getString("auth.business.url")
 		   String fileType = upload.getOriginalFilename().substring(upload.getOriginalFilename().lastIndexOf(".") + 1);
 		   String realpath = request.getSession().getServletContext().getRealPath("/"+url);
-		   String storeName = upload.getOriginalFilename() + "_" + DateUtil.getDateTime(DATE_PATTERN.YYYYMMDDHHMMSS) + "." + fileType;
+		   String storeName = upload.getOriginalFilename().replace(fileType, "") + "_" + DateUtil.getDateTime(DATE_PATTERN.YYYYMMDDHHMMSS) + "." + fileType;
 		   FileUtils.copyInputStreamToFile(upload.getInputStream(), new File(realpath+File.separator+storeName));
 		   Map<String,String> res=new HashMap<String, String>();
 		  // res.put("filePath", realpath+File.separator+storeName);
@@ -146,7 +183,7 @@ public class CustomerController  extends AbstractController {
 		   String url="positive_business";//PropertiesUtil.getString("auth.business.url")
 		   String fileType = upload.getOriginalFilename().substring(upload.getOriginalFilename().lastIndexOf(".") + 1);
 		   String realpath = request.getSession().getServletContext().getRealPath("/"+url);
-		   String storeName = upload.getOriginalFilename() + "_" + DateUtil.getDateTime(DATE_PATTERN.YYYYMMDDHHMMSS) + "." + fileType;
+		   String storeName = upload.getOriginalFilename().replace(fileType, "") + "_" + DateUtil.getDateTime(DATE_PATTERN.YYYYMMDDHHMMSS) + "." + fileType;
 		   FileUtils.copyInputStreamToFile(upload.getInputStream(), new File(realpath+File.separator+storeName));
 		   Map<String,String> res=new HashMap<String, String>();
 		  // res.put("filePath", realpath+File.separator+storeName);
@@ -161,7 +198,7 @@ public class CustomerController  extends AbstractController {
 		   String url="back_business";//PropertiesUtil.getString("auth.business.url")
 		   String fileType = upload.getOriginalFilename().substring(upload.getOriginalFilename().lastIndexOf(".") + 1);
 		   String realpath = request.getSession().getServletContext().getRealPath("/"+url);
-		   String storeName = upload.getOriginalFilename() + "_" + DateUtil.getDateTime(DATE_PATTERN.YYYYMMDDHHMMSS) + "." + fileType;
+		   String storeName = upload.getOriginalFilename().replace(fileType, "") + "_" + DateUtil.getDateTime(DATE_PATTERN.YYYYMMDDHHMMSS) + "." + fileType;
 		   FileUtils.copyInputStreamToFile(upload.getInputStream(), new File(realpath+File.separator+storeName));
 		   Map<String,String> res=new HashMap<String, String>();
 		  // res.put("filePath", realpath+File.separator+storeName);

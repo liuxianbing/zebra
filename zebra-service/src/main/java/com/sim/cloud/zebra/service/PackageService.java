@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sim.cloud.zebra.core.AbstractService;
-import com.sim.cloud.zebra.mapper.PackageUserMapper;
-import com.sim.cloud.zebra.model.PackageUser;
+import com.sim.cloud.zebra.mapper.PackageMapper;
+import com.sim.cloud.zebra.model.Package;
 
 /** 
 * @author liuxianbing: 
@@ -14,6 +14,6 @@ import com.sim.cloud.zebra.model.PackageUser;
 */
 @Service
 @Transactional
-public class PackageUserService extends AbstractService<PackageUserMapper, PackageUser> {
+public class PackageService extends AbstractService<PackageMapper, Package> {
 
 }

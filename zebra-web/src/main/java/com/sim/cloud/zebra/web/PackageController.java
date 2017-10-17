@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
-import com.sim.cloud.zebra.model.PackageUser;
+import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SysUser;
-import com.sim.cloud.zebra.service.PackageUserService;
+import com.sim.cloud.zebra.service.PackageService;
 import com.sim.cloud.zebra.service.SysUserService;
 
 import io.swagger.annotations.Api;
@@ -25,10 +25,10 @@ import io.swagger.annotations.ApiOperation;
 @Controller
 @Api(value = "用户套餐控制")
 @RequestMapping(value = "/package")
-public class PackageUserController extends AbstractController {
+public class PackageController extends AbstractController {
 
 	@Autowired
-	private PackageUserService packageUserService;
+	private PackageService packageUserService;
 	/**
 	 * 列表页面
 	 * @param model
@@ -47,9 +47,9 @@ public class PackageUserController extends AbstractController {
 	 */
 	@ApiOperation(value = "用户套餐列表请求")
 	@RequestMapping(value = "list", method = RequestMethod.POST, produces = { "application/json" })
-	public @ResponseBody DataTableParameter<PackageUser> list() {
-		Page<PackageUser> page=packageUserService.query(extractFromRequest());
-		return new DataTableParameter<PackageUser>(page.getTotal(),
+	public @ResponseBody DataTableParameter<Package> list() {
+		Page<Package> page=packageUserService.query(extractFromRequest());
+		return new DataTableParameter<Package>(page.getTotal(),
 				request.getParameter("sEcho"),page.getRecords());
 	}
 }
