@@ -13,18 +13,62 @@ public class TariffPlan extends BaseModel {
 	private String name;
 	private Integer type;//1:共享 0:独享
 	private Integer flow;//流量
-	private Float cost;
+	private Float cost;//资费价格
 	private Integer versionId;//版本
-	private Integer planId;//计划ID
 	private String account;//账号license
-	private String carrier;
+	
+	private Integer messages;//短信数
+	private Integer callMinutes;//通话分钟数
+	private Integer operator;
+	private Integer isMService;//订阅服务
+	private Integer isCallService;
+	private Integer uid;
+	private Integer isFlowService;
 	
 	
-	public String getCarrier() {
-		return carrier;
+	
+	
+	public Integer getMessages() {
+		return messages;
 	}
-	public void setCarrier(String carrier) {
-		this.carrier = carrier;
+	public void setMessages(Integer messages) {
+		this.messages = messages;
+	}
+	public Integer getCallMinutes() {
+		return callMinutes;
+	}
+	public void setCallMinutes(Integer callMinutes) {
+		this.callMinutes = callMinutes;
+	}
+	public Integer getOperator() {
+		return operator;
+	}
+	public void setOperator(Integer operator) {
+		this.operator = operator;
+	}
+	public Integer getIsMService() {
+		return isMService;
+	}
+	public void setIsMService(Integer isMService) {
+		this.isMService = isMService;
+	}
+	public Integer getIsCallService() {
+		return isCallService;
+	}
+	public void setIsCallService(Integer isCallService) {
+		this.isCallService = isCallService;
+	}
+	public Integer getUid() {
+		return uid;
+	}
+	public void setUid(Integer uid) {
+		this.uid = uid;
+	}
+	public Integer getIsFlowService() {
+		return isFlowService;
+	}
+	public void setIsFlowService(Integer isFlowService) {
+		this.isFlowService = isFlowService;
 	}
 	public String getAccount() {
 		return account;
@@ -37,12 +81,6 @@ public class TariffPlan extends BaseModel {
 	}
 	public void setVersionId(Integer versionId) {
 		this.versionId = versionId;
-	}
-	public Integer getPlanId() {
-		return planId;
-	}
-	public void setPlanId(Integer planId) {
-		this.planId = planId;
 	}
 	public String getName() {
 		return name;
