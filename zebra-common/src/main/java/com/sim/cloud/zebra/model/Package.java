@@ -4,7 +4,7 @@ package com.sim.cloud.zebra.model;
 * @version 创建时间：2017年10月14日 下午12:41:09 
 * 类说明  用户套餐表
 */
-public class PackageUser  extends BaseModel{
+public class Package  extends BaseModel{
 
 	private static final long serialVersionUID = 2371027727547341076L;
 	private Integer uid;                        // 用户ID
