@@ -136,4 +136,12 @@ public abstract class AbstractClient {
         ProcessingContext context = processor.createProcessingContext(message);
         return processor.secureOutboundMessage(context);
     }
+
+
+    // getter and setter
+	public String getUsername() {
+		return username;
+	}
+    
+    
 }
