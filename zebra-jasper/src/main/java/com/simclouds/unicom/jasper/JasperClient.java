@@ -136,7 +136,8 @@ public class JasperClient {
     			simCard = new SimCard();
     			simCard.setIccid(terminalMap.get("iccid")); // iccid
     			simCard.setUsedFlow(Float.valueOf(terminalMap.get("monthToDateDataUsage"))); // data usage
-    			simCard.setCarrier("unicom");
+    			//simCard.setCarrier("unicom");
+    			simCard.setOperator("unicom");
     			simCard.setAccount(terminalClient.getUsername());
     			simCard.setLastSyncTime(new Date().toLocaleString());
     			
