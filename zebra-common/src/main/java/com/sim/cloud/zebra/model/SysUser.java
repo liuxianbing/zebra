@@ -26,11 +26,7 @@ public class SysUser extends BaseModel {
 	private String remark;//备注
 	private Long cid;//企业ID
 
-	private Integer state = SysUser.able;// 用户的状态
-	protected Long parentId;// 创建者
-	public Long getParentId() {
-		return parentId;
-	}
+	private Integer status = SysUser.able;// 用户的状态
 
 	public Long getCid() {
 		return cid;
@@ -38,10 +34,6 @@ public class SysUser extends BaseModel {
 
 	public void setCid(Long cid) {
 		this.cid = cid;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
 	}
 
 	public String getRemark() {
@@ -101,13 +93,14 @@ public class SysUser extends BaseModel {
 		this.email = email;
 	}
 
-
-	public Integer getState() {
-		return state;
+	public Integer getStatus() {
+		return status;
 	}
 
-	public void setState(Integer state) {
-		this.state = state;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
+
+
 
 }

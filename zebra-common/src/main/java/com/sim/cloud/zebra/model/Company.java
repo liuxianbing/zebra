@@ -17,8 +17,6 @@ public class Company extends BaseModel{
 	private String legalBack;//身份证背面
 	private Integer legalAuth;//法人认证
 	private Long uid;//用户ID
-	
-	
 	public Integer getBusinessAuth() {
 		return businessAuth;
 	}
@@ -78,6 +76,13 @@ public class Company extends BaseModel{
 	}
 	public void setLegalAuth(Integer legalAuth) {
 		this.legalAuth = legalAuth;
+	}
+	@Override
+	public String toString() {
+		return "Company [businessCode=" + businessCode + ", name=" + name + ", businessUrl=" + businessUrl
+				+ ", businessAuth=" + businessAuth + ", legalName=" + legalName + ", legalCode=" + legalCode
+				+ ", legalPositive=" + legalPositive + ", legalBack=" + legalBack + ", legalAuth=" + legalAuth
+				+ ", uid=" + uid + ", status=" + status + "]";
 	}
 	
 	
