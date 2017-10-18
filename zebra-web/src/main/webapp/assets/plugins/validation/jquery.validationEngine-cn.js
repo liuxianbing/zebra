@@ -70,6 +70,10 @@
                     "regex": /^[\-\+]?\d+$/,
                     "alertText": "* 无效的整数"
                 },
+                "idCode": {
+                    "regex": /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i,
+                    "alertText": "* 无效的身份证号码"
+                },
                 "number": {
                     // Number, including positive, negative, and floating decimal. credit: orefalo
                     "regex": /^[\-\+]?(([0-9]+)([\.,]([0-9]+))?|([\.,]([0-9]+))?)$/,

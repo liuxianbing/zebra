@@ -63,8 +63,9 @@
 		 { "sTitle": "类型","sClass": "center" ,"sWidth":"100","mDataProp": "type"},
 		 { "sTitle": "流量","sClass": "center" ,"sWidth":"100","mDataProp": "flow"},
        { "sTitle": "费用",  "sClass": "center" ,"sWidth":"75", "mDataProp": "cost"},
-	   { "sTitle": "计划ID",  "sClass": "center","sWidth":"80","mDataProp": "planId"},
-	   { "sTitle": "运营商", "sClass": "center" ,"sWidth":"90","mDataProp": "carrier"}
+	   { "sTitle": "短信数",  "sClass": "center","sWidth":"80","mDataProp": "messages"},
+	   { "sTitle": "通话分钟数",  "sClass": "center","sWidth":"80","mDataProp": "callMinutes"},
+	   { "sTitle": "运营商", "sClass": "center" ,"sWidth":"90","mDataProp": "operator"}
 		];
 	function loadTable(){
 		if(oTable){

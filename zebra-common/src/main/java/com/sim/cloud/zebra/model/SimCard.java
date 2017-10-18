@@ -23,6 +23,26 @@ public class SimCard extends BaseModel {
 	private String account;// 账号license
 	private Integer operator;// 运营商      1-移动、2-电信、3-联通	
 
+	private Integer usedMessages;//已经使用的短信条数
+	private Integer usedMinutes;//已使用通话分钟数
+	
+	
+	public Integer getUsedMessages() {
+		return usedMessages;
+	}
+
+	public void setUsedMessages(Integer usedMessages) {
+		this.usedMessages = usedMessages;
+	}
+
+	public Integer getUsedMinutes() {
+		return usedMinutes;
+	}
+
+	public void setUsedMinutes(Integer usedMinutes) {
+		this.usedMinutes = usedMinutes;
+	}
+
 	public String getIccid() {
 		return iccid;
 	}

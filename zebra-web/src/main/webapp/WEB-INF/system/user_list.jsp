@@ -83,7 +83,7 @@
 		 { "sTitle": "联系人","sClass": "center" ,"sWidth":"100","mDataProp": "userName"},
        { "sTitle": "手机号",  "sClass": "center" ,"sWidth":"75", "mDataProp": "phone"},
 	   { "sTitle": "邮箱",  "sClass": "center","sWidth":"80","mDataProp": "email"},
-	   { "sTitle": "状态", "sClass": "center" ,"sWidth":"90","mDataProp": "state"}
+	   { "sTitle": "状态", "sClass": "center" ,"sWidth":"90","mDataProp": "status"}
 		];
 	function loadTable(){
 		if(oTable){

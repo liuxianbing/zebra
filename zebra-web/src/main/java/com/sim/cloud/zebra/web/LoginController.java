@@ -4,14 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.sim.cloud.zebra.common.util.WebUtil;
 import com.sim.cloud.zebra.model.SysUser;
@@ -52,6 +49,13 @@ public class LoginController extends AbstractController {
 			  }
 			  WebUtil.setCurrentUser(request, list.get(0));
 		  return "redirect:/user/list";
+	  }
+	
+	@ApiOperation(value = "退出")
+	  @RequestMapping(value = "/logout", method = RequestMethod.GET)
+	  public String logout(Model model) {
+		request.getSession().invalidate();
+		  return "login";
 	  }
 	
 }

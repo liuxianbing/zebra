@@ -44,7 +44,7 @@ if (typeof String.prototype.startsWith != 'function'){
   var find=false;
   $.each( $(".sidebar-menu").find('a'), function(i, n){
 		var inhref=$(this).attr('href');
-		if(window.location.href.endsWith(inhref)){
+		if(window.location.href.endsWith(inhref) && !find){
 			find=true;
 			$(this).parent().addClass('active');
 			if($(this).parent().parent().parent().hasClass('treeview')){
@@ -55,11 +55,12 @@ if (typeof String.prototype.startsWith != 'function'){
   if(!find){
 		$.each( $(".sidebar-menu").find('a'), function(i, n){
 			var inhref=$(this).attr('href').substring(0,$(this).attr('href').lastIndexOf('/'));
-			if(href.endsWith(inhref)){
+			if(href.endsWith(inhref) && inhref.length>2 && !find){
 				$(this).parent().addClass('active');
 				if($(this).parent().parent().parent().hasClass('treeview')){
 					$(this).parent().parent().parent().addClass('active');
 				}
+				find=true;
 			}
 		});
   }

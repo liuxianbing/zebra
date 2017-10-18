@@ -66,21 +66,23 @@
 						  </div>
 					</div>
 					<div class="row" >
+					    <!-- 
 						  <div class="col-md-5">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">用户状态</label>
 			                  <div class="col-sm-10">
 			                   <label class="radio-inline"> <input type="radio"
-										name="state" id="state1" value="1"
-										${user.state ==1 ?'checked':''}> 启用
+										name="status" id="state1" value="1"
+										${user.status ==1 ?'checked':''}> 启用
 									</label> <label class="radio-inline"> <input type="radio"
-										name="state" id="state2" value="0"
-										${user.state ==0 ?'checked':''}> 禁用
+										name="status" id="state2" value="0"
+										${user.status ==null || user.status ==0 ?'checked':''}> 禁用
 									</label>
 			                  </div>
 			                </div>
 						  </div>
-						   <div class="col-md-6">
+						   -->
+						   <div class="col-md-5">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">备注</label>
 			                  <div class="col-sm-10">

@@ -20,10 +20,10 @@ public class TariffPlan extends BaseModel {
 	private Integer messages;//短信数
 	private Integer callMinutes;//通话分钟数
 	private Integer operator;
-	private Integer isMService;//订阅服务
-	private Integer isCallService;
+	private Integer isMService;//订阅短信服务
+	private Integer isCallService;//订阅通话服务
 	private Integer uid;
-	private Integer isFlowService;
+	private Integer isFlowService;//定义流量服务
 	
 	
 	

@@ -54,7 +54,7 @@
                   <a href="${ctx }/user/account" class="btn btn-default btn-flat">修改账号</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">退出</a>
+                  <a href="${ctx }/logout" class="btn btn-default btn-flat">退出</a>
                 </div>
               </li>
             </ul>
@@ -102,7 +102,7 @@
             <i class="fa fa-dashboard"></i> <span>首页</span>           
           </a>
         </li>
-        
+            <!-- 
         <li class="treeview">
           <a href="#">
             <i class="fa fa-files-o"></i>
@@ -118,6 +118,7 @@
             <li><a href="pages/layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> Collapsed Sidebar</a></li>
           </ul>
         </li>
+    
         <li>
           <a href="pages/widgets.html">
             <i class="fa fa-th"></i> <span>Widgets</span>
@@ -126,6 +127,7 @@
             </span>
           </a>
         </li>
+         -->
         <li class="treeview">
           <a href="#">
             <i class="fa fa-pie-chart"></i>
@@ -137,8 +139,6 @@
           <ul class="treeview-menu">
             <li><a href="${ctx }/user/list"><i class="fa fa-circle-o"></i> 用户管理</a></li>
             <li><a href="${ctx }/user/account"><i class="fa fa-circle-o"></i> 账号设置</a></li>
-            <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> Flot</a></li>
-            <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> Inline charts</a></li>
           </ul>
         </li>
         <li class="treeview">
@@ -151,13 +151,9 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="${ctx }/tariffplan/list"><i class="fa fa-circle-o"></i> 资费计划</a></li>
-            <li><a href="pages/UI/icons.html"><i class="fa fa-circle-o"></i> Icons</a></li>
-            <li><a href="pages/UI/buttons.html"><i class="fa fa-circle-o"></i> Buttons</a></li>
-            <li><a href="pages/UI/sliders.html"><i class="fa fa-circle-o"></i> Sliders</a></li>
-            <li><a href="pages/UI/timeline.html"><i class="fa fa-circle-o"></i> Timeline</a></li>
-            <li><a href="pages/UI/modals.html"><i class="fa fa-circle-o"></i> Modals</a></li>
           </ul>
         </li>
+        <!-- 
         <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i> <span>Forms</span>
@@ -171,6 +167,7 @@
             <li><a href="pages/forms/editors.html"><i class="fa fa-circle-o"></i> Editors</a></li>
           </ul>
         </li>
+         -->
       </ul>
     </section>
     <!-- /.sidebar -->

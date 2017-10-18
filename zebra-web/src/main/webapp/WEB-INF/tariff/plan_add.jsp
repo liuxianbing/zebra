@@ -47,7 +47,7 @@
 										${card.type ==1 ?'checked':''}> 共享
 									</label> <label class="radio-inline"> <input type="radio"
 										name="type" id="type2" value="0"
-										${card.type ==0 ?'checked':''}> 独享
+										${card.type==null ||card.type ==0 ?'checked':''}> 独享
 									</label>
 			                  </div>
 			                </div>
@@ -76,15 +76,56 @@
 					<div class="row" >
 						  <div class="col-md-5">
 						  	 <div class="form-group">
-			                  <label for="inputEmail3" class="col-sm-2 control-label">计划ID</label>
+			                  <label for="inputEmail3" class="col-sm-2 control-label">短信数</label>
 			                  <div class="col-sm-10">
-			                    <input type="text"  class="form-control validate[required,custom[integer]]" 
-			                    name="planId" id="planId" placeholder="计划ID" value="${card.planId }">
+			                    <input type="text"  class="form-control validate[custom[integer]]" 
+			                    name="messages" id="messages" placeholder="短信数" value="${card.messages }">
 			                  </div>
 			                </div>
 						  </div>
 						   <div class="col-md-6">
+						  	  <div class="form-group">
+			                  <label for="inputEmail3" class="col-sm-2 control-label">短信服务</label>
+			                  <div class="col-sm-10">
+			                   <label class="radio-inline"> <input type="radio"
+										name="isMService" id="isMService1" value="1"
+										${card.isMService ==1 ?'checked':''}> 开通
+									</label> <label class="radio-inline"> <input type="radio"
+										name="isMService" id="isMService2" value="0"
+										${card.isMService==null || card.isMService ==0 ?'checked':''}> 未开通
+									</label>
+			                  </div>
+			                </div>
+						  </div>
+					</div>
+						<div class="row" >
+						  <div class="col-md-5">
 						  	 <div class="form-group">
+			                  <label for="inputEmail3" class="col-sm-2 control-label">通话分钟数</label>
+			                  <div class="col-sm-10">
+			                    <input type="text"  class="form-control validate[custom[integer]]" 
+			                    name="callMinutes" id="callMinutes" placeholder="通话分钟数" value="${card.callMinutes }">
+			                  </div>
+			                </div>
+						  </div>
+						   <div class="col-md-6">
+						    <div class="form-group">
+			                  <label for="inputEmail3" class="col-sm-2 control-label">通话服务</label>
+			                  <div class="col-sm-10">
+			                   <label class="radio-inline"> <input type="radio"
+										name="isCallService" id="isCallService1" value="1"
+										${card.isCallService ==1 ?'checked':''}> 开通
+									</label> <label class="radio-inline"> <input type="radio"
+										name="isCallService" id="isCallService2" value="0"
+										${card.isCallService==null || card.isCallService ==0 ?'checked':''}> 未开通
+									</label>
+			                  </div>
+			                </div>
+						  </div>
+					</div>
+					<div class="row" >
+						  <div class="col-md-5">
+						  <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">版本ID</label>
 			                  <div class="col-sm-10">
 			                      <input type="text"  class="form-control validate[required,custom[integer]]" 
@@ -114,14 +155,9 @@
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">运营商</label>
 			                  <div class="col-sm-10">
-			                     <select id="carrier" class="form-control" name="carrier"
-									style="float: left;" data-placeholder="所属账号">
-									<c:forEach var="sns" items="${carries}">
-										<option value="${sns}"
-											<c:if test="${card.carrier== sns}">
-													    selected="selected"
-													    </c:if>>${sns}</option>
-									</c:forEach>
+			                     <select id="operator" class="form-control" name="operator"
+									style="float: left;" data-placeholder="运营商">
+									<option value="3">中国联通</option>
 								</select>
 			                  </div>
 			                </div>
