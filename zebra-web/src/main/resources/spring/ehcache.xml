@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  dynamicConfig="true" monitoring="autodetect"
-         xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false" >
+         xsi:noNamespaceSchemaLocation="ehcache.xsd" name="MyEncacheZebra"  updateCheck="false" >
     <diskStore path="java.io.tmpdir" />
              <defaultCache
             maxElementsInMemory="50000"
@@ -11,12 +11,14 @@
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
              memoryStoreEvictionPolicy="LRU" />
+             <!-- 
              <cache name="userCache"      
            maxElementsInMemory="3000"      
            eternal="false"      
            overflowToDisk="true"      
            timeToIdleSeconds="3600"      
            timeToLiveSeconds="3600"      
-           memoryStoreEvictionPolicy="LFU"    />     
+           memoryStoreEvictionPolicy="LFU"    />   
+            -->  
              
 </ehcache>

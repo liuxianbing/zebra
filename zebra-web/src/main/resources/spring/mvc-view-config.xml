@@ -29,7 +29,6 @@
 			<mvc:exclude-mapping path="/assets/**" />
 			<mvc:exclude-mapping path="/*/api-docs" />
 			<mvc:exclude-mapping path="/swagger**" />
-			<mvc:exclude-mapping path="/webjars/**" />
 			<mvc:exclude-mapping path="/druid/**" />
 			<mvc:exclude-mapping path="/configuration/**" />
 			<bean class="com.sim.cloud.zebra.interceptor.EventInterceptor" >

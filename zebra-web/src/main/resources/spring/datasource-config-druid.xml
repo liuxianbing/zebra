@@ -54,9 +54,9 @@ http://www.springframework.org/schema/websocket/spring-websocket.xsd
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
 		<property name="url"
-			value="jdbc:mysql://rm-2zefpf9i7i12er10po.mysql.rds.aliyuncs.com:3306/dc_ar?characterEncoding=utf-8" />
-		<property name="username" value="data_center" />
-		<property name="password" value="Meiwu365" />
+			value="jdbc:mysql://47.104.6.27:3306/simcloud?characterEncoding=utf-8" />
+		<property name="username" value="sim" />
+		<property name="password" value="Bjzdc1206" />
 
 		<!-- 配置初始化大小、最小、最大 -->
 		<property name="initialSize" value="5" />
@@ -215,10 +215,11 @@ http://www.springframework.org/schema/websocket/spring-websocket.xsd
 	<!-- 事务配置 end -->
 
 
-	<!-- 基于Ehcache 开始 
-	<bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:configLocation="classpath:spring/ehcache.xml" />
+	<!-- 基于Ehcache 开始 -->
+	<bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" 
+	 p:shared="true"  p:configLocation="classpath:spring/ehcache.xml" />
 	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cacheManager-ref="ehcacheManager" />
-	-->
+	
 	<!--设置缓存管理器end -->
 	  <!--性能监控开始-->
     <bean id="performanceMonitor"

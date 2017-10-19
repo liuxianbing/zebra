@@ -30,26 +30,6 @@ http://www.springframework.org/schema/websocket/spring-websocket.xsd
    
     <task:annotation-driven scheduler="taskScheduler" mode="proxy"/>    
        <task:scheduler id="taskScheduler" pool-size="10"/> 
-   <!-- 
-	<context:component-scan scope-resolver="com.dabanjia.dc.lantern.util.DefaultControllerResolver" 
-	  base-package="com.dabanjia.dc.lantern.web" >
-		<context:include-filter type="annotation"
-			expression="org.aspectj.lang.annotation.Aspect" />
-	</context:component-scan>
-	
-<bean id="socketHandler" class="com.dabanjia.dc.lantern.websocket.WebSocketHandler"/>
-<websocket:handlers>
-    <websocket:mapping path="/homeWebSockJs" handler="socketHandler"/>
-    <websocket:handshake-interceptors>
-        <bean class="com.dabanjia.dc.lantern.websocket.HandshakeInterceptor"/>
-    </websocket:handshake-interceptors>
-    <websocket:sockjs/>
-</websocket:handlers>
-<bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
-    <property name="maxTextMessageBufferSize" value="8192"/>
-    <property name="maxBinaryMessageBufferSize" value="8192"/>
-</bean>
- -->
 	
  
    
