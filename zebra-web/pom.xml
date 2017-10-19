@@ -44,6 +44,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!--  -->
 		 <dependency>
 			<groupId>com.simcloud</groupId>
 			<artifactId>zebra-service</artifactId>
@@ -140,6 +141,12 @@
 			<artifactId>assertj-core</artifactId>
 			<version>${assertj.version}</version>
 		</dependency>
+		
+			<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -159,6 +166,11 @@
 			<version>1.0.27</version>
 		</dependency>
 		<!-- 日志文件管理包 -->
+			<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.4</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -202,9 +214,20 @@
 			<version>1.6</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mybatis</groupId>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<version>2.6.10</version>
+		</dependency>
+		<dependency>
+			 <groupId>org.mybatis.caches</groupId>
 			<artifactId>mybatis-ehcache</artifactId>
-			<version>1.0.0</version>
+			<version>1.1.0</version>
+			<exclusions>
+			 <exclusion>
+			 	<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			 </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -337,13 +360,21 @@
 							<configuration>
 								<warDirectory>target/${project.name}</warDirectory>
 								<path>/</path>
+								
 								<contextReloadable>true</contextReloadable>
 								<uriEncoding>UTF-8</uriEncoding>
-								<port>8082</port>
+								<port>443</port>
+								<!--  
+								<httpsPort>443</httpsPort>
+								<keystorePass>123456</keystorePass>
+								<keystoreFile>D:\tomcat.keystore</keystoreFile>
+								-->
+								<!--  
 								<url>http://localhost:8082/manager</url>
 								<server>tomcat</server>
 								<username>admin</username>
 								<password>admin</password>
+								-->
 								<contextReloadable>true</contextReloadable>
 								<systemProperties>
 									<webapps>
@@ -366,7 +397,7 @@
 	</profiles>
 
 	<build>
-		<finalName>${project.name}</finalName>
+		<finalName>ROOT</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
