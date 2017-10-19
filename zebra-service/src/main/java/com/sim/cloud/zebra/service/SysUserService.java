@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.sim.cloud.zebra.core.AbstractService;
 import com.sim.cloud.zebra.mapper.SysUserMapper;
 import com.sim.cloud.zebra.model.SysUser;
@@ -28,6 +29,17 @@ public class SysUserService extends AbstractService<SysUserMapper, SysUser> {
 		super.insert(users);
 		//throw new RuntimeException("roll back");
 	}
+	
+	/**
+	 * 查询普通客户
+	 * @return
+	 */
+	public List<SysUser> selectCustomers() {
+		EntityWrapper<SysUser> wrapper=new EntityWrapper<>();
+		wrapper.gt("create_user_id", 0);
+		return selectList(wrapper);
+	}
+	
 
 	// public List<SysUser> selectMutiTablePage(Pagination
 	// pagination,EntityWrapper wrapper){
