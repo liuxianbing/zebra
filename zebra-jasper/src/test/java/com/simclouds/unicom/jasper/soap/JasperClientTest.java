@@ -1,8 +1,8 @@
 package com.simclouds.unicom.jasper.soap;
 
-import java.util.List;
 import java.util.Map;
 
+import com.sim.cloud.zebra.model.SimCard;
 import com.simclouds.unicom.jasper.JasperClient;
 
 public class JasperClientTest {
@@ -22,12 +22,15 @@ public class JasperClientTest {
 //        List<String> list = jasperClient.getTerminals("2017-10-14T00:00:00Z");
 //        
 //        System.out.println(list.size());
-//        List<Map<String, String>> detailsList = jasperClient.getTerminalDetails(new String[]{iccid, "89860617020031095783"});
-//        System.out.println(detailsList.get(1).get("ratePlan"));
+        SimCard simCard = jasperClient.getTerminalDetail("89860617030017575922");
+        
+        System.out.println(simCard.getIccid());
+        System.out.println(jasperClient.getTerminalDataUsage("89860617030017575922"));
+        System.out.println(jasperClient.getTerminalRatePlan("89860617030017575922"));
 //        System.out.println(detailsList.get(0).get("ratePlan"));
         
-        Map<String, String> infoMap = jasperClient.getSessionInfo(iccid);
-        System.out.println(infoMap.get("ipAddress"));
+//        Map<String, String> infoMap = jasperClient.getSessionInfo("89860617030017575922");
+//        System.out.println(infoMap.get("ipAddress"));
         
         // ACTIVATION_READY_NAME: 可激活
         

@@ -12,6 +12,7 @@ import javax.xml.soap.SOAPException;
 import org.apache.log4j.Logger;
 
 import com.sim.cloud.zebra.model.SimCard;
+import com.simclouds.unicom.jasper.rest.SmsClient;
 import com.simclouds.unicom.jasper.soap.TerminalClient;
 import com.sun.xml.wss.XWSSecurityException;
 
@@ -27,12 +28,16 @@ public class JasperClient {
 	
 	private static TerminalClient terminalClient = null;
 	
+	private static SmsClient smsClient = null;
+	
     private static Map<String, JasperClient> jasperClientMap = new HashMap<String, JasperClient>();
     
     // client
     private JasperClient(String licenseKey, String username, String password) throws MalformedURLException, SOAPException, XWSSecurityException {
     	
     	terminalClient = new TerminalClient(licenseKey, username, password);
+    	
+    	smsClient = null; // TODO 
     }
     
     /**
@@ -137,7 +142,7 @@ public class JasperClient {
     			simCard.setIccid(terminalMap.get("iccid")); // iccid
     			simCard.setUsedFlow(Float.valueOf(terminalMap.get("monthToDateDataUsage"))); // data usage
     			//simCard.setCarrier("unicom");
-    			simCard.setOperator("unicom");
+    			simCard.setOperator(3); // unicom
     			simCard.setAccount(terminalClient.getUsername());
     			simCard.setLastSyncTime(new Date().toLocaleString());
     			
@@ -223,4 +228,36 @@ public class JasperClient {
     	return false;
     }
     
+    /**
+     * get sms list
+     * 
+     * @return
+     */
+    public List<String> searchSms() {
+    	// TODO 
+    	
+    	return null;
+    }
+    
+    /**
+     * get sms detail
+     * 
+     * @return
+     */
+    public Object getSmsDetail() {
+    	// TODO
+    	
+    	return null;
+    }
+    
+    /**
+     * send sms
+     * 
+     * @return
+     */
+    public Boolean sendSms() {
+    	// TODO
+    	
+    	return false;
+    }
 }

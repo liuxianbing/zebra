@@ -48,7 +48,7 @@
 		
 	<dependency>
 		<groupId>com.simcloud</groupId>
-		<artifactId>zebra-common</artifactId>
+		<artifactId>zebra-jasper</artifactId>
 		<version>${project.version}</version>
 		<exclusions>
 			<exclusion>
@@ -57,6 +57,18 @@
 			</exclusion>
 		</exclusions>
 	</dependency>
+		
+		<dependency>
+			<groupId>com.simcloud</groupId>
+			<artifactId>zebra-common</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		
 	   <dependency>
 			<groupId>com.simcloud</groupId>
