@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.DateUtil;
-import com.sim.cloud.zebra.model.PackageUser;
+import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SimCard;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.service.SimCardService;
