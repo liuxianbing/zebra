@@ -22,19 +22,46 @@
 		    </section>
 			<!-- Main content -->
 			<section class="content">
-				<form:form onsubmit="return false" action="${ctx}/user/list" method="post" id="searchform">
+				<form:form onsubmit="return false" action="${ctx}/simcard/list" method="post" id="searchform">
 					<div class="row" style="padding: 10px">
 						<div class="col-sm-2 col-md-2"
 							style="padding-left: 8px; padding-right: 0px">
 							<input type="text" id="search_name" name="keyword"
-								class="form-control" placeholder="账号或手机号或姓名">
+								class="form-control" placeholder="ICCID或电话号码或备注">
 						</div>
 						<div class="col-sm-2 col-md-2">
-							<select id="state" class="form-control select2" name="state"
-								style="float: left;" data-placeholder="用户状态">
-								<option value=" " selected="selected">全部</option>
-								<option value="1">启用</option>
-								<option value="0">禁用</option>
+							<select id="state" class="form-control select2" name="type"
+								style="float: left;" data-placeholder="卡类型">
+								<option value=" " selected="selected">全部卡</option>
+								  <option value="1" >单卡</option>
+								  <option value="2" >流量卡</option>
+							</select>
+						</div>
+							<div class="col-sm-2 col-md-2">
+							<select id="netType" class="form-control select2" name="netType"
+								style="float: left;" data-placeholder="网络状态">
+								<option value=" " selected="selected">全部网络状态</option>
+								  <option value="1" >开启</option>
+								  <option value="0" >关闭</option>
+							</select>
+						</div>
+						<div class="col-sm-2 col-md-2">
+							<select id="objType" class="form-control select2" name="objType"
+								style="float: left;" data-placeholder="设备状态">
+								<option value=" " selected="selected">全部设备状态</option>
+								  <option value="1" >已停卡</option>
+								  <option value="2" >已激活</option>
+								  <option value="0" >库存</option>
+							</select>
+						</div>
+						<div class="col-sm-2 col-md-2">
+							<select id="uid" class="form-control select2" name="uid"
+								style="float: left;" data-placeholder="关联客户">
+								<option value=" " selected="selected">全部关联客户</option>
+								  <option value="0" >未关联</option>
+								  <c:forEach items="${userList }" var="ul" >
+								     <option value="${ul.id }" >${ul.account }-${ul.userName }</option>
+								  </c:forEach>
 							</select>
 						</div>
 				<div class="col-sm-2 col-md-2">
@@ -43,7 +70,7 @@
 					</div>
 				</form:form>
 				<p class="btn_table">
-				    <button type="button"   class="btn  margin btn-success">创建用户</button>
+				    <button type="button"   class="btn  margin btn-success">划拨</button>
 				    <button type="button"  class="btn  margin btn-primary disabled">更改用户</button>
 				    <button type="button" class="btn  margin btn-info disabled">用户详细</button>
 				    <button type="button"  class="btn  margin btn-danger disabled">删除用户</button>、
@@ -66,7 +93,7 @@
 </html>
 <script>
 
-     $("#state").select2({ allowClear:false}).on("select2-selecting", function(e) {
+     $(".select2").select2({ allowClear:false}).on("select2-selecting", function(e) {
 		}).on("change", function(e) {
 			loadTable();
 		})
@@ -75,16 +102,20 @@
 	var options={};
      var oTable;
      var selectData;
-	options.sAjaxSource="${ctx}/user/list";
+	options.sAjaxSource="${ctx}/simcard/list";
 	options.aaSorting=[[ 0, "asc" ]];
 	options.aoColumns=[
-		 { "sTitle": "ID",  "sClass": "center","sWidth":"80","mDataProp": "id"},
-		 { "sTitle": "创建时间",  "sClass": "center","sWidth":"80","mDataProp": "createTime"},
-		 { "sTitle": "账号","sClass": "center" ,"sWidth":"100","mDataProp": "account"},
-		 { "sTitle": "联系人","sClass": "center" ,"sWidth":"100","mDataProp": "userName"},
-       { "sTitle": "手机号",  "sClass": "center" ,"sWidth":"75", "mDataProp": "phone"},
-	   { "sTitle": "邮箱",  "sClass": "center","sWidth":"80","mDataProp": "email"},
-	   { "sTitle": "状态", "sClass": "center" ,"sWidth":"90","mDataProp": "state"}
+		 { "sTitle": "ID", "bVisible":false, "sClass": "center","sWidth":"80","mDataProp": "id"},
+		 { "sTitle": "ICCID",  "sClass": "center","sWidth":"80","mDataProp": "iccid"},
+		 { "sTitle": "电话号码","sClass": "center" ,"sWidth":"100","mDataProp": "phone"},
+		 { "sTitle": "卡类型","sClass": "center" ,"sWidth":"100","mDataProp": "type"},
+       { "sTitle": "网络状态",  "sClass": "center" ,"sWidth":"75", "mDataProp": "netType"},
+	   { "sTitle": "设备状态",  "sClass": "center","sWidth":"80","mDataProp": "objType"},
+	   { "sTitle": "本月用量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "usedFlow"},
+	   { "sTitle": "套餐总量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "flow"},
+	   { "sTitle": "套餐已用(MB)",  "sClass": "center","sWidth":"80","mDataProp": "packageUsed"},
+	   { "sTitle": "套餐剩余(MB)",  "sClass": "center","sWidth":"80","mDataProp": "packageLeft"},
+	   { "sTitle": "备注", "sClass": "center" ,"sWidth":"90","mDataProp": "remark"}
 		];
 	function loadTable(){
 		if(oTable){

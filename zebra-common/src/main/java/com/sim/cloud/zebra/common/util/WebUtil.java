@@ -28,13 +28,17 @@ public final class WebUtil {
 	public static final SysUser getCurrentUser(HttpServletRequest request) {
 		try {
 			HttpSession session = request.getSession();
-			if (null != session) {
+			if (null != session && null!=session.getAttribute(Constants.CURRENT_USER)) {
 				return (SysUser) session.getAttribute(Constants.CURRENT_USER);
 			}
 		} catch (Exception e) {
 			logger.error(e);
 		}
 		return null;
+	}
+	
+	public static void setCurrentUser(HttpServletRequest request,SysUser user){
+		request.getSession().setAttribute(Constants.CURRENT_USER, user);
 	}
 
 	/** 获取客户端IP */

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sim.cloud.zebra.mapper.SimcardPackViewMapper">
+     <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+    
+    
+    	<!-- 查询列表-->
+	<select id="selectIdPage" resultType="java.lang.Long" useCache="false">
+		SELECT id FROM simcard_package_view
+		<where>
+			<if test="cm.keyword != null and cm.keyword != '' ">
+				and (iccid like CONCAT('%',#{cm.keyword},'%') or remark like CONCAT('%',#{cm.keyword},'%')
+				 or phone like CONCAT('%',#{cm.keyword},'%'))
+			</if>
+			<if test="cm.objType !=null ">
+			  and obj_type=#{cm.objType}
+			</if>
+			<if test="cm.type !=null ">
+			  and type=#{cm.type}
+			</if>
+			<if test="cm.uid !=null ">
+			  and uid=#{cm.uid}
+			</if>
+		</where>
+	</select>
+	
+</mapper>
