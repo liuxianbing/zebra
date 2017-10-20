@@ -66,4 +66,6 @@ public interface Constants {
 	}
 	
 	static final List<String> CARRIER=Arrays.asList("中国联通".split(","));
+	
+	static final List<String> TERM_LIST=Arrays.asList("1,2,3,4,5,6,7,8,9,10,11,12,18,24".split(","));
 }
