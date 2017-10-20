@@ -26,7 +26,19 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 
 	private static Logger log = Logger.getLogger(SimCardService.class);
 	
+	/**
+	 * change SimCard status
+	 */
+	public void changeStatus() {
+		// TODO
+	}
 	
+	/**
+	 * change SimCard rate plan
+	 */
+	public void changeRatePlan() {
+		// TODO
+	}
 	
 	//@Scheduled(fixedRate=1000 * 60 * 1) // 30 minutes
 	public void syncUnicomSimCards() {
