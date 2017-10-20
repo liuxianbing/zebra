@@ -3,6 +3,7 @@ package com.sim.cloud.zebra.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -23,43 +24,57 @@ import com.simclouds.unicom.jasper.JasperClient;
 @Transactional
 public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 
-	@Autowired
-	private SimCardMapper simCardMapper;
+	private static Logger log = Logger.getLogger(SimCardService.class);
 	
 	
 	
-	
-	
-	
-	@Scheduled(fixedRate=1000 * 60 * 30) // 30 minutes
-	private void syncUnicomSimCards() {
-		System.out.println("aaaaaaaaaaa: ####################################################");
+	//@Scheduled(fixedRate=1000 * 60 * 1) // 30 minutes
+	public void syncUnicomSimCards() {
+		log.info("############## Start sync simcard data. #######################");
+		
 		// get users
 		Map<String, String> accounts = ZebraConfig.getAccounts();
+		
 		// get cards
 		String username = null;
 		String password = null;
 		String licenseKey = null;
-		String apiKey = null;
+		String apiKey = null; // TODO
+		
 		String[] ss = null;
 		for (String value : accounts.values()) {
-			ss = value.split(":");
-			username = ss[0];
-			password = ss[1];
-			licenseKey = ss[2];
-			apiKey = ss[3];
-			
-			JasperClient jasperClient = JasperClient.getInstance(licenseKey, username, password);
-			
-			List<SimCard> sims = jasperClient.getTerminals(null);
-
-			// TODO save to db
-			
-			
+			try {
+				ss = value.split(":");
+				username = ss[0];
+				password = ss[1];
+				licenseKey = ss[2];
+				apiKey = ss[3];
+				System.out.println("#################test ######################: " + username + ", " + password + ", " + licenseKey);
+				JasperClient jasperClient = JasperClient.getInstance(licenseKey, username, password);
+				
+				List<SimCard> sims = jasperClient.getTerminals(null);
+				System.out.println("sim card number:" + sims.size() + "   ################################");
+				
+				// save to db
+				for (SimCard sim : sims) {
+					/**
+					 *  TODO get sim by iccid
+					 *  
+					 *  if exist then update
+					 *  or not save
+					 */
+					try {
+						this.insertOrUpdate(sim);
+					} catch (Exception e) {
+						// TODO 
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("error insert sim card: " + e.getMessage() + "   ################################");
+				e.printStackTrace();
+			}
 		}
 		
-		
-		
-		
+		log.info("############## End sync simcard data. #######################");
 	}
 }

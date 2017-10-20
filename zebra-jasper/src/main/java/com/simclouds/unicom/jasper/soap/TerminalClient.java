@@ -80,7 +80,7 @@ public class TerminalClient extends AbstractClient {
         // iccids 
         NodeList iccidList = message.getSOAPBody().getFirstChild().getLastChild().getPreviousSibling().getChildNodes();
         for (int i = 0; i < iccidList.getLength(); i++) {
-        	iccids.add(iccidList.item(0).getTextContent());
+        	iccids.add(iccidList.item(i).getTextContent());
         }
         
         return iccids;
