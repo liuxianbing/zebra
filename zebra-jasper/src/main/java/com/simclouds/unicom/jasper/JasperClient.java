@@ -77,7 +77,8 @@ public class JasperClient {
     	String username = ss[0];
     	String password = ss[1];
     	String licenseKey = ss[2];
-    	String apiKey = ss[3]; // TODO
+    	//String apiKey = ss[3]; // TODO
+    	//Integer type = Integer.parseInt(ss[4]);
     			
     	JasperClient jasperClient = jasperClientMap.get(licenseKey);
     	if (jasperClient == null) {
@@ -169,11 +170,15 @@ public class JasperClient {
     			simCard = new SimCard();
     			simCard.setIccid(terminalMap.get("iccid")); // iccid
     			simCard.setUsedFlow(Float.valueOf(terminalMap.get("monthToDateDataUsage"))); // data usage
+    			simCard.setUsedMessages(Integer.parseInt(terminalMap.get("monthToDateSMSUsage"))); // message usage
+    			simCard.setUsedMinutes(Integer.parseInt(terminalMap.get("monthToDateVoiceUsage"))); // voice usage
     			//simCard.setCarrier("unicom");
     			simCard.setStatus(Constants.statusIntegerMap.get(terminalMap.get("status"))); // status
     			simCard.setOperator(3); // unicom
-    			simCard.setAccount(terminalClient.getUsername());
+    			simCard.setPhone(terminalMap.get("imsi"));
+    			simCard.setAccount("unicom." + terminalClient.getUsername());
     			simCard.setLastSyncTime(new Date().toLocaleString());
+    			//simCard.setType(type);
     			
     			simCards.add(simCard);
     		}

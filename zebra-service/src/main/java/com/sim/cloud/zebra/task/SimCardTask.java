@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public class SimCardTask extends AbstractService<SimCardMapper, SimCard> {
 	private static Logger log = Logger.getLogger(SimCardTask.class);
 	
 	
-	//@Scheduled(fixedRate=1000 * 60 * 1) // 30 minutes
+	@Scheduled(fixedRate=1000 * 60 * 10) // 30 minutes
 	public void syncUnicomSimCards() {
 		log.info("############## Start sync simcard data. #######################");
 		
