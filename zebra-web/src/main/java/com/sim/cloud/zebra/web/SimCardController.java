@@ -22,10 +22,13 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.Constants;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.DateUtil;
+import com.sim.cloud.zebra.model.Company;
 import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SimCard;
 import com.sim.cloud.zebra.model.SimcardPackageView;
 import com.sim.cloud.zebra.model.SysUser;
+import com.sim.cloud.zebra.service.CompanyService;
+import com.sim.cloud.zebra.service.PackageService;
 import com.sim.cloud.zebra.service.SimCardService;
 import com.sim.cloud.zebra.service.SimcardPackViewService;
 import com.sim.cloud.zebra.service.SysUserService;
@@ -53,6 +56,10 @@ public class SimCardController extends AbstractController{
 	private SysUserService sysUserService;
 	@Autowired
 	private TariffPlanService tariffPlanService;
+	@Autowired
+	private CompanyService companyService;
+	@Autowired
+	private PackageService packageService;
 	/**
 	 * 物联网卡列表页面
 	 * @param model
@@ -67,6 +74,29 @@ public class SimCardController extends AbstractController{
 		return "simcard/card_list";
 	}
 	
+	@ApiOperation(value = "物联网卡列表页面")
+	@RequestMapping(value = "/detail", method = RequestMethod.GET)
+	public String toDetail(Model model,@RequestParam String id) {
+		SimcardPackageView card= simCardServiceView.selectById(Long.parseLong(id));
+		model.addAttribute("card", card);
+		SysUser user=new SysUser();
+		Company company=new Company();
+		Package pack=new Package();
+		if(card.getUid()!=null){
+			user=sysUserService.selectById(card.getUid());
+		}
+		if(user.getCid()!=null){
+			company=companyService.selectById(user.getCid());
+		}
+		if(card.getPackageId()!=null){
+			pack=packageService.selectById(card.getPackageId());
+		}
+		model.addAttribute("company", company);
+		model.addAttribute("user",user);
+		model.addAttribute("pack",pack);
+		return "simcard/card_detail";
+	}
+	
 	@ApiOperation(value = "物联网卡备注")
 	@RequestMapping(value = "remark", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody Map<String,String> remarkCards(@RequestBody Map<String,String> params) {
@@ -77,7 +107,6 @@ public class SimCardController extends AbstractController{
 			return sc;
 		}).collect(Collectors.toList());
 		simcardService.updateBatchById(list);
-		System.out.println(params);
 		return SUCCESS;
 	}
 	
@@ -110,7 +139,7 @@ public class SimCardController extends AbstractController{
 		Map<Long,SysUser> userMap=sysUserService.selectCustomers().stream().collect(Collectors.toMap(SysUser::getId, c->c));
 		page.getRecords().stream().forEach(e->{//设置用户信息
 			if(e.getUid()!=null && e.getUid()>0l && userMap.get(e.getUid())!=null){
-				e.setUserInfo(userMap.get(e.getUid()).getAccount()+"-"+userMap.get(e.getUid()).getUserName());
+				e.setUserInfo(userMap.get(e.getUid()).getUserName());
 			}
 		});
 		return new DataTableParameter<SimcardPackageView>(page.getTotal(),

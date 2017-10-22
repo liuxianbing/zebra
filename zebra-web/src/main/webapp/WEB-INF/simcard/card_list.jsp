@@ -49,7 +49,7 @@ margin-top:15px
 							<input type="text" id="search_name" name="keyword"
 								class="form-control" placeholder="ICCID或电话号码或备注">
 						</div>
-						<div class="col-sm-2 col-md-2">
+						<div class="col-sm-1 col-md-1">
 							<select id="state" class="form-control select2" name="type"
 								style="float: left;" data-placeholder="卡类型">
 								<option value=" " selected="selected">全部卡</option>
@@ -57,18 +57,18 @@ margin-top:15px
 								  <option value="2" >流量卡</option>
 							</select>
 						</div>
-							<div class="col-sm-2 col-md-2">
+							<div class="col-sm-1 col-md-1">
 							<select id="netType" class="form-control select2" name="netType"
 								style="float: left;" data-placeholder="网络状态">
-								<option value=" " selected="selected">全部网络状态</option>
+								<option value=" " selected="selected">全部网络</option>
 								  <option value="1" >开启</option>
 								  <option value="0" >关闭</option>
 							</select>
 						</div>
-						<div class="col-sm-2 col-md-2">
+						<div class="col-sm-1 col-md-1">
 							<select id="objType" class="form-control select2" name="objType"
 								style="float: left;" data-placeholder="设备状态">
-								<option value=" " selected="selected">全部设备状态</option>
+								<option value=" " selected="selected">全部设备</option>
 								 <option value="0" >库存</option>
 								  <option value="1" >已激活</option>
 								  <option value="2" >已停卡</option>
@@ -80,7 +80,7 @@ margin-top:15px
 								<option value=" " selected="selected">全部关联客户</option>
 								  <option value="0" >未关联</option>
 								  <c:forEach items="${userList }" var="ul" >
-								     <option value="${ul.id }" >${ul.account }-${ul.userName }</option>
+								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
 								  </c:forEach>
 							</select>
 						</div>
@@ -165,7 +165,7 @@ margin-top:15px
 						     <select id="uid" class="form-control select2" name="uid"
 								style="float: left;" data-placeholder="关联客户">
 								  <c:forEach items="${userList }" var="ul" >
-								     <option value="${ul.id }" >${ul.account }-${ul.userName }</option>
+								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
 								  </c:forEach>
 							</select>
 						  </div>
@@ -250,8 +250,13 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	var options={};
     
     options.success=function(data){
-    	 $(".btn-default").trigger('click')
-		 toastr.success('操作成功');
+    	 $(".btn-default").trigger('click');
+    	  if(data.result=='success'){
+    		  toastr.success('操作成功');
+    	  }else{
+    		  toastr.error(data.msg);
+    		  bootbox.alert(data.msg); 
+    	  }
     	 oTable.fnDraw();
 		  $(".btn_table").find('button').addClass('disabled')
 	  };
@@ -262,13 +267,17 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	options.aaSorting=[[ 0, "asc" ]];
 	options.aoColumns=[
 		 { "sTitle": "ID", "bVisible":false, "sClass": "center","sWidth":"80","mDataProp": "id"},
-		 { "sTitle": "ICCID",  "sClass": "center","sWidth":"220","mDataProp": "iccid"},
+		 { "sTitle": "ICCID",  "sClass": "center","sWidth":"220","mDataProp": "iccid","mRender": function ( data, type, full ) {
+			 return '<a href="${ctx}/simcard/detail?id='+full.id+'">'+data+'</a>';
+			 }
+		 },
 		 { "sTitle": "电话号码","sClass": "center" ,"sWidth":"100","mDataProp": "phone"},
 		 { "sTitle": "卡类型","sClass": "center" ,"sWidth":"100","mDataProp": "type"},
 		 { "sTitle": "关联用户", "asSorting": [ ],"sClass": "center" ,"sWidth":"100","mDataProp": "userInfo"},
        { "sTitle": "网络状态",  "sClass": "center" ,"sWidth":"75", "mDataProp": "netType"},
 	   { "sTitle": "设备状态",  "sClass": "center","sWidth":"80","mDataProp": "objType"},
 	   { "sTitle": "本月用量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "usedFlow"},
+	   { "sTitle": "套餐价格",  "sClass": "center","sWidth":"80","mDataProp": "externalQuote"},
 	   { "sTitle": "套餐总量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "flow"},
 	   { "sTitle": "套餐已用(MB)",  "sClass": "center","sWidth":"80","mDataProp": "packageUsed"},
 	   { "sTitle": "套餐剩余(MB)",  "sClass": "center","sWidth":"80","mDataProp": "packageLeft"},
@@ -311,7 +320,13 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		 var iccids="";
 		 var ids="";
 		 suc=0;
+		 var cardType=0;
 		 $.each(dataTableObj.rows('.row_selected').data(),function(i,n){
+			 if(cardType==0 && cardType!=-1){
+				 cardType=n.type;
+			 }else if(cardType!=n.type){
+				 cardType=-1;
+			 }
 			 if(n.netType==0 || n.objType==2){
 			 }else{
 				 iccids=iccids+n.iccid+",";
@@ -320,6 +335,10 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			 }
 		 }
 		 );
+		 if(cardType==-1){
+			  bootbox.alert("请选择同一类型的物联网卡!"); 
+			   return;
+		 }
 		 $('#iccid').val(iccids.substring(0,iccids.length-1))
 		  $('#ids').val(ids.substring(0,ids.length-1))
 		 var tips="当前可分配的ICCID"+suc+"个,无法分配的ICCID"+(dataTableObj.rows('.row_selected').data().length-suc)+"个";

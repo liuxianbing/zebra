@@ -15,7 +15,7 @@
 
     <form:form onsubmit="return subForm()" action="${ctx }/login" method="post">
       <div class="form-group has-feedback">
-        <input type="text" class="form-control" name="account" id="account" placeholder="用户账号">
+        <input type="text" class="form-control" name="phone" id="phone" placeholder="用户手机号">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">

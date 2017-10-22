@@ -25,52 +25,57 @@
 				<form:form onsubmit="return false" action="${ctx}/user/add" method="post" 
 				class="validationform form-horizontal" id="validationform">
 					<div class="row" style="margin-top:30px">
-						  <div class="col-md-5">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">账号</label>
-			                  <div class="col-sm-10">
-			                    <input type="text"  class="form-control validate[required,custom[onlyLetterNumber]]" 
-			                    name="account" id="account" value="${user.account }" placeholder="登录账号">
+			                  <div class="col-sm-6">
+			                    <input type="text"  class="form-control validate[required,custom[mobile]]" 
+			                    name="account" id="phone" value="${user.phone }" placeholder="登录账号,请输入手机号码">
 			                    <input type="hidden" name="id" value="${user.id }">
 			                  </div>
 			                </div>
-						  </div>
-						   <div class="col-md-6">
+					</div>
+					<div class="row" >
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">联系人</label>
-			                  <div class="col-sm-10">
+			                  <div class="col-sm-6">
 			                    <input type="text" class="form-control  validate[required,custom[letterHanzi]]" 
 			                    name="userName" id="userName" value="${user.userName }" placeholder="联系人">
 			                  </div>
-			                </div>
 						  </div>
-					</div>
-					<div class="row" >
-						  <div class="col-md-5">
+						</div>  
+						<div class="row" >
 						  	 <div class="form-group">
-			                  <label for="inputEmail3" class="col-sm-2 control-label">手机号</label>
-			                  <div class="col-sm-10">
-			                    <input type="text"  class="form-control validate[required,custom[mobile]]" 
-			                    name="phone" id="phone" placeholder="手机号" value="${user.phone }">
+			                  <label for="inputEmail3" class="col-sm-2 control-label">邮箱</label>
+			                  <div class="col-sm-6">
+			                    <input type="text" class="form-control" 
+			                    name="email" id="email" value="${user.email }" placeholder="邮箱">
 			                  </div>
-			                </div>
 						  </div>
-						   <div class="col-md-6">
+						</div> 
+					<div class="row" >
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">联系地址</label>
-			                  <div class="col-sm-10">
+			                  <div class="col-sm-6">
 			                    <input type="text" class="form-control" value="${user.address }"
 			                    name="address" id="address" placeholder="联系地址">
 			                  </div>
 			                </div>
-						  </div>
+			            <div class="row" >
+						  	 <div class="form-group">
+			                  <label for="inputEmail3" class="col-sm-2 control-label">备注&nbsp;&nbsp; </label>
+			                  <div class="col-sm-6">
+			                     <textarea rows="3" cols="10" style="height:80px" 
+								   class="form-control"  name="remark" id="remark">
+							     </textarea>
+			                  </div>
+			                </div>
 					</div>
 					<div class="row" >
 					    <!-- 
 						  <div class="col-md-5">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">用户状态</label>
-			                  <div class="col-sm-10">
+			                  <div class="col-sm-6">
 			                   <label class="radio-inline"> <input type="radio"
 										name="status" id="state1" value="1"
 										${user.status ==1 ?'checked':''}> 启用
@@ -82,16 +87,7 @@
 			                </div>
 						  </div>
 						   -->
-						   <div class="col-md-5">
-						  	 <div class="form-group">
-			                  <label for="inputEmail3" class="col-sm-2 control-label">备注</label>
-			                  <div class="col-sm-10">
-			                     <textarea rows="3" cols="10" style="height:80px" 
-								   class="form-control"  name="remark" id="remark">
-							     </textarea>
-			                  </div>
-			                </div>
-						  </div>
+						  
 					</div>
 					 <!-- /.box-body -->
 	              <div class="row">

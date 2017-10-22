@@ -79,9 +79,8 @@
 	options.aoColumns=[
 		 { "sTitle": "ID",  "sClass": "center","sWidth":"80","mDataProp": "id"},
 		 { "sTitle": "创建时间",  "sClass": "center","sWidth":"80","mDataProp": "createTime"},
-		 { "sTitle": "账号","sClass": "center" ,"sWidth":"100","mDataProp": "account"},
 		 { "sTitle": "联系人","sClass": "center" ,"sWidth":"100","mDataProp": "userName"},
-       { "sTitle": "手机号",  "sClass": "center" ,"sWidth":"75", "mDataProp": "phone"},
+       { "sTitle": "登录手机号",  "sClass": "center" ,"sWidth":"135", "mDataProp": "phone"},
 	   { "sTitle": "邮箱",  "sClass": "center","sWidth":"80","mDataProp": "email"},
 	   { "sTitle": "状态", "sClass": "center" ,"sWidth":"90","mDataProp": "status"}
 		];

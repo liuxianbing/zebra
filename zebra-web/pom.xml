@@ -33,6 +33,23 @@
 
 	<dependencies>
 	
+
+<dependency>
+    <groupId>xmldsig</groupId>
+    <artifactId>xmldsig</artifactId>
+   <version>3.0</version>
+    <scope>system</scope>
+    <systemPath>${project.basedir}/lib/xmldsig.jar</systemPath>
+</dependency>
+
+<dependency>
+    <groupId>com.sun.xml.wss</groupId>
+    <artifactId>xws-security</artifactId>
+   <version>3.0</version>
+    <scope>system</scope>
+    <systemPath>${project.basedir}/lib/xws-security-3.0.jar</systemPath>
+</dependency>
+
 	<dependency>
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>jstl-impl</artifactId>
@@ -48,6 +65,18 @@
 		 <dependency>
 			<groupId>com.simcloud</groupId>
 			<artifactId>zebra-service</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		 <dependency>
+			<groupId>com.simcloud</groupId>
+			<artifactId>zebra-jasper</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>

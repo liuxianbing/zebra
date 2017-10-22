@@ -4,9 +4,11 @@
 <jsp:include page="../fragments/meta.jsp" />
 <link rel="stylesheet"
 	href="${ctx }/assets/plugins/validation/validationEngine.jquery.css" />
-	 <link rel="stylesheet" type="text/css" href="${ctx}/assets/plugins/data-tables/DT_bootstrap.css" />
- <link href="${ctx }/assets/plugins/dropzone/css/dropzone.css" rel="stylesheet"/>
- <link
+<link rel="stylesheet" type="text/css"
+	href="${ctx}/assets/plugins/data-tables/DT_bootstrap.css" />
+<link href="${ctx }/assets/plugins/dropzone/css/dropzone.css"
+	rel="stylesheet" />
+<link
 	href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css"
 	rel="stylesheet" type="text/css" />
 <link rel="shortcut icon" href="${ctx}/assets/img/fav.ico" />
@@ -18,144 +20,154 @@
 		<jsp:include page="../fragments/menu.jsp" />
 		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper">
-		 <!-- Content Header (Page header)-->
-		    <section class="content-header">
-		      <h1>
-		      	账户设置
-		      </h1>
-		    </section>
+			<!-- Content Header (Page header)-->
+			<section class="content-header">
+				<h1>账户设置</h1>
+			</section>
 			<!-- Main content -->
 			<section class="content">
-			
-			 <div class="nav-tabs-custom">
-	            <ul class="nav nav-tabs">
-	              <li class="active"><a href="#activity" data-toggle="tab">基本信息</a></li>
-	              <li><a href="#timeline" data-toggle="tab">修改密码</a></li>
-	              <li><a href="#settings" data-toggle="tab">企业信息</a></li>
-	            </ul>
-	             <div class="tab-content">
-	             		<div class="active tab-pane" id="activity">
-	             				<form:form onsubmit=" return false;" action="${ctx}/user/add" method="post" 
-									class="validationform form-horizontal" id="validationform">
-										<div class="row" style="margin-top:30px">
-											  <div class="col-md-5">
-											  	 <div class="form-group">
-								                  <label for="inputEmail3" class="col-sm-2 control-label">账号</label>
-								                  <div class="col-sm-10">
-								                    <input type="text"  class="form-control validate[required,custom[onlyLetterNumber]]" 
-								                    name="account" id="account" value="${user.account }" placeholder="登录账号">
-								                    <input type="hidden" name="id" value="${user.id }">
-								                  </div>
-								                </div>
-											  </div>
-											   <div class="col-md-6">
-											  	 <div class="form-group">
-								                  <label for="inputEmail3" class="col-sm-2 control-label">联系人</label>
-								                  <div class="col-sm-10">
-								                    <input type="text" class="form-control  validate[required,custom[letterHanzi]]" 
-								                    name="userName" id="userName" value="${user.userName }" placeholder="联系人">
-								                  </div>
-								                </div>
-											  </div>
+
+				<div class="nav-tabs-custom">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#activity" data-toggle="tab">基本信息</a></li>
+						<li><a href="#timeline" data-toggle="tab">修改密码</a></li>
+						<li><a href="#settings" data-toggle="tab">企业信息</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="active tab-pane" id="activity">
+							<form:form onsubmit=" return false;" action="${ctx}/user/add"
+								method="post" class="validationform form-horizontal"
+								id="validationform">
+								<div class="row" style="margin-top: 30px">
+									<div class="col-md-5">
+										<div class="form-group">
+											<label for="inputEmail3" class="col-sm-2 control-label">账号</label>
+											<div class="col-sm-10">
+												<input type="text"
+													class="form-control validate[required,custom[onlyLetterNumber]]"
+													name="account" id="account" value="${user.account }"
+													placeholder="登录账号"> <input type="hidden" name="id"
+													value="${user.id }">
+											</div>
 										</div>
-										<div class="row" >
-											  <div class="col-md-5">
-											  	 <div class="form-group">
-								                  <label for="inputEmail3" class="col-sm-2 control-label">手机号</label>
-								                  <div class="col-sm-10">
-								                    <input type="text"  class="form-control validate[required,custom[mobile]]" 
-								                    name="phone" id="phone" placeholder="手机号" value="${user.phone }">
-								                  </div>
-								                </div>
-											  </div>
-											   <div class="col-md-6">
-											  	 <div class="form-group">
-								                  <label for="inputEmail3" class="col-sm-2 control-label">联系地址</label>
-								                  <div class="col-sm-10">
-								                    <input type="text" class="form-control" value="${user.address }"
-								                    name="address" id="address" placeholder="联系地址">
-								                  </div>
-								                </div>
-											  </div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="inputEmail3" class="col-sm-2 control-label">联系人</label>
+											<div class="col-sm-10">
+												<input type="text"
+													class="form-control  validate[required,custom[letterHanzi]]"
+													name="userName" id="userName" value="${user.userName }"
+													placeholder="联系人">
+											</div>
 										</div>
-										<div class="row" >
-											  <div class="col-md-5">
-											  	 <div class="form-group">
-								                  <label for="inputEmail3" class="col-sm-2 control-label">用户状态</label>
-								                  <div class="col-sm-10">
-								                   <label class="radio-inline"> <input type="radio"
-															name="state" id="state1" value="1"
-															${user.status ==1 ?'checked':''}> 启用
-														</label> <label class="radio-inline"> <input type="radio"
-															name="state" id="state2" value="0"
-															${user.status ==0 ?'checked':''}> 禁用
-														</label>
-								                  </div>
-								                </div>
-											  </div>
-											   <div class="col-md-6">
-											  	 <div class="form-group">
-								                  <label for="inputEmail3" class="col-sm-2 control-label">备注</label>
-								                  <div class="col-sm-10">
-								                     <textarea rows="3" cols="10" style="height:80px" 
-													   class="form-control"  name="remark" id="remark">
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-5">
+										<div class="form-group">
+											<label for="inputEmail3" class="col-sm-2 control-label">手机号</label>
+											<div class="col-sm-10">
+												<input type="text"
+													class="form-control validate[required,custom[mobile]]"
+													name="phone" id="phone" placeholder="手机号"
+													value="${user.phone }">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="inputEmail3" class="col-sm-2 control-label">联系地址</label>
+											<div class="col-sm-10">
+												<input type="text" class="form-control"
+													value="${user.address }" name="address" id="address"
+													placeholder="联系地址">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-5">
+										<div class="form-group">
+											<label for="inputEmail3" class="col-sm-2 control-label">用户状态</label>
+											<div class="col-sm-10">
+												<label class="radio-inline"> <input type="radio"
+													name="state" id="state1" value="1"
+													${user.status ==1 ?'checked':''}> 启用
+												</label> <label class="radio-inline"> <input type="radio"
+													name="state" id="state2" value="0"
+													${user.status ==0 ?'checked':''}> 禁用
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="inputEmail3" class="col-sm-2 control-label">备注</label>
+											<div class="col-sm-10">
+												<textarea rows="3" cols="10" style="height: 80px"
+													class="form-control" name="remark" id="remark">
 												     </textarea>
-								                  </div>
-								                </div>
-											  </div>
+											</div>
 										</div>
-										 <!-- /.box-body -->
-						              <div class="row">
-						                 <div class="col-md-6" style="text-align: center">
-						                <button type="button" id="submit" class="btn btn-info">修改</button>
-						                </div>
-						              </div>
-									</form:form>
-	             		</div>
-	             		 <div class="tab-pane" id="timeline">
-	             		 	<form:form onsubmit=" return false;" action="${ctx}/user/modifyPwd" method="post" 
-									class="validationform form-horizontal" id="validationform2">
-									<div class="row" style="margin-top:30px">
-											  	 <div class="form-group">
-								                  <label for="inputEmail3" class="col-sm-2 control-label">原始密码</label>
-								                  <div class="col-sm-4">
-								                    <input type="password" class="form-control  validate[required,maxSize[16],minSize[6]]" 
-								                    name="oldPwd" id="oldPwd"  placeholder="原始密码">
-								                  </div>
-								                </div>
+									</div>
+								</div>
+								<!-- /.box-body -->
+								<div class="row">
+									<div class="col-md-6" style="text-align: center">
+										<button type="button" id="submit" class="btn btn-info">修改</button>
+									</div>
+								</div>
+							</form:form>
+						</div>
+						<div class="tab-pane" id="timeline">
+							<form:form onsubmit=" return false;"
+								action="${ctx}/user/modifyPwd" method="post"
+								class="validationform form-horizontal" id="validationform2">
+								<div class="row" style="margin-top: 30px">
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-2 control-label">原始密码</label>
+										<div class="col-sm-4">
+											<input type="password"
+												class="form-control  validate[required,maxSize[16],minSize[6]]"
+												name="oldPwd" id="oldPwd" placeholder="原始密码">
 										</div>
-										<div class="row" >
-											  	 <div class="form-group">
-								                  <label for="inputEmail3" class="col-sm-2 control-label">新密码</label>
-								                  <div class="col-sm-4">
-								                    <input type="password" class="form-control  validate[required,maxSize[16],minSize[6]]" 
-								                   id="newPwd" name="newPwd"  placeholder="新密码  至少6位">
-								                  </div>
-								                </div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-2 control-label">新密码</label>
+										<div class="col-sm-4">
+											<input type="password"
+												class="form-control  validate[required,maxSize[16],minSize[6]]"
+												id="newPwd" name="newPwd" placeholder="新密码  至少6位">
 										</div>
-										<div class="row" >
-											  	 <div class="form-group">
-								                  <label for="inputEmail3" class="col-sm-2 control-label">再次新密码</label>
-								                  <div class="col-sm-4">
-								                    <input type="password" class="form-control  validate[required,maxSize[16],minSize[6]]" 
-								                   id="againPwd" name="againPwd"  placeholder="原始密码">
-								                  </div>
-								                </div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-2 control-label">再次新密码</label>
+										<div class="col-sm-4">
+											<input type="password"
+												class="form-control  validate[required,maxSize[16],minSize[6]]"
+												id="againPwd" name="againPwd" placeholder="原始密码">
 										</div>
-										  <div class="row" >
-										        <div class="col-sm-6" style="text-align:center">
-						              		  <button type="button" id="submit2" class="btn btn-info">提交</button>
-						              		  </div>
-						             		 </div>
-									</form:form>
-	             		 </div>
-	             		 <div class="tab-pane" id="settings">
-	             		 	<jsp:include page="auth_fragment.jsp" />
-	             		 </div>
-	             </div>
-	         </div>
-            
-				
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6" style="text-align: center">
+										<button type="button" id="submit2" class="btn btn-info">提交</button>
+									</div>
+								</div>
+							</form:form>
+						</div>
+						<div class="tab-pane" id="settings">
+							<jsp:include page="auth_fragment.jsp" />
+						</div>
+					</div>
+				</div>
+
+
 			</section>
 			<!-- /.content -->
 		</div>
@@ -164,21 +176,20 @@
 	</div>
 
 	<jsp:include page="../fragments/footer.jsp" />
+	<script src="${ctx}/assets/plugins/validation/jquery.validationEngine.js" type="text/javascript"></script>
 	<script
-	src="${ctx}/assets/plugins/validation/jquery.validationEngine.js"
-	type="text/javascript"></script>
-<script
-	src="${ctx}/assets/plugins/validation/jquery.validationEngine-cn.js"
-	type="text/javascript"></script>
-	
-		<script type="text/javascript"  src="${ctx }/assets/plugins/dropzone/dropzone.js"></script>
+		src="${ctx}/assets/plugins/validation/jquery.validationEngine-cn.js"
+		type="text/javascript"></script>
+
+	<script type="text/javascript"
+		src="${ctx }/assets/plugins/dropzone/dropzone.js"></script>
 	<script
-	src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"
-	type="text/javascript"></script>
-<script
-	src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modal.js"
-	type="text/javascript"></script>
-	
+		src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"
+		type="text/javascript"></script>
+	<script
+		src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modal.js"
+		type="text/javascript"></script>
+
 </body>
 </html>
 <script>

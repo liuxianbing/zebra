@@ -15,11 +15,11 @@ body.modal-open,
 }
 
 .modal {
-  left: 10%;
+  left: 15%;
   bottom: auto;
   top:300px;
   right: auto;
-  width:50%;
+  width:60%;
   padding: 0;
   background-color: #ffffff;
   border: 1px solid #999999;
