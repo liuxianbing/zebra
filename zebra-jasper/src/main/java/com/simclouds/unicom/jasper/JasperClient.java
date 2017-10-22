@@ -11,6 +11,7 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.log4j.Logger;
 
+import com.sim.cloud.zebra.common.util.Constants;
 import com.sim.cloud.zebra.model.SimCard;
 import com.simclouds.unicom.jasper.rest.SmsClient;
 import com.simclouds.unicom.jasper.soap.TerminalClient;
@@ -51,6 +52,33 @@ public class JasperClient {
      * @throws MalformedURLException 
      */
     public static JasperClient getInstance(String licenseKey, String username, String password) {
+    	JasperClient jasperClient = jasperClientMap.get(licenseKey);
+    	if (jasperClient == null) {
+    		try {
+    			jasperClient = new JasperClient(licenseKey, username, password);
+    			
+    			jasperClientMap.put(licenseKey, jasperClient);
+        	} catch (Exception e) {
+        		log.error("create jasper client failed", e);
+        	}
+    	}
+    	
+    	return jasperClient;
+    }
+    
+    /**
+     * get jasper client
+     * 
+     * @param accountValue
+     * @return
+     */
+    public static JasperClient getInstance(String accountValue) {
+    	String[] ss = accountValue.split(":");
+    	String username = ss[0];
+    	String password = ss[1];
+    	String licenseKey = ss[2];
+    	String apiKey = ss[3]; // TODO
+    			
     	JasperClient jasperClient = jasperClientMap.get(licenseKey);
     	if (jasperClient == null) {
     		try {
@@ -142,6 +170,7 @@ public class JasperClient {
     			simCard.setIccid(terminalMap.get("iccid")); // iccid
     			simCard.setUsedFlow(Float.valueOf(terminalMap.get("monthToDateDataUsage"))); // data usage
     			//simCard.setCarrier("unicom");
+    			simCard.setStatus(Constants.statusMap.get(terminalMap.get("status"))); // status
     			simCard.setOperator(3); // unicom
     			simCard.setAccount(terminalClient.getUsername());
     			simCard.setLastSyncTime(new Date().toLocaleString());
@@ -227,6 +256,36 @@ public class JasperClient {
     	
     	return false;
     }
+    
+    /**
+	 * change SimCard status
+	 */
+	public List<String> changeStatus(List<String> iccids, String status) {
+		List<String> failList = new ArrayList<String>();
+		
+		for(String iccid : iccids) {
+			if (!this.editTerminal(iccid, "3", status)) {
+				failList.add(iccid);
+			}
+		}
+		
+		return failList;
+	}
+	
+	/**
+	 * change SimCard rate plan
+	 */
+	public List<String> changeRatePlan(List<String> iccids, String ratePlan) {
+		List<String> failList = new ArrayList<String>();
+		
+		for(String iccid : iccids) {
+			if (!this.editTerminal(iccid, "4", ratePlan)) {
+				failList.add(iccid);
+			}
+		}
+		
+		return failList;
+	}
     
     /**
      * get sms list
