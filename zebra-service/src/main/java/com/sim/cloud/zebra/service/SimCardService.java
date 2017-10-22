@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.sim.cloud.zebra.common.util.DateUtil;
+import com.sim.cloud.zebra.common.util.ZebraConfig;
 import com.sim.cloud.zebra.core.AbstractService;
 import com.sim.cloud.zebra.mapper.PackageMapper;
 import com.sim.cloud.zebra.mapper.SimCardMapper;
@@ -17,6 +18,7 @@ import com.sim.cloud.zebra.mapper.TariffPlanMapper;
 import com.sim.cloud.zebra.model.SimCard;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
+import com.simclouds.unicom.jasper.JasperClient;
 
 /** 
 * @author liuxianbing: 
@@ -83,12 +85,24 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 			card.setPackageId(packId);
 			super.updateById(card);
 		}
+		
+		//更新jasper
 		List<String> errorIccids=new ArrayList<>();
-		if(null!=errorIccids){//失败的还原
-			allCardList.stream().filter(f->errorIccids.contains(f.getIccid())).forEach(m->{
-				super.updateById(m);
-			});
+		try {
+			System.out.println(ZebraConfig.getAccounts());
+			String accountInfo=ZebraConfig.getAccounts().get(tp.getAccount());
+			System.out.println(accountInfo);
+			JasperClient jasperClient=JasperClient.getInstance(accountInfo);
+			 errorIccids.addAll(jasperClient.changeRatePlan(iccidsList, tp.getName()));
+			if(null!=errorIccids && errorIccids.size()>0){//失败的还原
+				allCardList.stream().filter(f->errorIccids.contains(f.getIccid())).forEach(m->{
+					super.updateById(m);
+				});
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
 		}
-		return null;
+		
+		return errorIccids;
 	}
 }

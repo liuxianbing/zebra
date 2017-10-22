@@ -1,6 +1,7 @@
 package com.sim.cloud.zebra.web;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,7 +45,7 @@ import io.swagger.annotations.ApiOperation;
 public class SimCardController extends AbstractController{
 
 	@Autowired
-	private SimcardPackViewService simCardService;
+	private SimcardPackViewService simCardServiceView;
 	@Autowired
 	private SimCardService simcardService;
 	
@@ -83,7 +84,17 @@ public class SimCardController extends AbstractController{
 	@ApiOperation(value = "物联网卡划拨")
 	@RequestMapping(value = "alloc", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody Map<String,String> alloc(@RequestBody Map<String,Object> params) {
-		System.out.println(params);
+		List<String> iccidsList=Arrays.asList(params.get("iccid").toString());
+		List<String> list=simcardService.saveCardPlanRel(iccidsList,
+				Arrays.asList(params.get("ids").toString()),Float.parseFloat(params.get("externalQuote").toString()),
+				Long.parseLong(params.get("planId").toString()), Long.parseLong(params.get("uid").toString())
+				, Integer.parseInt(params.get("term").toString()));
+		Map<String,String> map=new HashMap<>();
+		if(null!=list && list.size()>0){
+			String msg=list.stream().collect(Collectors.joining(","));
+			map.put("msg", "成功划拨卡片:"+(iccidsList.size()-list.size())+"个,失败划拨卡片:"+list.size()+"个,ICCID为:"+msg);
+			return map;
+		}
 		return SUCCESS;
 	}
 	
@@ -95,7 +106,7 @@ public class SimCardController extends AbstractController{
 	@ApiOperation(value = "物联网卡列表请求")
 	@RequestMapping(value = "list", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody DataTableParameter<SimcardPackageView> list() {
-		Page<SimcardPackageView> page=simCardService.query(extractFromRequest());
+		Page<SimcardPackageView> page=simCardServiceView.query(extractFromRequest());
 		Map<Long,SysUser> userMap=sysUserService.selectCustomers().stream().collect(Collectors.toMap(SysUser::getId, c->c));
 		page.getRecords().stream().forEach(e->{//设置用户信息
 			if(e.getUid()!=null && e.getUid()>0l && userMap.get(e.getUid())!=null){
