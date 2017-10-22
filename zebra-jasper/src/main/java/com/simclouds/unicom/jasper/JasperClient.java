@@ -170,7 +170,7 @@ public class JasperClient {
     			simCard.setIccid(terminalMap.get("iccid")); // iccid
     			simCard.setUsedFlow(Float.valueOf(terminalMap.get("monthToDateDataUsage"))); // data usage
     			//simCard.setCarrier("unicom");
-    			simCard.setStatus(Constants.statusMap.get(terminalMap.get("status"))); // status
+    			simCard.setStatus(Constants.statusIntegerMap.get(terminalMap.get("status"))); // status
     			simCard.setOperator(3); // unicom
     			simCard.setAccount(terminalClient.getUsername());
     			simCard.setLastSyncTime(new Date().toLocaleString());
