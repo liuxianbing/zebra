@@ -181,7 +181,15 @@ public class JasperClient {
     			simCard.setUsedFlow(Float.valueOf(terminalMap.get("monthToDateDataUsage"))); // data usage
     			simCard.setUsedMessages(Integer.parseInt(terminalMap.get("monthToDateSMSUsage"))); // message usage
     			simCard.setUsedMinutes(Integer.parseInt(terminalMap.get("monthToDateVoiceUsage"))); // voice usage
-    			simCard.setStatus(Constants.statusIntegerMap.get(terminalMap.get("status"))); // status
+    			simCard.setObjType(Constants.statusIntegerMap.get(terminalMap.get("status"))); // status
+    			
+    			// net type
+    			if (simCard.getObjType() == 1 || simCard.getObjType() == 3 || simCard.getObjType() == 4) {
+    				simCard.setNetType(1);
+    			} else {
+    				simCard.setNetType(0);
+    			}
+    			
     			simCard.setOperator(3); // unicom
     			simCard.setPhone(terminalMap.get("imsi"));
     			simCard.setAccount("unicom." + terminalClient.getUsername());
