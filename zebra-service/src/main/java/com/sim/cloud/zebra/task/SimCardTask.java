@@ -34,21 +34,21 @@ public class SimCardTask extends AbstractService<SimCardMapper, SimCard> {
 		Map<String, String> accounts = ZebraConfig.getAccounts();
 		
 		// get cards
-		String username = null;
-		String password = null;
-		String licenseKey = null;
-		String apiKey = null; // TODO
-		
-		String[] ss = null;
+//		String username = null;
+//		String password = null;
+//		String licenseKey = null;
+//		String apiKey = null; // TODO
+//		
+//		String[] ss = null;
 		for (String value : accounts.values()) {
 			try {
-				ss = value.split(":");
-				username = ss[0];
-				password = ss[1];
-				licenseKey = ss[2];
-				apiKey = ss[3];
-				System.out.println("#################test ######################: " + username + ", " + password + ", " + licenseKey);
-				JasperClient jasperClient = JasperClient.getInstance(licenseKey, username, password);
+//				ss = value.split(":");
+//				username = ss[0];
+//				password = ss[1];
+//				licenseKey = ss[2];
+//				apiKey = ss[3];
+//				System.out.println("#################test ######################: " + username + ", " + password + ", " + licenseKey);
+				JasperClient jasperClient = JasperClient.getInstance(value);
 				
 				List<SimCard> sims = jasperClient.getTerminals(null);
 				System.out.println("sim card number:" + sims.size() + "   ################################");

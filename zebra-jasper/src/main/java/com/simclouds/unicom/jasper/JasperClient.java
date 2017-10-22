@@ -33,6 +33,8 @@ public class JasperClient {
 	
     private static Map<String, JasperClient> jasperClientMap = new HashMap<String, JasperClient>();
     
+    private static Map<String, Integer> typeMap = new HashMap<String, Integer>();
+    
     // client
     private JasperClient(String licenseKey, String username, String password) throws MalformedURLException, SOAPException, XWSSecurityException {
     	
@@ -51,10 +53,12 @@ public class JasperClient {
      * @throws SOAPException 
      * @throws MalformedURLException 
      */
-    public static JasperClient getInstance(String licenseKey, String username, String password) {
+    public static JasperClient getInstance(String licenseKey, String username, String password, String apiKey, Integer type) {
     	JasperClient jasperClient = jasperClientMap.get(licenseKey);
     	if (jasperClient == null) {
     		try {
+    			typeMap.put(username, type);
+    			
     			jasperClient = new JasperClient(licenseKey, username, password);
     			
     			jasperClientMap.put(licenseKey, jasperClient);
@@ -74,21 +78,26 @@ public class JasperClient {
      */
     public static JasperClient getInstance(String accountValue) {
     	String[] ss = accountValue.split(":");
-    	String username = ss[0];
-    	String password = ss[1];
     	String licenseKey = ss[2];
-    	//String apiKey = ss[3]; // TODO
-    	//Integer type = Integer.parseInt(ss[4]);
-    			
+    		
     	JasperClient jasperClient = jasperClientMap.get(licenseKey);
     	if (jasperClient == null) {
-    		try {
-    			jasperClient = new JasperClient(licenseKey, username, password);
-    			
-    			jasperClientMap.put(licenseKey, jasperClient);
-        	} catch (Exception e) {
-        		log.error("create jasper client failed", e);
-        	}
+    		String username = ss[0];
+        	String password = ss[1];
+        	String apiKey = ss[3];
+        	Integer type = Integer.parseInt(ss[4]);
+        	
+        	jasperClient = getInstance(licenseKey, username, password, apiKey, type);
+//        	
+//        	typeMap.put(username, type);
+//        	
+//    		try {
+//    			jasperClient = new JasperClient(licenseKey, username, password);
+//    			
+//    			jasperClientMap.put(licenseKey, jasperClient);
+//        	} catch (Exception e) {
+//        		log.error("create jasper client failed", e);
+//        	}
     	}
     	
     	return jasperClient;
@@ -172,13 +181,12 @@ public class JasperClient {
     			simCard.setUsedFlow(Float.valueOf(terminalMap.get("monthToDateDataUsage"))); // data usage
     			simCard.setUsedMessages(Integer.parseInt(terminalMap.get("monthToDateSMSUsage"))); // message usage
     			simCard.setUsedMinutes(Integer.parseInt(terminalMap.get("monthToDateVoiceUsage"))); // voice usage
-    			//simCard.setCarrier("unicom");
     			simCard.setStatus(Constants.statusIntegerMap.get(terminalMap.get("status"))); // status
     			simCard.setOperator(3); // unicom
     			simCard.setPhone(terminalMap.get("imsi"));
     			simCard.setAccount("unicom." + terminalClient.getUsername());
     			simCard.setLastSyncTime(new Date().toLocaleString());
-    			//simCard.setType(type);
+    			simCard.setType(typeMap.get(terminalClient.getUsername())); // type
     			simCard.setTerminalId(terminalMap.get("terminalId"));
     			
     			simCards.add(simCard);
