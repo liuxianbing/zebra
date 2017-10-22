@@ -7,26 +7,35 @@ package com.sim.cloud.zebra.model;
 public class SimCard extends BaseModel {
 
 	private static final long serialVersionUID = -3969900141839401630L;
-	private String phone;
-	private String iccid;// ICCID信息
-	private Long uid;
-	private Integer type;
-	private Integer netType;// 网络状态
-	private Integer objType;// 设备状态
-	private Float usedFlow;// 使用流量 kb 小数点三位
-	private String remark;
-	private int packageId;// 套餐ID
-	private String openTime;// 开通时间
-	private String expireTime;// 过期时间
-	private String lastSyncTime;// 最近同步时间
-	private Integer creator;// 创建人ID
-	private String account;// 账号license
-	private Integer operator;// 运营商      1-移动、2-电信、3-联通	
+	protected String phone;
+	protected String iccid;// ICCID信息
+	protected Long uid;
+	protected Integer type;//1-单卡、2-流量池卡
+	protected Integer netType;// 网络状态 
+	protected Integer objType;// 设备状态
+	protected Float usedFlow;// 使用流量 kb 小数点三位
+	protected String remark;
+	protected Integer packageId;// 套餐ID
+	protected String openTime;// 开通时间
+	protected String expireTime;// 过期时间
+	protected String lastSyncTime;// 最近同步时间
+	protected String account;// 账号license
+	protected Integer operator;// 运营商      1-移动、2-电信、3-联通	
 
-	private Integer usedMessages;//已经使用的短信条数
-	private Integer usedMinutes;//已使用通话分钟数
+	protected Integer usedMessages;//已经使用的短信条数
+	protected Integer usedMinutes;//已使用通话分钟数
+	private Long cid;
 	
 	
+	
+	public Long getCid() {
+		return cid;
+	}
+
+	public void setCid(Long cid) {
+		this.cid = cid;
+	}
+
 	public Integer getUsedMessages() {
 		return usedMessages;
 	}
@@ -99,14 +108,6 @@ public class SimCard extends BaseModel {
 		this.lastSyncTime = lastSyncTime;
 	}
 
-	public Integer getCreator() {
-		return creator;
-	}
-
-	public void setCreator(Integer creator) {
-		this.creator = creator;
-	}
-
 	public String getAccount() {
 		return account;
 	}
@@ -135,11 +136,11 @@ public class SimCard extends BaseModel {
 		this.type = type;
 	}
 
-	public int getPackageId() {
+	public Integer getPackageId() {
 		return packageId;
 	}
 
-	public void setPackageId(int packageId) {
+	public void setPackageId(Integer packageId) {
 		this.packageId = packageId;
 	}
 

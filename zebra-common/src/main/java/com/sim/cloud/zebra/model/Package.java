@@ -7,7 +7,7 @@ package com.sim.cloud.zebra.model;
 public class Package  extends BaseModel{
 
 	private static final long serialVersionUID = 2371027727547341076L;
-	private Integer uid;                        // 用户ID
+	private Long uid;                        // 用户ID
 	private Integer packageType;                // 套餐类型  1-按月套餐、2-加油包、3-超额流量包、4-自定义套餐包
 	private Integer flow;                       // 流量
 	private Integer messages;                   // 短信条数
@@ -16,14 +16,14 @@ public class Package  extends BaseModel{
 	private Float platQuote;                    // 平台价格
 	private Float externalQuote;                // 对外的价格
 	private Integer   operator;                 // 运营商      1-移动、2-电信、3-联通	
-    private Integer planId;                     // 资费计划ID 
+    private Long planId;                     // 资费计划ID 
 	private String  account;                    // 运营商平台账号	
 	private String  remark;                     // 备注	
 	
-  public Integer getUid() {
+  public Long getUid() {
     return uid;
   }
-  public void setUid(Integer uid) {
+  public void setUid(Long uid) {
     this.uid = uid;
   }
   public Integer getPackageType() {
@@ -69,10 +69,10 @@ public class Package  extends BaseModel{
     this.externalQuote = externalQuote;
   }
 
-  public Integer getPlanId() {
+  public Long getPlanId() {
     return planId;
   }
-  public void setPlanId(Integer planId) {
+  public void setPlanId(Long planId) {
     this.planId = planId;
   }
   public String getAccount() {
