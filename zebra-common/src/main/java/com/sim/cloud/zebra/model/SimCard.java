@@ -25,7 +25,7 @@ public class SimCard extends BaseModel {
 	protected Integer usedMessages;//已经使用的短信条数
 	protected Integer usedMinutes;//已使用通话分钟数
 	private Long cid;
-	
+	private String terminalId; // 设备ID
 	
 	
 	public Long getCid() {
@@ -163,4 +163,14 @@ public class SimCard extends BaseModel {
 	public void setObjType(Integer objType) {
 		this.objType = objType;
 	}
+
+	public String getTerminalId() {
+		return terminalId;
+	}
+
+	public void setTerminalId(String terminalId) {
+		this.terminalId = terminalId;
+	}
+	
+	
 }

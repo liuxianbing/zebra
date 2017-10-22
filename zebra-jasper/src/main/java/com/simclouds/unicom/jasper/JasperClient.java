@@ -179,6 +179,7 @@ public class JasperClient {
     			simCard.setAccount("unicom." + terminalClient.getUsername());
     			simCard.setLastSyncTime(new Date().toLocaleString());
     			//simCard.setType(type);
+    			simCard.setTerminalId(terminalMap.get("terminalId"));
     			
     			simCards.add(simCard);
     		}
