@@ -191,7 +191,7 @@ public class JasperClient {
     			}
     			
     			simCard.setOperator(3); // unicom
-    			simCard.setPhone(terminalMap.get("imsi"));
+    			simCard.setPhone(terminalMap.get("msisdn"));
     			simCard.setAccount("unicom." + terminalClient.getUsername());
     			simCard.setLastSyncTime(new Date().toLocaleString());
     			simCard.setType(typeMap.get(terminalClient.getUsername())); // type
