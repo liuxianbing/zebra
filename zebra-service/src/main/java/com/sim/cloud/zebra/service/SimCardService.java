@@ -2,6 +2,8 @@ package com.sim.cloud.zebra.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,7 +65,7 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 		pack.setPlatQuote(tp.getCost());
 		pack.setExternalQuote(externalQuote);
 		pack.setFlow(tp.getFlow());
-		pack.setAccount(user.getAccount());
+		pack.setAccount(tp.getAccount());
 		pack.setOperator(tp.getOperator());
 		pack.setTerm(term);
 		pack.setPlanId(planId);
@@ -86,12 +88,18 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 			super.updateById(card);
 		}
 		
+		//逻辑删除历史套餐
+		allCardList.stream().filter(f->f.getPackageId()!=null && f.getPackageId()>0).
+		   map(m->m.getPackageId()).collect(Collectors.toSet()).stream().forEach(p->{
+			   com.sim.cloud.zebra.model.Package tmpPack=new com.sim.cloud.zebra.model.Package();
+				tmpPack.setId(new Long(p.intValue()));
+				tmpPack.setStatus(1);//删除
+				packageMapper.updateById(tmpPack);
+		});
 		//更新jasper
 		List<String> errorIccids=new ArrayList<>();
 		try {
-			System.out.println(ZebraConfig.getAccounts());
 			String accountInfo=ZebraConfig.getAccounts().get(tp.getAccount());
-			System.out.println(accountInfo);
 			JasperClient jasperClient=JasperClient.getInstance(accountInfo);
 			 errorIccids.addAll(jasperClient.changeRatePlan(iccidsList, tp.getName()));
 			if(null!=errorIccids && errorIccids.size()>0){//失败的还原
