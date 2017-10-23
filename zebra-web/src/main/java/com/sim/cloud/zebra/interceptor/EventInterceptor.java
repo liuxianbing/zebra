@@ -68,7 +68,7 @@ public class EventInterceptor extends BaseInterceptor {
 				}
 				record.setStatus(response.getStatus());
 				if (user != null) {
-					record.setUserName(user.getUserName()+"-"+user.getAccount());
+					record.setUserName(user.getUserName()+"-"+user.getPhone());
 				}
 				final String msg = (String) request.getAttribute("msg");
 				try {
