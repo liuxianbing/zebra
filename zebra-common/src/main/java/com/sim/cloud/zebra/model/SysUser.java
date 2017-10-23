@@ -22,11 +22,11 @@ public class SysUser extends BaseModel {
 	private String email;
 	private String phone;
 	private String address;
-	private String account;
 	private String remark;//备注
-	private Long cid;//企业ID
 
 	private Integer status = SysUser.able;// 用户的状态
+	private Long cid;
+
 
 	public Long getCid() {
 		return cid;
@@ -58,14 +58,6 @@ public class SysUser extends BaseModel {
 
 	public void setAddress(String address) {
 		this.address = address;
-	}
-
-	public String getAccount() {
-		return account;
-	}
-
-	public void setAccount(String account) {
-		this.account = account;
 	}
 
 

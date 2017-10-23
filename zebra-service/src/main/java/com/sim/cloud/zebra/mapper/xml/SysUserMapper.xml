@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sim.cloud.zebra.mapper.SysUserMapper">
      <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
-     <!-- 
+     <!--  -->
 	<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>  
-	 -->
+	
 	<!-- 查询列表-->
-	<select id="selectIdPage" resultType="java.lang.Long">
+	<select id="selectIdPage" resultType="java.lang.Long" useCache="false">
 		SELECT id FROM sys_user
 		<where>
 			<if test="cm.keyword != null and cm.keyword != '' ">
-				and (user_name like CONCAT('%',#{cm.keyword},'%') or account like CONCAT('%',#{cm.keyword},'%')
+				and (user_name like CONCAT('%',#{cm.keyword},'%') 
 				 or phone like CONCAT('%',#{cm.keyword},'%'))
 			</if>
 			<if test="cm.state !=null ">

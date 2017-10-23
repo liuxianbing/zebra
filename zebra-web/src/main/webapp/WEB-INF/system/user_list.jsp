@@ -82,7 +82,10 @@
 		 { "sTitle": "联系人","sClass": "center" ,"sWidth":"100","mDataProp": "userName"},
        { "sTitle": "登录手机号",  "sClass": "center" ,"sWidth":"135", "mDataProp": "phone"},
 	   { "sTitle": "邮箱",  "sClass": "center","sWidth":"80","mDataProp": "email"},
-	   { "sTitle": "状态", "sClass": "center" ,"sWidth":"90","mDataProp": "status"}
+	   { "sTitle": "操作", "sClass": "center" ,"sWidth":"90","mDataProp": "status","mRender": function ( data, type, full ) {
+		   return '<a href="${ctx}/user/packlist?id='+full.id+'">查看套餐</a>';
+		   }
+	   }
 		];
 	function loadTable(){
 		if(oTable){
