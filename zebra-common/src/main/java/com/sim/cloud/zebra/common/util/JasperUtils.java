@@ -1,5 +1,7 @@
 package com.sim.cloud.zebra.common.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,5 +42,15 @@ public class JasperUtils {
 		//statusMap.put("STATUS_7", "PURGED_NAME"); // ???
 		
 		return statusMap;
+	}
+	
+	/**
+	 * date format
+	 * 
+	 * @param date
+	 * @return 2008-08-26T00:00:00Z
+	 */
+	public static String dateFormat(Date date) {
+		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(date);
 	}
 }

@@ -158,6 +158,11 @@ public class TerminalClient extends AbstractClient {
         	Map<String, String> detailMap = new HashMap<String, String>();
         	
             SOAPBodyElement terminalElement = itr.next();
+            
+            // attributes
+            detailMap.put("msisdn", terminalElement.getAttribute("msisdn"));
+            
+            // child nodes
             NodeList list = terminalElement.getChildNodes();
             Node n = null;
             for (int i = 0; i < list.getLength(); i ++) {
