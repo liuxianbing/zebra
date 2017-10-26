@@ -6,6 +6,7 @@ package com.sim.cloud.zebra.model;
 */
 public class TariffPlan extends BaseModel {
 
+	public static final Integer SHARE=1;
 	/**
 	 * 
 	 */
