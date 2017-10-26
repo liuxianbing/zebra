@@ -16,11 +16,29 @@ public class SimcardPackageView extends SimCard{
 	private Integer packageType;//套餐类型
 	private Float packageUsed;//套餐使用
 	
+	private Float externalQuote;//对外价格
+	
+	private Long planId;//
+	
+	
+	
+	public Long getPlanId() {
+		return planId;
+	}
+	public void setPlanId(Long planId) {
+		this.planId = planId;
+	}
 	@TableField(exist = false)
 	private String userInfo;
 	
 	
 	
+	public Float getExternalQuote() {
+		return externalQuote;
+	}
+	public void setExternalQuote(Float externalQuote) {
+		this.externalQuote = externalQuote;
+	}
 	public String getUserInfo() {
 		return userInfo;
 	}

@@ -25,6 +25,8 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/plugins/bootstrap/css/bootstrap.min.css">
   
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/plugins/bootstrap-toastr/toastr.min.css" />
+  
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/plugins/tipso/tipso.min.css" />
 	
   
   

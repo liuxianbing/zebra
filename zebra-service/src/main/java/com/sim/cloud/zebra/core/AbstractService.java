@@ -1,5 +1,6 @@
 package com.sim.cloud.zebra.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<Bas
 	public M getBaseMapper() {
 		return (M) baseMapper;
 	}
-
+	
 	int maxThread = PropertiesUtil.getInt("db.reader.list.maxThread", 500);
 	int threadSleep = PropertiesUtil.getInt("db.reader.list.threadWait", 5);
 	ExecutorService executorService = Executors.newFixedThreadPool(maxThread);
@@ -61,7 +62,7 @@ public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<Bas
 	}
 
 	/** 分页查询 */
-	public Page<Long> getPage(Map<String, Object> params) {
+	public Page<T> getPage(Map<String, Object> params) {
 		    String orderBy = null;
 		    boolean asc=false;
 		    int pageNum = 1;
@@ -81,7 +82,7 @@ public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<Bas
 			orderBy = (String) params.get("orderBy");
 			params.remove("orderBy");
 		}
-		Page<Long> page = new Page<Long>(pageNum, pageSize, BeanHump.camelToUnderline(orderBy));
+		Page<T> page = new Page<T>(pageNum, pageSize, BeanHump.camelToUnderline(orderBy));
 		page.setAsc(asc);
 		return page;
 	}
@@ -300,9 +301,35 @@ public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<Bas
 	}
 
 	public Page<T> query(Map<String, Object> params) {
-		Page<Long> page = getPage(params);
+		Page<Long> page = (Page<Long>) getPage(params);
 		page.setRecords(baseMapper.selectIdPage(page, params));
 		return getPage(page);
+	}
+	
+	
+	
+	public Page<T> selectPage(Map<String, Object> params, Class<T> cls){
+		Page<T> page =  getPage(params);
+		T t=null;
+		try {
+			t = cls.newInstance();
+		} catch (Exception e) {
+		} 
+		Map<String, Object> pm=InstanceUtil.transMap2Bean(params, t);
+		Wrapper<T> wrapper=new EntityWrapper<>();
+		List<String> likeStr=new ArrayList<>();
+		if(params.get("zebraLike")!=null){
+			likeStr.addAll(Arrays.asList(params.get("zebraLike").toString().split(",")));
+		}
+		pm.entrySet().stream().forEach(e->{
+			if(likeStr.contains(e.getKey())){
+				wrapper.like(BeanHump.camelToUnderline(e.getKey()), e.getValue().toString());
+			}else{
+				wrapper.eq(BeanHump.camelToUnderline(e.getKey()), e.getValue());
+			}
+		});
+		System.out.println(pm);
+		return super.selectPage(page,wrapper);
 	}
 
 	public List<T> queryList(Map<String, Object> params) {
@@ -312,13 +339,13 @@ public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<Bas
 	}
 
 	protected <P> Page<P> query(Map<String, Object> params, Class<P> cls) {
-		Page<Long> page = getPage(params);
+		Page<Long> page = (Page<Long>) getPage(params);
 		page.setRecords(baseMapper.selectIdPage(page, params));
 		return getPage(page, cls);
 	}
 
 	public Page<Map<String, Object>> queryMap(Map<String, Object> params) {
-		Page<Long> page = getPage(params);
+		Page<Long> page = (Page<Long>) getPage(params);
 		page.setRecords(baseMapper.selectIdPage(page, params));
 		return getPageMap(page);
 	}

@@ -8,11 +8,70 @@
 <script type="text/javascript"
 	src="${ctx }/assets/plugins/echarts-3.5.4.min.js"></script>
 <style>
-.row{
-padding:15px
+.info-box-content {
+	padding: 5px 10px;
+	margin-left: 10px;
+	margin-right: 5px
 }
-.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
-    border-top: none;
+
+.info-box .progress {
+    background: rgba(0,0,0,0.2);
+    margin: 5px 0px 5px 0px;
+    height: 2px;
+}
+
+.info-box .progressMax {
+	height: 12px;
+}
+
+.info-box .progress .progress-bar {
+	height: 12px;
+	background: #00a65a;
+	line-height: 12px;
+}
+
+.progress-wrapper .progress-bar2.thin {
+	z-index: 1;
+	background-color: #fff;
+	overflow: hidden;
+	height: 14px;
+}
+
+.progress-wrapper .progress-bar2 {
+	height: 14px;
+	width: 100%;
+	border-radius: 100px;
+	background-color: #e0e6ed;
+	overflow: hidden;
+	position: relative;
+	box-sizing: content-box;
+}
+
+.progress-wrapper .progress-bar2 .seg-first {
+	background-color: #ffbf00;
+}
+
+.progress-wrapper .progress-bar2 .seg-second {
+	background-color: #20a0ff;
+}
+
+.progress-wrapper .progress-bar2 .seg-three {
+	background-color: #fa5e5b;;
+}
+
+.progress-wrapper .progress-bar2 .seg-four {
+	background-color: #4dd0e1;
+}
+
+.progress-wrapper .progress-bar2 span {
+	position: absolute;
+	display: inline-block;
+	height: 100%;
+}
+
+.tipso_style {
+	cursor: default;
+	border-bottom: none;
 }
 </style>
 </head>
@@ -30,29 +89,54 @@ padding:15px
 				</h1>
 			</section>
 			<section class="content">
-				 <div class="row">
-				 	 <div class="col-md-3 col-sm-6 col-xs-12">
-			          <div class="info-box bg-gray">
-			
-			            <div class="info-box-content">
-			              <span class="info-box-text">Bookmarks11</span>
-			              <span class="info-box-number">41,410</span>
-			
-			              <div class="progress">
-			                <div class="progress-bar" style="width: 90%;height:6px"></div>
-			              </div>
-			                  <span class="progress-description">
-			                    70% Increase in 30 Days
-			                  </span>
-			            </div>
-			            <!-- /.info-box-content -->
-			          </div>
-			          <!-- /.info-box -->
-			        </div>
-				 </div>
-			</section>
+
+				<c:forEach var="pool" items="${list}" varStatus="cou">
+					<c:if test="${cou.count eq 1 || (cou.count-1) % 4 eq 0}">
+						<div class="row">
+					</c:if>
+					<div class="col-md-3 col-sm-6 col-xs-12">
+						<div class="info-box bg-gray">
+							<div class="info-box-content">
+								<span class="info-box-number" style="display:inline">${pool.flowName}</span>
+								<a href="${ctx }/flow/detail?flow=${pool.flow}" class="small-box-footer" 
+								style="float:right;font-size:10px">更多详情<i style="margin-left:5px;font-size:14px" class="fa fa-arrow-circle-right"></i>
+                				 </a>
+								 <span
+									class="info-box-text">剩余${pool.leftPool }MB</span>
+
+								<div class="progress progressMax">
+									<div class="progress-bar" style="width: ${pool.leftPercent}%;">100%</div>
+								</div>
+								<span class="info-box-text" style="color:#777">卡片总数:${pool.allNum}</span> <span
+									class="info-box-text">已激活${pool.activeNum} | 库存
+									${pool.stockNum} | 已停卡 ${pool.blockNum}| 测试期${pool.testNum} </span>
+								<div class="progress-wrapper">
+									<div class="progress-bar2 thin" >
+										<span title="已激活${pool.activeNum}"
+											class="seg-first el-tooltip item" style="width:${pool.activeNum*100/pool.allNum}%;">
+										</span> <span  title="库存${pool.stockNum}" class="seg-second el-tooltip item"
+											style="left: ${pool.activeNum*100/pool.allNum}%; width: ${pool.stockNum*100/pool.allNum}%;"></span> <span
+											title="已停卡${pool.blockNum}" class="seg-three el-tooltip item"
+											style="left: ${(pool.activeNum+pool.stockNum)*100/pool.allNum}%; width: ${pool.blockNum*100/pool.allNum}%;"></span> <span
+											class="seg-four el-tooltip item"
+											style="left: 100%; width: 0%;"></span>
+									</div>
+								</div>
+
+								<span class="progress-description">
+									最近同步时间：${pool.lastSyncTime }</span>
+							</div>
+							<!-- /.info-box-content -->
+						</div>
+						<!-- /.info-box -->
+					</div>
+					<c:if test="${cou.count eq 1 || (cou.count-1) % 4 eq 0}">
 		</div>
-		<jsp:include page="../fragments/bottom.jsp" />
+		</c:if>
+		</c:forEach>
+		</section>
+	</div>
+	<jsp:include page="../fragments/bottom.jsp" />
 	</div>
 
 	<jsp:include page="../fragments/footer.jsp" />
@@ -65,77 +149,8 @@ padding:15px
 </body>
 </html>
 <script>
-$('#remark').val('${user.remark}')
-$(".validationform").validationEngine({ relative: true, relativePadding:false,
-	overflownDIV: ".form", promptPosition:"bottomRight" });
-var options={};
-$('#submit').click(function(){
-	SP.ajax($("#validationform"),options);
-});
-
-var cardOption = {
-	    tooltip : {
-	        trigger: 'item',
-	        formatter: "{a} <br/>{b} : {c} ({d}%)"
-	    },
-	    legend: {
-	    	 top:80,
-	        data: ['已用流量','剩余流量']
-	    },
-	    grid: {
-	    	left: '1%',
-	        right: '0%',
-	        top:-50,
-	        bottom: '1%',
-	        containLabel: true
-	    },
-	    series : [
-	        {
-	            name: '套餐分布',
-	            type: 'pie',
-	            radius : '48%',
-	            center: ['22%', '50%'],
-	            data:[
-	                {value:'${card.packageUsed}', name:'已用流量'},
-	                {value:'${card.packageLeft}', name:'剩余流量'}
-	            ],
-	            lableLine: {
-	                normal: {
-	                    show: true
-	                },
-	                emphasis: {
-	                    show: true
-	                }
-	            },
-	            itemStyle: {
-	            	normal: {label:{  
-	                    show:true,  
-	                    formatter:'{b}\n{c}MB ({d}%)'  
-	                },  
-	                color: function(params) {
-	                	 var colorList = [
-	                          '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-	                           '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-	                           '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-	                        ];
-	                        return colorList[params.dataIndex]
-	                },
-	                labelLine:{show:true}},  
-	                  emphasis: {  
-	                      label: {  
-	                          show: true,  
-	                          formatter: "{b}\n{c}MB ({d}%)",  
-	                          position: 'center',  
-	                          textStyle: {  
-	                              fontSize: '14',  
-	                              fontWeight: 'bold'  
-	                          }  
-	                      }  
-	                  }  
-	            }
-	        }
-	    ]
-	};
-var saasChart = echarts.init(document.getElementById("cardStatis"));
-saasChart.setOption(cardOption);
+$('.el-tooltip').tipso({
+	background        : '#555',
+	useTitle: true
+	});
 </script>

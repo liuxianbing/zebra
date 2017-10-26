@@ -57,6 +57,7 @@
      var oTable;
      var selectData;
 	options.sAjaxSource="${ctx}/tariffplan/list";
+	options.bServerSide=false;
 	options.aaSorting=[[ 0, "asc" ]];
 	options.aoColumns=[
 		 { "sTitle": "计划名称",  "sClass": "center","sWidth":"80","mDataProp": "name"},

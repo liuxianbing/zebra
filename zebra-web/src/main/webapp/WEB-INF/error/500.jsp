@@ -14,7 +14,7 @@
         <div style="float:left">
            <h2 class="headline text-red" style="font-size:100px">500</h2>
            </div>
-           <div style="float:left;margin-left:40px">
+           <div style="float:left;">
            <h3 style="margin-top:60px" ><i class="fa fa-warning text-red" ></i> 抱歉，页面出现了意想不到的错误，我们正在处理...</h3>
            </div>
              

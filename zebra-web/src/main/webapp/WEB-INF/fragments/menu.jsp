@@ -163,6 +163,8 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="${ctx }/tariffplan/list"><i class="fa fa-circle-o"></i> 资费计划</a></li>
+             <li><a href="${ctx }/flow/self"><i class="fa fa-circle-o"></i>我的流量池</a></li>
+             <li><a href="${ctx }/flow/list"><i class="fa fa-circle-o"></i>流量池管理</a></li>
           </ul>
         </li>
         <!-- 

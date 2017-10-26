@@ -14,6 +14,9 @@
 
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/assets/plugins/bootstrap-toastr/toastr.min.js"></script>
+	
+	<script type="text/javascript"
+	src="${pageContext.request.contextPath}/assets/plugins/tipso/tipso.min.js"></script>
 
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/assets/plugins/json2.js"></script>
@@ -28,6 +31,7 @@
 	type="text/javascript"></script>
 
 <script>
+$("[data-toggle='tooltip']").tooltip();
 if (typeof String.prototype.startsWith != 'function'){   
     String.prototype.startsWith = function (str){  
        return this.slice(0, str.length) == str;  

@@ -25,6 +25,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,7 +55,8 @@ public final class InstanceUtil {
 	}
 
 	// Map --> Bean 1: 利用Introspector,PropertyDescriptor实现 Map --> Bean
-	public static void transMap2Bean(Map<String, Object> map, Object obj) {
+	public static Map<String, Object> transMap2Bean(Map<String, Object> map, Object obj) {
+		Map<String, Object> res=new HashMap<>();
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
 			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
@@ -64,13 +66,24 @@ public final class InstanceUtil {
 					Object value = map.get(key);
 					// 得到property对应的setter方法
 					Method setter = property.getWriteMethod();
-					setter.invoke(obj, value);
+					try {
+						Object finalVal=ConvertUtils.convert(value, property.getPropertyType());
+						if(!finalVal.toString().equals(value.toString())){
+							continue;
+						}
+						setter.invoke(obj, finalVal);
+						res.put(key, finalVal);
+					} catch (Exception e) {
+						System.out.println(key+"###"+value+"$$"+property.getPropertyType());
+					}
+					
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("transMap2Bean Error " + e);
 		}
-		return;
+		return res;
 	}
 
 	// Bean --> Map 1: 利用Introspector和PropertyDescriptor 将Bean --> Map

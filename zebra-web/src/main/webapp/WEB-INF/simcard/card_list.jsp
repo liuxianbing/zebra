@@ -177,9 +177,6 @@ margin-top:15px
 						   <div class="col-md-9">
 						     <select id="planId" class="form-control select2" name="planId"
 								style="float: left;" data-placeholder="关联套餐">
-								  <c:forEach items="${planList }" var="pl" >
-								     <option value="${pl.id }" >${pl.name}--${pl.flow }MB--￥${pl.cost }</option>
-								  </c:forEach>
 							</select>
 						  </div>
 					</div>
@@ -205,6 +202,16 @@ margin-top:15px
 			                    name="externalQuote" id="externalQuote"  placeholder="自定义套餐价格">
 						  </div>
 					</div>
+					<div class="row" >
+						  <div class="col-md-3">
+						  	  <label for="inputEmail3" class="control-label">套餐备注</label>
+						  </div>
+						   <div class="col-md-3">
+							 <textarea rows="3" cols="10" style="height:80px" 
+								   class="form-control" value=""   name="remark" >
+							     </textarea>
+						  </div>
+					</div>
 				</form:form>
 	</div>
 	<div class="modal-footer">
@@ -218,6 +225,12 @@ margin-top:15px
 
 <button class="btn blue"  id="hb" data-target="#business" data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
 <button class="btn blue"  id="rm" data-target="#remarkDiv" data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
+
+<div style="display:none" id="allPlan">
+    <c:forEach items="${planList }" var="pl" >
+            <a href="${pl.id }" class="${pl.type }" >${pl.name}--${pl.flow }MB--￥${pl.cost }</a>
+	</c:forEach>
+</div>
 
 	<jsp:include page="../fragments/footer.jsp" />
 	<script type="text/javascript"
@@ -285,7 +298,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		];
 	function loadTable(){
 		if(oTable){
-			 $("#table_list").empty();
+			 $("#card_list").empty();
 			 oTable.fnDestroy();
 		}
 		oTable=SP.loadTableInfo($("#card_list"),options,$("#searchform"));
@@ -339,6 +352,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			  bootbox.alert("请选择同一类型的物联网卡!"); 
 			   return;
 		 }
+		 initPlanSelect(cardType)
 		 $('#iccid').val(iccids.substring(0,iccids.length-1))
 		  $('#ids').val(ids.substring(0,ids.length-1))
 		 var tips="当前可分配的ICCID"+suc+"个,无法分配的ICCID"+(dataTableObj.rows('.row_selected').data().length-suc)+"个";
@@ -363,5 +377,12 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		 });
 		 $('#remarkIds').val(ids.substring(0,ids.length-1))
 		  $("#rm").trigger('click')
+	 }
+	 //初始化资费计划选择
+	 function initPlanSelect(type){
+		 $("#planId").empty();
+		 $("#allPlan").find("a."+type).each(function (index,domEle){
+				$("#planId").append("<option value="+ $(this).attr('href') + ">"+ $(this).text() +"</option>");
+		 });
 	 }
 </script>
