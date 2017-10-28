@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sim.cloud.zebra.common.util.JackSonUtil;
+import com.sim.cloud.zebra.common.util.JasperUtils;
 import com.sim.cloud.zebra.core.AbstractService;
 import com.sim.cloud.zebra.mapper.SimcardPackViewMapper;
 import com.sim.cloud.zebra.mapper.SysUserMapper;
@@ -31,6 +34,39 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	
 	@Autowired
 	private SysUserMapper sysUserMapper;
+	
+	/**
+	 * 流量池详细
+	 * @param uid
+	 * @param flow
+	 * @return
+	 */
+	public SimcardPackageView statisFlowPool(Long uid,Integer flow){
+		Map<String,Object> map=new HashMap<>();
+		map.put("uid", uid);
+		map.put("flow", flow);
+		map.put("type", TariffPlan.SHARE);//共享卡
+		List<SimcardPackageView> list=selectByMap(map);
+		Map<Integer,List<SimcardPackageView>> cards=list.stream().collect(Collectors.groupingBy(SimcardPackageView::getNetType));
+		SimcardPackageView cardFlow=new SimcardPackageView();
+		cardFlow.setPackageUsed((float) list.stream().mapToDouble(m->m.getPackageUsed()).sum());
+		cardFlow.setPackageLeft( (float) list.stream().mapToDouble(m->m.getPackageLeft()).sum());
+		cardFlow.setFlow(list.stream().mapToInt(m->m.getFlow()).sum());
+		cardFlow.setLastSyncTime(list.stream().max((a,b)-> a.getLastSyncTime().compareTo(b.getLastSyncTime())).get().getLastSyncTime());
+		SysUser user=sysUserMapper.selectById(uid);
+		cardFlow.setPhone(user.getPhone()+"-"+user.getUserName());
+		Map<String,Integer> mapCard=new HashMap<>();
+		cards.entrySet().stream().forEach(e->{
+			mapCard.put(JasperUtils.getStatusStringMap().get("STATUS_"+e), e.getValue().size());
+		});
+		try {
+			cardFlow.setRemark(JackSonUtil.getObjectMapper().writeValueAsString(mapCard));
+		} catch (JsonProcessingException e1) {
+		}
+		return cardFlow;    
+	}
+	
+	
 	/**
 	 * 查询自己的流量池
 	 * @param uid
