@@ -5,6 +5,13 @@ package com.sim.cloud.zebra.model;
  * @version 创建时间：2017年10月14日 下午12:26:30 类说明 物联网卡
  */
 public class SimCard extends BaseModel {
+	
+	public static final int ACTIVATED_NAME=4;
+	public static final int DEACTIVATED_NAME=5;
+	public static final int RETIRED_NAME=6;
+	public static final int TEST_READY_NAME=1;
+	public static final int INVENTORY_NAME=2;
+	public static final int ACTIVATION_READY_NAME=3;
 
 	private static final long serialVersionUID = -3969900141839401630L;
 	protected String phone;
@@ -15,7 +22,7 @@ public class SimCard extends BaseModel {
 	protected Integer objType;// 设备状态
 	protected Float usedFlow;// 使用流量 kb 小数点三位
 	protected String remark;
-	protected Integer packageId;// 套餐ID
+	protected Long packageId;// 套餐ID
 	protected String openTime;// 开通时间
 	protected String expireTime;// 过期时间
 	protected String lastSyncTime;// 最近同步时间
@@ -24,10 +31,29 @@ public class SimCard extends BaseModel {
 
 	protected Integer usedMessages;//已经使用的短信条数
 	protected Integer usedMinutes;//已使用通话分钟数
-	private Long cid;
-	private String terminalId; // 设备ID
+	protected Long cid;
+	
+	protected String ip;
+	protected String terminalId; // 设备ID
 	
 	
+	
+	public String getTerminalId() {
+		return terminalId;
+	}
+
+	public void setTerminalId(String terminalId) {
+		this.terminalId = terminalId;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
 	public Long getCid() {
 		return cid;
 	}
@@ -136,11 +162,11 @@ public class SimCard extends BaseModel {
 		this.type = type;
 	}
 
-	public Integer getPackageId() {
+	public Long getPackageId() {
 		return packageId;
 	}
 
-	public void setPackageId(Integer packageId) {
+	public void setPackageId(Long packageId) {
 		this.packageId = packageId;
 	}
 
@@ -163,14 +189,4 @@ public class SimCard extends BaseModel {
 	public void setObjType(Integer objType) {
 		this.objType = objType;
 	}
-
-	public String getTerminalId() {
-		return terminalId;
-	}
-
-	public void setTerminalId(String terminalId) {
-		this.terminalId = terminalId;
-	}
-	
-	
 }
