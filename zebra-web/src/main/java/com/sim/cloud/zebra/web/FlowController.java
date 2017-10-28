@@ -13,11 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sim.cloud.zebra.common.util.DataTableParameter;
+import com.sim.cloud.zebra.common.util.JasperUtils;
 import com.sim.cloud.zebra.model.FlowPoolVo;
-import com.sim.cloud.zebra.model.SysUser;
+import com.sim.cloud.zebra.model.SimcardPackageView;
 import com.sim.cloud.zebra.model.TariffPlan;
 import com.sim.cloud.zebra.service.SimcardPackViewService;
 import com.sim.cloud.zebra.service.SysUserService;
@@ -47,9 +49,17 @@ public class FlowController extends AbstractController {
 	
 	@ApiOperation(value = "个人流量池列表页面")
 	@RequestMapping(value = "/self", method = RequestMethod.GET)
-	public String toSelfList(Model model) {
+	public String toDetail(Model model) {
 		model.addAttribute("list", simCardServiceView.selectSelfPoolList(getCurrUser().getId()));
 		return "flow/self_flow";
+	}
+	
+	@ApiOperation(value = "流量池详细页面")
+	@RequestMapping(value = "/self", method = RequestMethod.GET)
+	public String toSelfList(Model model,@RequestParam Long uid,@RequestParam Integer flow) {
+		SimcardPackageView spv=simCardServiceView.statisFlowPool(uid, flow);
+		model.addAttribute("cardflow",spv);
+		return "flow/flow_detail";
 	}
 	
 	@ApiOperation(value = "流量池列表页面")
