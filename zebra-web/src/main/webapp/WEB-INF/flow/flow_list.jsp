@@ -107,7 +107,7 @@ var dataTableObj;
 	options.aaSorting=[[ 0, "asc" ]];
 	options.aoColumns=[
 		 { "sTitle": "流量池规格",  "sClass": "center","sWidth":"220","mDataProp": "flowName","mRender": function ( data, type, full ) {
-			 return '<a href="${ctx}/simcard/detail?id='+full.flow+'">'+data+'</a>';
+			 return '<a href="${ctx}/flow/detail?flow='+full.flow+'&phone='+full.phone+'">'+data+'</a>';
 			 }
 		 },
 		 { "sTitle": "流量池总计","sClass": "center" ,"sWidth":"100","mDataProp": "totalPool"},

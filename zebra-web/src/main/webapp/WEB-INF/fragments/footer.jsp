@@ -21,6 +21,9 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/assets/plugins/json2.js"></script>
 	
+	<script type="text/javascript"
+	src="${pageContext.request.contextPath}/assets/plugins/moment/moment.min.js"></script>
+	
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/assets/plugins/select2/js/select2.full.min.js"></script>
 	
@@ -83,4 +86,41 @@ $('#table_list').on('click', ' tbody tr', function () {
 		selectData=oTable.fnGetData(oTable.$(this)[0]);
 	}	
 });
+
+var range={
+        startDate: moment().subtract('days', 30),
+        endDate: moment(),
+        minDate: '2017-10-01',
+        maxDate: '2040-12-01',
+        dateLimit: {
+            days: 100
+        },
+        showDropdowns: true,
+        showWeekNumbers: true,
+        timePicker: false,
+        timePickerIncrement: 1,
+        timePicker12Hour: true,
+        ranges: {
+            '最近7天': [moment().subtract('days', 7), moment().subtract('days', 1)],
+            '最近30天': [moment().subtract('days', 30), moment().subtract('days', 1)],
+            '本月': [moment().startOf('month'), moment().endOf('month')],
+            '上月': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+        },
+        buttonClasses: ['btn'],
+        applyClass: 'green',
+        cancelClass: 'default',
+        format: 'YYYY-MM-DD',
+        separator: ' 到 ',
+        locale: {
+            applyLabel: '确定',
+            cancelLabel: '取消',
+            fromLabel: '开始',
+            toLabel: '结束',
+            weekLabel: '周',
+            customRangeLabel: '自定义	',
+            daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+            monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            firstDay: 1
+        }
+};
 </script>

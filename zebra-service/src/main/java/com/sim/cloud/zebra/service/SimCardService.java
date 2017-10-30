@@ -2,6 +2,7 @@ package com.sim.cloud.zebra.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.sim.cloud.zebra.mapper.SimCardMapper;
 import com.sim.cloud.zebra.mapper.SysUserMapper;
 import com.sim.cloud.zebra.mapper.TariffPlanMapper;
 import com.sim.cloud.zebra.model.SimCard;
+import com.sim.cloud.zebra.model.SimcardPackageView;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
 import com.simclouds.unicom.jasper.JasperClient;
@@ -51,6 +53,63 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 		} else {
 			return list.get(0).getId();
 		}
+	}
+	
+	/**
+	 * 卡片总数统计
+	 * @param uid
+	 * @return
+	 */
+	public int statisCardCount(Long uid){
+		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
+		if(null!=uid){
+			wrapper.ge("uid", uid);
+		}
+		return selectCount(wrapper);
+	}
+	
+	/**
+	 * 设备状态统计
+	 * @param uid
+	 * @return
+	 */
+	public List<Map<String,Object>> statisDevice(Long uid){
+		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
+		wrapper.setSqlSelect("cast(obj_type as signed) as name ","count(1) as value");
+		if(null!=uid){
+			wrapper.ge("uid", uid);
+		}
+		wrapper.groupBy("obj_type");
+		return selectMaps(wrapper);
+	}
+	/**
+	 * 网络状态统计
+	 * @param uid
+	 * @return
+	 */
+	public List<Map<String,Object>> statisNet(Long uid){
+		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
+		wrapper.setSqlSelect("cast(net_type as signed) as name ","count(1) as value");
+		if(null!=uid){
+			wrapper.ge("uid", uid);
+		}
+		wrapper.groupBy("net_type");
+		return selectMaps(wrapper);
+	}
+	
+	/**
+	 * 卡片类型统计
+	 * @param uid
+	 * @return
+	 */
+	public List<Map<String,Object>> statisType(Long uid){
+		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
+		wrapper.setSqlSelect("cast(type as signed) as name ","count(1) as value");
+		if(null!=uid){
+			wrapper.ge("uid", uid);
+		}
+		wrapper.groupBy("type");
+		return selectMaps(wrapper);
 	}
 
 //	/**

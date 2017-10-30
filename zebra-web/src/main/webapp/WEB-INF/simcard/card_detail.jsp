@@ -5,8 +5,8 @@
 <link rel="stylesheet"
 	href="${ctx }/assets/plugins/validation/validationEngine.jquery.css" />
 <link rel="shortcut icon" href="${ctx}/assets/img/fav.ico" />
-<script type="text/javascript"
-	src="${ctx }/assets/plugins/echarts-3.5.4.min.js"></script>
+	<link rel="stylesheet" type="text/css"
+	 href="${ctx}/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" />
 <style>
 .row{
 padding:15px
@@ -133,10 +133,21 @@ padding:15px
 							  <tbody>
 							    
 							  </tbody>
-							</table>
+							</table> 
 					</div>
 				</div>
 				-->
+				<div class="row">
+					<div class="col-md-4">
+											<div id="reportrange" class="btn bg-aqua">
+												<i class="fa fa-calendar"></i> &nbsp;<span></span> <b
+													class="fa fa-angle-down"></b>
+											</div>
+					</div>
+				</div>
+				<div class="row">
+				  <div id="flowStatis" style="min-height:250px"/>
+				</div>
 			</section>
 			<!-- /.content -->
 		</div>
@@ -145,23 +156,24 @@ padding:15px
 	</div>
 
 	<jsp:include page="../fragments/footer.jsp" />
-	<script
-		src="${ctx}/assets/plugins/validation/jquery.validationEngine.js"
-		type="text/javascript"></script>
-	<script
-		src="${ctx}/assets/plugins/validation/jquery.validationEngine-cn.js"
-		type="text/javascript"></script>
+		<script type="text/javascript"
+	src="${ctx}/assets/plugins/bootstrap-daterangepicker/daterangepicker-new.js"></script>
+	<script type="text/javascript"
+	src="${ctx }/assets/plugins/echarts-3.5.4.min.js"></script>
 </body>
 </html>
 <script>
-$('#remark').val('${user.remark}')
-$(".validationform").validationEngine({ relative: true, relativePadding:false,
-	overflownDIV: ".form", promptPosition:"bottomRight" });
-var options={};
-$('#submit').click(function(){
-	SP.ajax($("#validationform"),options);
+var startDay,endDay;
+endDay = moment().subtract('days', 1).format('YYYY-MM-DD');
+startDay = moment().subtract('days',30).format('YYYY-MM-DD');
+$('#reportrange').daterangepicker(range,function(start, end) {
+	startDay = start.format('YYYY-MM-DD');
+	endDay = end.format('YYYY-MM-DD');
+	loadChart();
 });
-
+var res={};
+res['iccid']='${card.iccid}'
+$('#reportrange span').html(startDay + ' - ' + endDay);
 var cardOption = {
 	    tooltip : {
 	        trigger: 'item',
@@ -227,4 +239,67 @@ var cardOption = {
 	};
 var saasChart = echarts.init(document.getElementById("cardStatis"));
 saasChart.setOption(cardOption);
+
+var flowChart = echarts.init(document.getElementById("flowStatis"));
+
+var flowOption = {
+	   tooltip : {
+	        trigger: 'axis',
+	        formatter: '{b0}<br/>{a0}: {c0}MB'
+	    },
+	legend : {
+		data : []
+	},
+	grid : {
+		left : '1%',
+		right : '1%',
+		containLabel : true
+	},
+	xAxis : [ {
+		type : 'category',
+		data : [],
+		axisLabel : {
+			interval : 0,
+			rotate:45,
+			textStyle : {
+				fontSize : 12
+			}
+		}
+	} ],
+	yAxis : [ {
+		type : 'value',
+		 name: '使用流量(MB)',
+		min : 0,
+		axisLabel : {
+			formatter : '{value} '
+		}
+	} ],
+	series : []
+};
+loadChart()
+function loadChart(){
+	var options = {};
+	options.success = function(e) {
+		flowOption.series = [];
+		flowOption.legend.data = [];
+		flowOption.xAxis[0].data = [];
+		if (e.xName != null) {
+			$.each(e.series, function(key, value) {
+				var tt = {};
+				tt['type'] = 'line';
+				tt['data'] = value.data;
+				tt['name'] = value.name;
+				flowOption.legend.data.push(value.name)
+				flowOption.series.push(tt);
+			});
+			flowOption.xAxis[0].data = e.xName;
+			flowChart.setOption(flowOption);
+		}
+	}
+	options.url = '${ctx}/simcard/flow';
+	res['begin']=startDay;
+	res['end']=endDay;
+	options.data=JSON2.stringify(res);
+	SP.ajax($("#searchform"), options, false);
+}
 </script>
