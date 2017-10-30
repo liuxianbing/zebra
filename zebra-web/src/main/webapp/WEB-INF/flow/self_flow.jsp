@@ -94,7 +94,7 @@
 					<c:if test="${cou.count eq 1 || (cou.count-1) % 4 eq 0}">
 						<div class="row">
 					</c:if>
-					<div class="col-md-3 col-sm-6 col-xs-12">
+					<div class="col-md-3">
 						<div class="info-box bg-gray">
 							<div class="info-box-content">
 								<span class="info-box-number" style="display:inline">${pool.flowName}</span>
@@ -130,9 +130,9 @@
 						</div>
 						<!-- /.info-box -->
 					</div>
-					<c:if test="${cou.count eq 1 || (cou.count-1) % 4 eq 0}">
-		</div>
-		</c:if>
+					     <c:if test="${cou.count % 4 eq 0 || cou.count eq 4}">   
+						</div>
+					</c:if>
 		</c:forEach>
 		</section>
 	</div>

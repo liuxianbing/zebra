@@ -29,7 +29,6 @@
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/plugins/tipso/tipso.min.css" />
 	
   
-  
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css">
   
   <!-- AdminLTE Skins. Choose a skin from the css/skins

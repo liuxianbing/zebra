@@ -41,12 +41,13 @@
 								<div class="row" style="margin-top: 30px">
 									<div class="col-md-5">
 										<div class="form-group">
-											<label for="inputEmail3" class="col-sm-2 control-label">账号</label>
+											<label for="inputEmail3" class="col-sm-2 control-label">手机号</label>
 											<div class="col-sm-10">
 												<input type="text"
-													class="form-control validate[required,custom[onlyLetterNumber]]"
-													name="account" id="account" value="${user.account }"
-													placeholder="登录账号"> <input type="hidden" name="id"
+													class="form-control validate[required,custom[mobile]]"
+													name="phone" id="phone" placeholder="手机号"
+													value="${user.phone }">
+													<input type="hidden" name="id"
 													value="${user.id }">
 											</div>
 										</div>
@@ -66,12 +67,12 @@
 								<div class="row">
 									<div class="col-md-5">
 										<div class="form-group">
-											<label for="inputEmail3" class="col-sm-2 control-label">手机号</label>
+											<label for="inputEmail3" class="col-sm-2 control-label">邮箱</label>
 											<div class="col-sm-10">
 												<input type="text"
-													class="form-control validate[required,custom[mobile]]"
-													name="phone" id="phone" placeholder="手机号"
-													value="${user.phone }">
+													class="form-control validate[custom[email]]"
+													name="email" id="email" placeholder="邮箱"
+													value="${user.email }">
 											</div>
 										</div>
 									</div>

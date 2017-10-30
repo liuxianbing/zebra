@@ -294,6 +294,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	   { "sTitle": "套餐总量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "flow"},
 	   { "sTitle": "套餐已用(MB)",  "sClass": "center","sWidth":"80","mDataProp": "packageUsed"},
 	   { "sTitle": "套餐剩余(MB)",  "sClass": "center","sWidth":"80","mDataProp": "packageLeft"},
+	   { "sTitle": "最近同步时间",  "sClass": "center","sWidth":"80","mDataProp": "lastSyncTime"},
 	   { "sTitle": "备注", "sClass": "center" ,"sWidth":"90","mDataProp": "remark"}
 		];
 	function loadTable(){
@@ -333,12 +334,12 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		 var iccids="";
 		 var ids="";
 		 suc=0;
-		 var cardType=0;
+		 var cardType=-1;
 		 $.each(dataTableObj.rows('.row_selected').data(),function(i,n){
-			 if(cardType==0 && cardType!=-1){
+			 if(cardType==-1){
 				 cardType=n.type;
 			 }else if(cardType!=n.type){
-				 cardType=-1;
+				 cardType=-2;
 			 }
 			 if(n.netType==0 || n.objType==2){
 			 }else{
@@ -348,7 +349,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			 }
 		 }
 		 );
-		 if(cardType==-1){
+		 if(cardType<0){
 			  bootbox.alert("请选择同一类型的物联网卡!"); 
 			   return;
 		 }

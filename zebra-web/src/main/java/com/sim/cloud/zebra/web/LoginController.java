@@ -31,7 +31,7 @@ public class LoginController extends AbstractController {
 	  @RequestMapping(value = "/login", method = RequestMethod.GET)
 	  public String initLoginPage() {
 	    if (getCurrUser() != null) {
-	      return "redirect:/user/list";
+	      return "redirect:/index";
 	    } else {
 	      return "login";
 	    }
@@ -48,7 +48,7 @@ public class LoginController extends AbstractController {
 				  return "login";
 			  }
 			  WebUtil.setCurrentUser(request, list.get(0));
-		  return "redirect:/user/list";
+			  return "redirect:/index";
 	  }
 	
 	@ApiOperation(value = "退出")

@@ -77,7 +77,7 @@
           <img src="${ctx }/assets/img/user2-160x160.jpg" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p>18612985592</p>
+          <p>${CURRENT_USER.phone }</p>
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
       </div>
@@ -138,33 +138,33 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="${ctx }/simcard/list"><i class="fa fa-circle-o"></i> 卡片列表</a></li>
+            <li><a href="${ctx }/flow/self"><i class="fa fa-circle-o"></i> 我的流量池</a></li>
           </ul>
         </li>
         <li class="treeview">
           <a href="#">
             <i class="fa fa-pie-chart"></i>
-            <span>系统管理</span>
+            <span>设置</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${ctx }/user/list"><i class="fa fa-circle-o"></i> 用户管理</a></li>
-            <li><a href="${ctx }/user/account"><i class="fa fa-circle-o"></i> 账号设置</a></li>
+            <li><a href="${ctx }/user/account"><i class="fa fa-circle-o"></i> 账户设置</a></li>
           </ul>
         </li>
         <li class="treeview">
           <a href="#">
             <i class="fa fa-laptop"></i>
-            <span>资费管理</span>
+            <span>分销管理</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${ctx }/tariffplan/list"><i class="fa fa-circle-o"></i> 资费计划</a></li>
-             <li><a href="${ctx }/flow/self"><i class="fa fa-circle-o"></i>我的流量池</a></li>
-             <li><a href="${ctx }/flow/list"><i class="fa fa-circle-o"></i>流量池管理</a></li>
+            <li><a href="${ctx }/tariffplan/list"><i class="fa fa-circle-o"></i> 资费计划管理</a></li>
+             <li><a href="${ctx }/flow/list"><i class="fa fa-circle-o"></i>客户流量池</a></li>
+              <li><a href="${ctx }/user/list"><i class="fa fa-circle-o"></i> 客户管理</a></li>
           </ul>
         </li>
         <!-- 
