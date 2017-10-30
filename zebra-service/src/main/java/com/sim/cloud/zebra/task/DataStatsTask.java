@@ -39,8 +39,8 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 	// total data yesterday
 	Map<String, Float> totalDataMap = new HashMap<String, Float>();
 	
-	//@Scheduled(cron="0 10 0 * * *") // 00:10:00 every day
-	@Scheduled(fixedRate=1000 * 60 * 3) // 30 minutes
+	@Scheduled(cron="0 10 0 * * *") // 00:10:00 every day
+	//@Scheduled(fixedRate=1000 * 60 * 30) // 30 minutes
 	public void syncDayData() {
 		log.info("############## Start sync day data. #######################");
 		
