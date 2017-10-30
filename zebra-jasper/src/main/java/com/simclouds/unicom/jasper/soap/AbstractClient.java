@@ -38,6 +38,7 @@ public abstract class AbstractClient {
     static final String NAMESPACE_URI = "http://api.jasperwireless.com/ws/schema";
     static final String PREFIX = "jws";
     static final String TERMINAL_API = "/ws/service/terminal";
+    static final String BILLING_API = "/ws/service/billing";
     
     String BASE_URL = "https://api.10646.cn";
     

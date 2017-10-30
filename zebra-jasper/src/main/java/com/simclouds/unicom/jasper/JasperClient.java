@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.sim.cloud.zebra.common.util.Constants;
 import com.sim.cloud.zebra.model.SimCard;
 import com.simclouds.unicom.jasper.rest.SmsClient;
+import com.simclouds.unicom.jasper.soap.BillingClient;
 import com.simclouds.unicom.jasper.soap.TerminalClient;
 import com.sun.xml.wss.XWSSecurityException;
 
@@ -31,6 +32,8 @@ public class JasperClient {
 	
 	private static SmsClient smsClient = null;
 	
+	private static BillingClient billingClient = null;
+	
     private static Map<String, JasperClient> jasperClientMap = new HashMap<String, JasperClient>();
     
     private static Map<String, Integer> typeMap = new HashMap<String, Integer>();
@@ -40,7 +43,9 @@ public class JasperClient {
     	
     	terminalClient = new TerminalClient(licenseKey, username, password);
     	
-    	smsClient = null; // TODO 
+//    	smsClient = null; // TODO 
+    	
+    	billingClient = new BillingClient(licenseKey, username, password);
     }
     
     /**
@@ -307,6 +312,24 @@ public class JasperClient {
 		}
 		
 		return failList;
+	}
+	
+	/**
+	 * get terminal usage data details
+	 * 
+	 * @param iccid
+	 * @param cycleStartDate
+	 * @param pageNumber
+	 */
+	public Float getTerminalUsageDataDetails(String iccid, String cycleStartDate) {
+		Float data = null;
+		try {
+			data = billingClient.getTerminalUsageDataDetails(iccid, cycleStartDate);
+		} catch (Exception e) {
+			log.error("getTerminalUsageDataDetails failed", e);
+		}
+		
+		return data;
 	}
     
     /**
