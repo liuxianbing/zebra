@@ -2,7 +2,6 @@ package com.sim.cloud.zebra.task;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,8 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 
 	// total data yesterday
 	Map<String, Float> totalDataMap = new HashMap<String, Float>();
+
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Scheduled(cron="0 10 0 * * *") // 00:10:00 every day
 	//@Scheduled(fixedRate=1000 * 60 * 30) // 30 minutes
@@ -85,8 +86,6 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 		log.info("############## End sync day data. #######################");
 		
 	}
-	
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	/**
 	 * get yesterday 
