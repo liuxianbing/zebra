@@ -277,7 +277,7 @@ public class TerminalClient extends AbstractClient {
         
         SOAPConnection connection = connectionFactory.createConnection();
         SOAPMessage response = connection.call(request, url);
-        response.writeTo(System.out);
+//        response.writeTo(System.out);
         if (!response.getSOAPBody().hasFault()) {
             return writeGetSessionInfoResponse(response);
         } else {
@@ -341,5 +341,80 @@ public class TerminalClient extends AbstractClient {
         }
         
         return false;
+    }
+    
+    /********************************************************************************************************************
+     * This method creates a Terminal Request and sends back the SOAPMessage.
+     * ICCID value is passed into this method
+     *
+     * @return SOAPMessage
+     * @throws SOAPException
+     */
+    private SOAPMessage createGetTerminalUsageRequest(String iccid, String cycleStartDate) throws SOAPException {
+    	SOAPMessage message = this.createBaseRequest(TERMINAL_API, "GetTerminalUsage");
+        
+        SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+        SOAPBodyElement terminalRequestElement = (SOAPBodyElement) message.getSOAPBody().getFirstChild();
+        
+        Name iccidName = envelope.createName("iccid", PREFIX, NAMESPACE_URI);
+        SOAPElement iccidElement = terminalRequestElement.addChildElement(iccidName);
+        iccidElement.setValue(iccid);
+        
+        Name cycleStartDateName = envelope.createName("cycleStartDate", PREFIX, NAMESPACE_URI);
+        SOAPElement cycleStartDateElement = terminalRequestElement.addChildElement(cycleStartDateName);
+        cycleStartDateElement.setValue(cycleStartDate);
+        
+        return message;
+    }
+
+    /**
+     * Gets the terminal response.
+     *
+     * @param message
+     * @throws SOAPException
+     */
+    private Float writeGetTerminalUsageResponse(SOAPMessage message) throws SOAPException {
+    	Float monthData = 0.0f;
+    	
+        SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+        Name terminalResponseName = envelope.createName("GetTerminalUsageResponse", PREFIX, NAMESPACE_URI);
+        SOAPBodyElement terminalResponseElement = (SOAPBodyElement) message
+                .getSOAPBody().getChildElements(terminalResponseName).next();
+        
+        Name totalDataVolumeName = envelope.createName("totalDataVolume", PREFIX, NAMESPACE_URI);
+        
+        SOAPBodyElement totalDataVolumeElement = (SOAPBodyElement) terminalResponseElement.getChildElements(totalDataVolumeName).next();
+        
+        monthData = Float.parseFloat(totalDataVolumeElement.getTextContent());
+        
+        return monthData;
+    }
+    
+    /**
+     * get Terminal Usage
+     * 
+     * @param username
+     * @param password
+     * @param iccid
+     * @throws SOAPException
+     * @throws IOException
+     * @throws XWSSecurityException
+     * @throws Exception
+     */
+    public Float getTerminalUsage(String iccid, String cycleStartDate) throws SOAPException, IOException, XWSSecurityException, Exception {
+        SOAPMessage request = createGetTerminalUsageRequest(iccid, cycleStartDate);
+        request = secureMessage(request, username, password);
+        
+        SOAPConnection connection = connectionFactory.createConnection();
+        SOAPMessage response = connection.call(request, url);
+//        response.writeTo(System.out);
+        if (!response.getSOAPBody().hasFault()) {
+            return writeGetTerminalUsageResponse(response);
+        } else {
+            SOAPFault fault = response.getSOAPBody().getFault();
+            log.error("Method: getSessionInfo Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
+        }
+        
+        return null;
     }
 }

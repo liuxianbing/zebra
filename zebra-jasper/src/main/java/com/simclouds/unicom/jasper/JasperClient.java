@@ -332,6 +332,24 @@ public class JasperClient {
 		return data;
 	}
     
+	/**
+	 * get last month data
+	 * 
+	 * @param iccid
+	 * @param cycleStartData
+	 * @return
+	 */
+	public Float getTerminalUsage(String iccid, String cycleStartDate) {
+		Float data = null;
+		try {
+			data = terminalClient.getTerminalUsage(iccid, cycleStartDate);
+		} catch (Exception e) {
+			log.error("getTerminalUsageDataDetails failed", e);
+		}
+		
+		return data;
+	}
+	
     /**
      * get sms list
      * 
