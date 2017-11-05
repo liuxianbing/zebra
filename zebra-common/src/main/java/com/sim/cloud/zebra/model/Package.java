@@ -18,9 +18,25 @@ public class Package  extends BaseModel{
 	private Integer   operator;                 // 运营商      1-移动、2-电信、3-联通	
     private Long planId;                     // 资费计划ID 
 	private String  account;                    // 运营商平台账号	
-	private String  remark;                     // 备注	
+	private String  remark;                     // 备注
+	private Integer   type; //0:用户套餐  1：系统套餐
+	private Integer cardType;
 	
-  public Long getUid() {
+	
+	
+  public Integer getCardType() {
+		return cardType;
+	}
+	public void setCardType(Integer cardType) {
+		this.cardType = cardType;
+	}
+public Integer getType() {
+		return type;
+	}
+	public void setType(Integer type) {
+		this.type = type;
+	}
+public Long getUid() {
     return uid;
   }
   public void setUid(Long uid) {
