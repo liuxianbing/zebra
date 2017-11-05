@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.sim.cloud.zebra.common.util.CardDeviceStatusEnum;
 import com.sim.cloud.zebra.common.util.DateUtil;
+import com.sim.cloud.zebra.common.util.JasperUtils;
 import com.sim.cloud.zebra.common.util.ZebraConfig;
 import com.sim.cloud.zebra.core.AbstractService;
 import com.sim.cloud.zebra.mapper.PackageMapper;
@@ -18,7 +20,6 @@ import com.sim.cloud.zebra.mapper.SimCardMapper;
 import com.sim.cloud.zebra.mapper.SysUserMapper;
 import com.sim.cloud.zebra.mapper.TariffPlanMapper;
 import com.sim.cloud.zebra.model.SimCard;
-import com.sim.cloud.zebra.model.SimcardPackageView;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
 import com.simclouds.unicom.jasper.JasperClient;
@@ -80,7 +81,11 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 			wrapper.ge("uid", uid);
 		}
 		wrapper.groupBy("obj_type");
-		return selectMaps(wrapper);
+		List<Map<String,Object>> list= selectMaps(wrapper);
+		list.stream().forEach(e->{
+			e.put("name", CardDeviceStatusEnum.getEnumByStatus((Integer)e.get("name")).getSimStatus());
+		});
+		return list;
 	}
 	/**
 	 * 网络状态统计
@@ -89,7 +94,7 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 	 */
 	public List<Map<String,Object>> statisNet(Long uid){
 		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
-		wrapper.setSqlSelect("cast(net_type as signed) as name ","count(1) as value");
+		wrapper.setSqlSelect(" (case when net_type=1 then '开启' else '关闭' end) as name ","count(1) as value");
 		if(null!=uid){
 			wrapper.ge("uid", uid);
 		}
@@ -104,7 +109,7 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 	 */
 	public List<Map<String,Object>> statisType(Long uid){
 		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
-		wrapper.setSqlSelect("cast(type as signed) as name ","count(1) as value");
+		wrapper.setSqlSelect(" (case when type=1 then '共享卡' else '独卡' end) as name ","count(1) as value");
 		if(null!=uid){
 			wrapper.ge("uid", uid);
 		}
@@ -174,6 +179,7 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 		pack.setOperator(tp.getOperator());
 		pack.setTerm(term);
 		pack.setPlanId(planId);
+		pack.setCardType(tp.getType());
 		pack.setUid(uid);
 		pack.setRemark(remark);
 		pack.setCreateTime(DateUtil.getDateTime());
@@ -284,4 +290,63 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 //			}
 //		});
 //	}
+	
+	
+	/**
+	 * 打开网络
+	 * @param iccids
+	 * @param status
+	 * @return
+	 */
+	public List<String> openCardNet(List<Long> ids,Long uid){
+		return changeCardStatus(ids,SimCard.NET_OPEN,SimCard.ACTIVATED_NAME,uid);
+	}
+	
+	/**
+	 * 关闭网络
+	 * @param iccids
+	 * @param status
+	 * @return
+	 */
+	public List<String> closeCardNet(List<Long> ids,Long uid){
+		return changeCardStatus(ids,SimCard.NET_CLOSE,SimCard.RETIRED_NAME,uid);
+	}
+	
+	/**
+	 * 打开网络
+	 * @param iccids
+	 * @param status
+	 * @return
+	 */
+	private List<String> changeCardStatus(List<Long> ids,int netType,int deviceType,Long uid){
+		List<SimCard> list=new ArrayList<>();
+		String account=null;
+		for(Long e:ids){
+			SimCard obj=selectById(e);
+			if(null!=uid && obj.getUid()!=uid){
+				throw new RuntimeException("无权限操作!");
+			}
+			SimCard tmp=new SimCard();
+			tmp.setId(obj.getId());
+			tmp.setIccid(obj.getIccid());
+			tmp.setNetType(obj.getNetType());
+			tmp.setObjType(obj.getObjType());
+			list.add(tmp);
+			
+			obj.setNetType(netType);
+			obj.setObjType(deviceType);
+			super.updateById(obj);
+			account=obj.getAccount();
+		}
+		String accountInfo = ZebraConfig.getAccounts().get(account);
+		JasperClient jasperClient = JasperClient.getInstance(accountInfo);
+		List<String> failList=jasperClient.changeStatus(list.stream().map(m->m.getIccid()).collect(Collectors.toList()), 
+				JasperUtils.getStatusStringMap().get("STATUS_"+deviceType));
+		if(failList.size()>0){//回退
+			list.stream().filter(f->failList.contains(f.getIccid())).forEach(e->{
+				super.updateById(e);
+			});
+		}
+		return failList;
+	}
 }

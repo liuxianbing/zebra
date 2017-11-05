@@ -29,7 +29,7 @@
 			                  <label for="inputEmail3" class="col-sm-2 control-label">账号</label>
 			                  <div class="col-sm-6">
 			                    <input type="text"  class="form-control validate[required,custom[mobile]]" 
-			                    name="account" id="phone" value="${user.phone }" placeholder="登录账号,请输入手机号码">
+			                    name="phone" id="phone" value="${user.phone }" placeholder="登录账号,请输入手机号码">
 			                    <input type="hidden" name="id" value="${user.id }">
 			                  </div>
 			                </div>

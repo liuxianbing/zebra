@@ -4,20 +4,15 @@
 <jsp:include page="../fragments/meta.jsp" />
 	<link rel="stylesheet" type="text/css"
 	href="${ctx}/assets/plugins/datatables.net-bs/css/dataTables.bootstrap.css" />
+	
+	 <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal.css"
+	rel="stylesheet" type="text/css" />
 <style>
 .row{
 padding:15px
 }
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
     border-top: none;
-}
-.cardnodata{
-font-size:30px;
-text-align: center;
-color:#999;
-display:block
-line-height:150px;
-margin-top:80px
 }
 .nodata {
     height: 190px;
@@ -99,10 +94,13 @@ margin-top:80px
 						</div>
 					</div>
 				</form:form>
+				<form:form onsubmit="return false" action="" method="post" id="oper">
+				  <input type='hidden' name="ids" id="ids" />
+				</form:form>
 				<p class="btn_table" style='margin-left:5px'>
-				    <button type="button" id="huabo"  class="btn  margin btn-success disabled">打开网络</button>
+				    <button type="button"  class="btn  margin btn-success disabled">打开网络</button>
 				    
-				    <button type="button" id="rmBtn"  class="btn  margin btn-primary disabled">关闭网络</button>
+				    <button type="button"   class="btn  margin btn-primary disabled">关闭网络</button>
 				<p>
 				<table id="card_list" class="table table-bordered table-hover">
 				</table>
@@ -117,8 +115,13 @@ margin-top:80px
 	src="${ctx }/assets/plugins/echarts-3.5.4.min.js"></script>
 	<script type="text/javascript"
 		src="${ctx }/assets/plugins/datatables.net/js/jquery.dataTables.js"></script>
-	<script type="text/javascript"
-		src="${ctx }/assets/plugins/datatables.net-bs/js/dataTables.bootstrap2.js"></script>
+	<script type="text/javascript" src="${ctx }/assets/plugins/datatables.net-bs/js/dataTables.bootstrap2.js"></script>
+		
+		<script src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+		<script src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+	
+	
+	
 </body>
 </html>
 <script>
@@ -228,8 +231,9 @@ options.aoColumns=[
 		 }
 	 },
 	 { "sTitle": "电话号码","sClass": "center" ,"sWidth":"100","mDataProp": "phone"},
-  { "sTitle": "网络状态",  "sClass": "center" ,"sWidth":"75", "mDataProp": "netType"},
-  { "sTitle": "设备状态",  "sClass": "center","sWidth":"80","mDataProp": "objType"},
+  { "sTitle": "网络状态",  "sClass": "center" ,"sWidth":"75", "mDataProp": "netTypeStr"},
+  { "sTitle": "设备状态",  "sClass": "center","sWidth":"80","mDataProp": "objTypeStr"},
+  { "sTitle": "设备名称",  "sClass": "center","sWidth":"80","mDataProp": "terminalId"},
   { "sTitle": "本月用量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "usedFlow"},
   { "sTitle": "套餐价格",  "sClass": "center","sWidth":"80","mDataProp": "externalQuote"},
   { "sTitle": "套餐总量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "flow"},
@@ -238,6 +242,7 @@ options.aoColumns=[
   { "sTitle": "最近同步时间",  "sClass": "center","sWidth":"80","mDataProp": "lastSyncTime"},
   { "sTitle": "备注", "sClass": "center" ,"sWidth":"90","mDataProp": "remark"}
 	];
+	
 function loadTable(){
 	if(oTable){
 		 $("#card_list").empty();
@@ -262,14 +267,47 @@ $('.btn_table').on('click', 'button', function () {
 	  if($(this).hasClass('disabled')){
 		  return;
 	  }
+	  if(!getSelectedData()){
+		  return false;
+	  }
   if($(this).hasClass('btn-success') && netType==0){
   	openNet();
   }else if($(this).hasClass('btn-primary') && netType==1){
   	closeNet();
+  }else{
+	  bootbox.alert("请选择其他卡片状态!"); 
+	   return false;
   }
 });
 
+
+var opt={}
+opt.success=function(data){
+	  if(data.result=='success'){
+		  toastr.success('操作成功！！！');
+	  }else{
+		  toastr.error(data.msg);
+		  bootbox.alert(data.msg); 
+	  }
+	  loadTable();
+	  $(".btn_table").find('button').addClass('disabled')
+  };
+
+function openNet(){
+	 $('body').modalmanager('loading');
+		$("#oper").attr('action',"${ctx}/simcard/open");
+		SP.ajax($("#oper"),opt);
+}
+
+function closeNet(){
+	    $('body').modalmanager('loading');
+		$("#oper").attr('action',"${ctx}/simcard/close");
+		SP.ajax($("#oper"),opt);
+}
+
+
 function getSelectedData(){
+	 netType=-1;
 	 var iccids="";
 	 $.each(dataTableObj.rows('.row_selected').data(),function(i,n){
 		 if(netType==-1 && netType!=-2){
@@ -277,15 +315,17 @@ function getSelectedData(){
 		 }else if(netType!=n.netType){
 			 netType=-2;
 		 }
-			 iccids=iccids+n.iccid+",";
+			 iccids=iccids+n.id+",";
 	 }
 	 );
-	 if(cardType==-1){
+	 if(netType==-2){
 		  bootbox.alert("请选择同一网络类型的物联网卡!"); 
 		   return false;
 	 }
-	 $('#iccid').val(iccids.substring(0,iccids.length-1))
+	 $('#ids').val(iccids.substring(0,iccids.length-1))
 	 return true;
 }
+//setTimeout(function(){$('body').modalmanager('loading');},2000);
+//setTimeout(function(){$('body').modalmanager('removeLoading');},6000);
 
 </script>

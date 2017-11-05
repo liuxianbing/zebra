@@ -81,11 +81,11 @@
 					  return;
 				  }
 		        if($(this).hasClass('btn-success')){
-		        	if(selectData){
-		        		window.location.href='${ctx}/tariffplan/add?id='+selectData.id;
-		        	}else{
+		        	//if(selectData){
+		        		//window.location.href='${ctx}/tariffplan/add?id='+selectData.id;
+		        	//}else{
 		        		window.location.href='${ctx}/tariffplan/add';
-		        	}
+		        	//}
 		        }else if($(this).hasClass('btn-primary')){
 		        	window.location.href='${ctx}/tariffplan/add?id='+selectData.id;
 		        }else if($(this).hasClass('btn-danger')){

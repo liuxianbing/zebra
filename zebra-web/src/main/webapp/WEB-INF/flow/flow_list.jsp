@@ -8,9 +8,7 @@
 	<link rel="stylesheet"
 	href="${ctx }/assets/plugins/validation/validationEngine.jquery.css" />
  <link href="${ctx }/assets/plugins/dropzone/css/dropzone.css" rel="stylesheet"/>
- <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css"
-	rel="stylesheet" type="text/css" />
-	
+ <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
 	 <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal.css"
 	rel="stylesheet" type="text/css" />
 	
@@ -83,8 +81,6 @@ margin-top:15px
 		src="${ctx}/assets/plugins/validation/jquery.validationEngine-cn.js"
 		type="text/javascript"></script>
 	<script src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
-		
-		
 	<script
 		src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modal.js"
 		type="text/javascript"></script>

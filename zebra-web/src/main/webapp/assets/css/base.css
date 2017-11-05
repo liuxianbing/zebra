@@ -13,3 +13,18 @@
 	border:none;
 	    box-shadow:none;
 }
+.modal-open{
+	overflow:auto
+}
+.cont {
+	line-height: 80px;
+}
+.f-bold {
+    font-weight: 600;
+}
+.f-size-l3 {
+    font-size: 20px!important;
+}
+.color-666 {
+    color: #666!important;
+}

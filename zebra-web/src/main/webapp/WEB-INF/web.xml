@@ -72,6 +72,15 @@
 		<servlet-name>SpringMVC</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+	<filter>
+		<filter-name>LoginFilter</filter-name>
+		<filter-class>com.sim.cloud.zebra.filter.LoginFilter</filter-class>
+		<async-supported>true</async-supported>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoginFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	 <!-- session配置 -->
 	<session-config>
 		<session-timeout>30</session-timeout>

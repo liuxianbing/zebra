@@ -14,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mysql.fabric.xmlrpc.base.Array;
 import com.sim.cloud.zebra.common.util.JackSonUtil;
 import com.sim.cloud.zebra.common.util.JasperUtils;
+import com.sim.cloud.zebra.common.util.ZebraConfig;
 import com.sim.cloud.zebra.core.AbstractService;
 import com.sim.cloud.zebra.mapper.SimcardPackViewMapper;
 import com.sim.cloud.zebra.model.FlowPoolVo;
@@ -23,6 +25,9 @@ import com.sim.cloud.zebra.model.SimCard;
 import com.sim.cloud.zebra.model.SimcardPackageView;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
+import com.simclouds.unicom.jasper.JasperClient;
+
+import javafx.beans.property.SimpleListProperty;
 
 /** 
 * @author liuxianbing: 
@@ -112,7 +117,7 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 			fpv.setTotalPool(e.getValue().size()*e.getKey());
 			fpv.setActiveNum(mapInner.get(SimCard.ACTIVATED_NAME)==null?0:mapInner.get(SimCard.ACTIVATED_NAME).size());
 			fpv.setStockNum(mapInner.get(SimCard.INVENTORY_NAME)==null?0:mapInner.get(SimCard.INVENTORY_NAME).size());
-			fpv.setBlockNum(mapInner.get(SimCard.RETIRED_NAME)==null?0:mapInner.get(SimCard.INVENTORY_NAME).size());
+			fpv.setBlockNum(mapInner.get(SimCard.RETIRED_NAME)==null?0:mapInner.get(SimCard.RETIRED_NAME).size());
 			fpv.setLastSyncTime(e.getValue().stream().max((a,b)-> a.getLastSyncTime().compareTo(b.getLastSyncTime())).get().getLastSyncTime());
 			  return fpv;
 					}).collect(Collectors.toList());
@@ -229,7 +234,12 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 		}).collect(Collectors.toList());
 	}
 	
-	
+	/**
+	 * 卡片数量统计
+	 * @param uid
+	 * @param type
+	 * @return
+	 */
 	public List<Map<String,Object>> statisCardOfFlow(Long uid,Integer type){
 		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
 		wrapper.setSqlSelect("cast(flow as signed) as name ","count(1) as value");
@@ -272,7 +282,7 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 			Map<String, Object>  dataVal = new HashMap<String, Object>();
 			      dataVal.put("name",e.get("name").toString());
 			      dataVal.put("value", e.get("used"));
-			      xName.add(e.get("name").toString());
+			      xName.add(e.get("name").toString()+"MB");
 			      data.add(dataVal);
 		});
 		
@@ -303,6 +313,7 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	    res.put("series", series);
 		return res;
 	}
+	
 	
 	
 	

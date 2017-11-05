@@ -29,6 +29,11 @@
 	background: #00a65a;
 	line-height: 12px;
 }
+.info-box .progress .progress-bar-red {
+	height: 12px;
+	background: #dd4b39;
+	line-height: 12px;
+}
 
 .progress-wrapper .progress-bar2.thin {
 	z-index: 1;
@@ -45,6 +50,11 @@
 	overflow: hidden;
 	position: relative;
 	box-sizing: content-box;
+}
+
+.progress-wrapper .progress-bar2 .seg-none {
+	background-color: #999;
+	width:100%
 }
 
 .progress-wrapper .progress-bar2 .seg-first {
@@ -98,20 +108,28 @@
 						<div class="info-box bg-gray">
 							<div class="info-box-content">
 								<span class="info-box-number" style="display:inline">${pool.flowName}</span>
-								<a href="${ctx }/flow/detail?flow=${pool.flow}" class="small-box-footer" 
+								<a href="${ctx }/flow/detail?flow=${pool.flow}&phone=${CURRENT_USER.phone}" class="small-box-footer" 
 								style="float:right;font-size:10px">更多详情<i style="margin-left:5px;font-size:14px" class="fa fa-arrow-circle-right"></i>
                 				 </a>
 								 <span
 									class="info-box-text">剩余${pool.leftPool }MB</span>
 
 								<div class="progress progressMax">
-									<div class="progress-bar" style="width: ${pool.leftPercent}%;">100%</div>
+								   <c:if test="${pool.leftPercent>=95}">
+									<div class="progress-bar progress-bar-red" 
+									style="width: ${pool.leftPercent}%;">${pool.leftPercent}%</div>
+									</c:if>
+									<c:if test="${pool.leftPercent<95}">
+										<div class="progress-bar" 
+									style="width: ${pool.leftPercent}%;">${pool.leftPercent}%</div>
+									</c:if>
 								</div>
 								<span class="info-box-text" style="color:#777">卡片总数:${pool.allNum}</span> <span
 									class="info-box-text">已激活${pool.activeNum} | 库存
 									${pool.stockNum} | 已停卡 ${pool.blockNum}| 测试期${pool.testNum} </span>
 								<div class="progress-wrapper">
 									<div class="progress-bar2 thin" >
+									     <c:if test="${pool.allNum>0 }">
 										<span title="已激活${pool.activeNum}"
 											class="seg-first el-tooltip item" style="width:${pool.activeNum*100/pool.allNum}%;">
 										</span> <span  title="库存${pool.stockNum}" class="seg-second el-tooltip item"
@@ -120,6 +138,10 @@
 											style="left: ${(pool.activeNum+pool.stockNum)*100/pool.allNum}%; width: ${pool.blockNum*100/pool.allNum}%;"></span> <span
 											class="seg-four el-tooltip item"
 											style="left: 100%; width: 0%;"></span>
+											</c:if>
+											 <c:if test="${pool.allNum==0 }">
+											  <span  class="seg-none el-tooltip item" title="暂无卡片"></span>
+											 </c:if>
 									</div>
 								</div>
 

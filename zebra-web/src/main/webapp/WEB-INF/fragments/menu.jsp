@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
-	
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 	<header class="main-header">
     <!-- Logo -->
     <a href="index2.html" class="logo">
@@ -21,7 +21,7 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="${ctx }/assets/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">18612985592</span>
+              <span class="hidden-xs">${CURRENT_USER.phone }</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
@@ -99,89 +99,54 @@
          -->
          <li>
           <a href="${ctx }/index">
-            <i class="fa fa-dashboard"></i> <span>首页</span>           
+            <i class="fa fa-home"></i> <span>首页</span>           
           </a>
         </li>
-            <!-- 
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-files-o"></i>
-            <span>Layout Options</span>
-            <span class="pull-right-container">
-              <span class="label label-primary pull-right">4</span>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="pages/layout/top-nav.html"><i class="fa fa-circle-o"></i> Top Navigation</a></li>
-            <li><a href="pages/layout/boxed.html"><i class="fa fa-circle-o"></i> Boxed</a></li>
-            <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> Fixed</a></li>
-            <li><a href="pages/layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> Collapsed Sidebar</a></li>
-          </ul>
-        </li>
-    
-        <li>
-          <a href="pages/widgets.html">
-            <i class="fa fa-th"></i> <span>Widgets</span>
-            <span class="pull-right-container">
-              <small class="label pull-right bg-green">new</small>
-            </span>
-          </a>
-        </li>
-         -->
           <li class="treeview">
           <a href="#">
-            <i class="fa fa-laptop"></i>
+            <i class="fa fa-cc-mastercard"></i>
             <span>卡片管理</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${ctx }/simcard/list"><i class="fa fa-circle-o"></i> 卡片列表</a></li>
-            <li><a href="${ctx }/flow/self"><i class="fa fa-circle-o"></i> 我的流量池</a></li>
+            <li><a href="${ctx }/simcard/list"><i class="fa fa-list-alt"></i> 卡片列表</a></li>
+            <li><a href="${ctx }/flow/self"><i class="fa fa-hourglass-2"></i> 我的流量池</a></li>
+             <li><a href="${ctx }/cart/buy"><i class="fa fa-hourglass-2"></i> 购买正式卡</a></li>
+              <li><a href="${ctx }/cart/order"><i class="fa fa-hourglass-2"></i> 订单</a></li>
+               <li><a href="${ctx }/cart/record"><i class="fa fa-hourglass-2"></i>购卡记录</a></li>
           </ul>
         </li>
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-pie-chart"></i>
+            <i class="fa fa-gears"></i>
             <span>设置</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${ctx }/user/account"><i class="fa fa-circle-o"></i> 账户设置</a></li>
+            <li><a href="${ctx }/user/account"><i class="fa fa-user"></i> 账户设置</a></li>
           </ul>
         </li>
+        <c:if 	test="${CURRENT_USER.createUserId==null || CURRENT_USER.createUserId==0 }">
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-laptop"></i>
+            <i class="fa fa-puzzle-piece"></i>
             <span>分销管理</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${ctx }/tariffplan/list"><i class="fa fa-circle-o"></i> 资费计划管理</a></li>
-             <li><a href="${ctx }/flow/list"><i class="fa fa-circle-o"></i>客户流量池</a></li>
-              <li><a href="${ctx }/user/list"><i class="fa fa-circle-o"></i> 客户管理</a></li>
+            <li><a href="${ctx }/tariffplan/list"><i class="fa fa-paper-plane"></i> 资费计划管理</a></li>
+            <li><a href="${ctx }/pack/list"><i class="fa fa-paper-plane"></i> 系统套餐管理</a></li>
+             <li><a href="${ctx }/flow/list"><i class="fa fa-tasks"></i>客户流量池</a></li>
+              <li><a href="${ctx }/user/list"><i class="fa fa-users"></i> 客户管理</a></li>
           </ul>
         </li>
-        <!-- 
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-edit"></i> <span>Forms</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="pages/forms/general.html"><i class="fa fa-circle-o"></i> General Elements</a></li>
-            <li><a href="pages/forms/advanced.html"><i class="fa fa-circle-o"></i> Advanced Elements</a></li>
-            <li><a href="pages/forms/editors.html"><i class="fa fa-circle-o"></i> Editors</a></li>
-          </ul>
-        </li>
-         -->
+        </c:if>
       </ul>
     </section>
     <!-- /.sidebar -->

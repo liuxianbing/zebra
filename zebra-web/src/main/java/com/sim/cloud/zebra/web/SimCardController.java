@@ -138,10 +138,57 @@ public class SimCardController extends AbstractController {
 		simcardService.updateBatchById(list);
 		return SUCCESS;
 	}
+	
+
+	@ApiOperation(value = "物联网卡打开网络")
+	@RequestMapping(value = "open", method = RequestMethod.POST, produces = { "application/json" })
+	public @ResponseBody Map<String, String> openNet(@RequestBody Map<String, String> params) {
+		Long uid=null;
+		if(!checkIfManager()){
+			uid=getCurrUser().getId();
+		}
+		List<String> list =simcardService.openCardNet( Arrays.asList(params.get("ids").split(",")).stream()
+				.map(m->Long.parseLong(m)).collect(Collectors.toList()), uid);
+		if (null != list && list.size() > 0) {
+			Map<String, String> map = new HashMap<>();
+			String msg = list.stream().collect(Collectors.joining(","));
+			map.put("msg",
+					"成功打开网络:" + (Arrays.asList(params.get("ids").split(",")).size() 
+							- list.size()) + "个,失败打开网络:" + list.size() + "个,ICCID为:" + msg);
+			return map;
+		}
+		return SUCCESS;
+	}
+	
+	@ApiOperation(value = "物联网卡关闭网络")
+	@RequestMapping(value = "close", method = RequestMethod.POST, produces = { "application/json" })
+	public @ResponseBody Map<String, String> closeNet(@RequestBody Map<String, String> params) {
+		Long uid=null;
+		if(!checkIfManager()){
+			uid=getCurrUser().getId();
+		}
+		List<String> list =simcardService.closeCardNet( Arrays.asList(params.get("ids").split(",")).stream()
+				.map(m->Long.parseLong(m)).collect(Collectors.toList()), uid);
+		if (null != list && list.size() > 0) {
+			Map<String, String> map = new HashMap<>();
+			String msg = list.stream().collect(Collectors.joining(","));
+			map.put("msg",
+					"成功关闭网络:" + (Arrays.asList(params.get("ids").split(",")).size() 
+							- list.size()) + "个,失败关闭网络:" + list.size() + "个,ICCID为:" + msg);
+			return map;
+		}
+		return SUCCESS;
+	}
+	
+	
+	
 
 	@ApiOperation(value = "物联网卡划拨")
 	@RequestMapping(value = "alloc", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody Map<String, String> alloc(@RequestBody Map<String, Object> params) {
+		if(!checkIfManager()){
+			throw new RuntimeException("无权限操作!");
+		}
 		List<String> iccidsList = Arrays.asList(params.get("iccid").toString());
 		List<String> list = simcardService.saveCardPlanRel(iccidsList, Arrays.asList(params.get("ids").toString()),
 				Float.parseFloat(params.get("externalQuote").toString()),
@@ -151,7 +198,7 @@ public class SimCardController extends AbstractController {
 		if (null != list && list.size() > 0) {
 			String msg = list.stream().collect(Collectors.joining(","));
 			map.put("msg",
-					"成功划拨卡片:" + (iccidsList.size() - list.size()) + "个,失败划拨卡片:" + list.size() + "个,ICCID为:" + msg);
+					"成功操作卡片:" + (iccidsList.size() - list.size()) + "个,失败操作卡片:" + list.size() + "个,ICCID为:" + msg);
 			return map;
 		}
 		return SUCCESS;
@@ -166,12 +213,23 @@ public class SimCardController extends AbstractController {
 	@ApiOperation(value = "物联网卡列表请求")
 	@RequestMapping(value = "list", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody DataTableParameter<SimcardPackageView> list() {
-		Page<SimcardPackageView> page = simCardServiceView.query(extractFromRequest());
-		Map<Long, SysUser> userMap = sysUserService.selectCustomers().stream()
-				.collect(Collectors.toMap(SysUser::getId, c -> c));
+		Map<String,Object> params=extractFromRequest();
+		Map<Long, SysUser> userMap =new HashMap<>();
+		boolean ismana=checkIfManager();
+		if(!ismana){
+			params.put("uid", getCurrUser().getId());
+		}else{
+			userMap.putAll(sysUserService.selectCustomers().stream()
+					.collect(Collectors.toMap(SysUser::getId, c -> c)));
+		}
+		Page<SimcardPackageView> page = simCardServiceView.query(params);
 		page.getRecords().stream().forEach(e -> {// 设置用户信息
-			if (e.getUid() != null && e.getUid() > 0l && userMap.get(e.getUid()) != null) {
-				e.setUserInfo(userMap.get(e.getUid()).getUserName());
+			if(!ismana){
+				e.setUserInfo(getCurrUser().getUserName());
+			}else{
+				if (e.getUid() != null && e.getUid() > 0l && userMap.get(e.getUid()) != null) {
+					e.setUserInfo(userMap.get(e.getUid()).getUserName());
+				}
 			}
 		});
 		return new DataTableParameter<SimcardPackageView>(page.getTotal(), request.getParameter("sEcho"),

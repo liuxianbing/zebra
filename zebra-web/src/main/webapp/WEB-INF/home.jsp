@@ -3,7 +3,7 @@
 <%@ include file="fragments/taglibs.jsp"%>
 <!DOCTYPE HTML>
 <html>
-<jsp:include page="fragments/meta.jsp"/>
+<jsp:include page="fragments/meta.jsp" />
 </head>
 <body class="hold-transition skin-blue">
 	<div class="wrapper">
@@ -16,31 +16,6 @@
 			<!-- Main content -->
 			<section class="content">
 				<div class="row">
-					<div class="col-lg-3 col-xs-6">
-						<!-- small box -->
-						<div class="small-box bg-aqua">
-							<div class="inner">
-								<h3>${customerSize }</h3>
-								<p>用户数</p>
-							</div>
-							<div class="icon">
-								<i class="ion ion-bag"></i>
-							</div>
-						</div>
-					</div>
-					<!-- ./col -->
-					<div class="col-lg-3 col-xs-6">
-						<!-- small box -->
-						<div class="small-box bg-green">
-							<div class="inner">
-								<h3>${authSize }</h3>
-								<p>认证企业数</p>
-							</div>
-							<div class="icon">
-								<i class="ion ion-stats-bars"></i>
-							</div>
-						</div>
-					</div>
 					<!-- ./col -->
 					<div class="col-lg-3 col-xs-6">
 						<!-- small box -->
@@ -50,66 +25,107 @@
 								<p>卡片数</p>
 							</div>
 							<div class="icon">
-								<i class="ion ion-person-add"></i>
+								<i class="fa fa-cc-mastercard"></i>
 							</div>
 						</div>
 					</div>
-					<!-- ./col -->
-					<div class="col-lg-3 col-xs-6">
-						<!-- small box -->
-						<div class="small-box bg-red">
-							<div class="inner">
-								<h3>${orderSize }</h3>
-
-								<p>订单数</p>
-							</div>
-							<div class="icon">
-								<i class="ion ion-pie-graph"></i>
+					<c:if test="${CURRENT_USER.createUserId>0 }">
+						<div class="col-lg-3 col-xs-6">
+							<!-- small box -->
+							<div class="small-box bg-aqua">
+								<div class="inner">
+									<h3>${money }</h3>
+									<p>账号余额</p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-money"></i>
+								</div>
 							</div>
 						</div>
-					</div>
+					</c:if>
+					<c:if
+						test="${CURRENT_USER.createUserId==null || CURRENT_USER.createUserId==0 }">
+						<div class="col-lg-3 col-xs-6">
+							<!-- small box -->
+							<div class="small-box bg-aqua">
+								<div class="inner">
+									<h3>${customerSize }</h3>
+									<p>用户数</p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-users"></i>
+								</div>
+							</div>
+						</div>
+						<!-- ./col -->
+						<div class="col-lg-3 col-xs-6">
+							<!-- small box -->
+							<div class="small-box bg-green">
+								<div class="inner">
+									<h3>${authSize }</h3>
+									<p>认证企业数</p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-certificate"></i>
+								</div>
+							</div>
+						</div>
+						<!-- ./col -->
+						<div class="col-lg-3 col-xs-6">
+							<!-- small box -->
+							<div class="small-box bg-red">
+								<div class="inner">
+									<h3>${orderSize }</h3>
+									<p>订单数</p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-paypal"></i>
+								</div>
+							</div>
+						</div>
+					</c:if>
 					<!-- ./col -->
 				</div>
-				
-				 <div class="row">
-				 		<div class="col-md-12">
-				 				 <div class="box">
-				 				 	<div class="box-header with-border">
-				 				 	 	<h3 class="box-title">联通卡片状态统计</h3>
-				 				 	 </div>
-				 				 	   <div class="box-body">
-				 				 	   		 <div class="row">
-				 				 	   		 	 <div class="col-md-3" id="cardType" style="min-height:220px">
-				 				 	   		 	 </div>
-				 				 	   		 	 <div class="col-md-3" id="cardNet" style="min-height:220px">
-				 				 	   		 	 </div>
-				 				 	   		 	 <div class="col-md-3"  id="cardDevice" style="min-height:220px">
-				 				 	   		 	 </div>
-				 				 	   		 	 <div class="col-md-3"  id="cardFlow" style="min-height:220px">
-				 				 	   		 	 </div>
-				 				 	   		 </div>
-				 				 	   </div>
-				 				 </div>
-				 		</div>
-				 </div>
-				 
-				  <div class="row">
-				 		<div class="col-md-12">
-				 				 <div class="box">
-				 				 	<div class="box-header with-border">
-				 				 	 	<h3 class="box-title">联通流量统计</h3>
-				 				 	 </div>
-				 				 	   <div class="box-body">
-				 				 	   		 <div class="row">
-				 				 	   		 	 <div class="col-md-6" id="shareFlow" style="min-height:250px">
-				 				 	   		 	 </div>
-				 				 	   		 	 <div class="col-md-6" id="singleFlow" style="min-height:250px">
-				 				 	   		 	 </div>
-				 				 	   		 </div>
-				 				 	   </div>
-				 				 </div>
-				 		</div>
-				 </div>
+
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box">
+							<div class="box-header with-border">
+								<h3 class="box-title">联通卡片状态统计</h3>
+							</div>
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-3" id="cardType" style="min-height: 220px">
+									</div>
+									<div class="col-md-3" id="cardNet" style="min-height: 220px">
+									</div>
+									<div class="col-md-3" id="cardDevice" style="min-height: 220px">
+									</div>
+									<div class="col-md-3" id="cardFlow" style="min-height: 220px">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box">
+							<div class="box-header with-border">
+								<h3 class="box-title">联通流量统计</h3>
+							</div>
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6" id="shareFlow" style="min-height: 250px">
+									</div>
+									<div class="col-md-6" id="singleFlow" style="min-height: 250px">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</section>
 			<!-- /.content -->
 		</div>
@@ -120,8 +136,9 @@
 	<jsp:include page="fragments/footer.jsp" />
 </body>
 </html>
-	<script type="text/javascript" src="${ctx }/assets/plugins/echarts-3.5.4.min.js"></script>
-	
+<script type="text/javascript"
+	src="${ctx }/assets/plugins/echarts-3.5.4.min.js"></script>
+
 <script>
 var cardOption = {
 		 title: {
@@ -280,7 +297,12 @@ flowOption.series=[
 		label:narmalLable,
 		type:'bar',
 		name:'',
-		data:[]
+		data:[],
+		itemStyle:{
+			  normal: {
+			        color: '#ffb200'
+			}
+			}
 	}
 ]
 flowOption.xAxis[0].data=[];

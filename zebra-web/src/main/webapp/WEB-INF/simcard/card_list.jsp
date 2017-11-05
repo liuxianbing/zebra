@@ -11,8 +11,8 @@
  <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css"
 	rel="stylesheet" type="text/css" />
 	
-	 <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal.css"
-	rel="stylesheet" type="text/css" />
+	 <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+	
 	
 <link rel="shortcut icon" href="${ctx}/assets/img/fav.ico" />
 <style>
@@ -74,6 +74,7 @@ margin-top:15px
 								  <option value="2" >已停卡</option>
 							</select>
 						</div>
+						 <c:if 	test="${CURRENT_USER.createUserId==null || CURRENT_USER.createUserId==0 }">
 						<div class="col-sm-2 col-md-2">
 							<select id="uid" class="form-control select2" name="uid"
 								style="float: left;" data-placeholder="关联客户">
@@ -84,6 +85,7 @@ margin-top:15px
 								  </c:forEach>
 							</select>
 						</div>
+						</c:if>
 				<div class="col-sm-2 col-md-2">
 					 <button type="button" id="searchButton" onclick="loadTable()" class="btn btn-primary">查询</button>
                 </div>
@@ -91,8 +93,10 @@ margin-top:15px
 				</form:form>
 				<p class="btn_table">
 				    <button type="button" id="huabo"  class="btn  margin btn-success disabled">划拨</button>
-				    
 				    <button type="button" id="rmBtn"  class="btn  margin btn-primary disabled">备注</button>
+				 <button type="button"  class="btn  margin btn-info disabled">打开网络</button>
+				    <button type="button"   class="btn  margin btn-warning disabled">关闭网络</button>
+				
 				<p>
 				<table id="card_list" class="table table-bordered table-hover">
 				</table>
@@ -206,7 +210,7 @@ margin-top:15px
 						  <div class="col-md-3">
 						  	  <label for="inputEmail3" class="control-label">套餐备注</label>
 						  </div>
-						   <div class="col-md-3">
+						   <div class="col-md-5">
 							 <textarea rows="3" cols="10" style="height:80px" 
 								   class="form-control" value=""   name="remark" >
 							     </textarea>
@@ -232,6 +236,10 @@ margin-top:15px
 	</c:forEach>
 </div>
 
+<form:form onsubmit="return false" action="" method="post" id="oper">
+				  <input type='hidden' name="ids" id="myids" />
+				</form:form>
+
 	<jsp:include page="../fragments/footer.jsp" />
 	<script type="text/javascript"
 		src="${ctx }/assets/plugins/datatables.net/js/jquery.dataTables.js"></script>
@@ -243,11 +251,8 @@ margin-top:15px
 		src="${ctx}/assets/plugins/validation/jquery.validationEngine-cn.js"
 		type="text/javascript"></script>
 	<script src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+	<script src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
 		
-		
-	<script
-		src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modal.js"
-		type="text/javascript"></script>
 		
 </body>
 </html>
@@ -280,15 +285,16 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	options.aaSorting=[[ 0, "asc" ]];
 	options.aoColumns=[
 		 { "sTitle": "ID", "bVisible":false, "sClass": "center","sWidth":"80","mDataProp": "id"},
-		 { "sTitle": "ICCID",  "sClass": "center","sWidth":"220","mDataProp": "iccid","mRender": function ( data, type, full ) {
+		 { "sTitle": "ICCID",  "sClass": "center","sWidth":"150","mDataProp": "iccid","mRender": function ( data, type, full ) {
 			 return '<a href="${ctx}/simcard/detail?id='+full.id+'">'+data+'</a>';
 			 }
 		 },
 		 { "sTitle": "电话号码","sClass": "center" ,"sWidth":"100","mDataProp": "phone"},
 		 { "sTitle": "卡类型","sClass": "center" ,"sWidth":"100","mDataProp": "type"},
 		 { "sTitle": "关联用户", "asSorting": [ ],"sClass": "center" ,"sWidth":"100","mDataProp": "userInfo"},
-       { "sTitle": "网络状态",  "sClass": "center" ,"sWidth":"75", "mDataProp": "netType"},
-	   { "sTitle": "设备状态",  "sClass": "center","sWidth":"80","mDataProp": "objType"},
+       { "sTitle": "网络状态",  "sClass": "center" ,"sWidth":"75", "mDataProp": "netTypeStr"},
+	   { "sTitle": "设备状态",  "sClass": "center","sWidth":"80","mDataProp": "objTypeStr"},
+	   { "sTitle": "设备名称",  "sClass": "center","sWidth":"80","mDataProp": "terminalId"},
 	   { "sTitle": "本月用量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "usedFlow"},
 	   { "sTitle": "套餐价格",  "sClass": "center","sWidth":"80","mDataProp": "externalQuote"},
 	   { "sTitle": "套餐总量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "flow"},
@@ -324,12 +330,20 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		        	getSelectedData();
 		        }else if($(this).hasClass('btn-primary')){
 		        	remarkCards();
-		        }
+		        }else if($(this).hasClass('btn-info') && netType==0){
+		        	openNet();
+		        }else if($(this).hasClass('btn-warning') && netType==1){
+		        	closeNet();
+		        }else{
+		      	  bootbox.alert("请选择其他卡片状态!"); 
+		   	      return false;
+		     }
 			});
 	
 	 
 	loadTable();
 	var suc=0;
+	var netType=-1;
 	 function getSelectedData(){
 		 var iccids="";
 		 var ids="";
@@ -365,9 +379,11 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			   bootbox.alert("当前没有可分配的物联网卡"); 
 			   return;
 		 }
+		 $('body').modalmanager('loading');
 		 SP.ajax($("#validationform"),options);
 	 })
 	  $("#submitRemark").click(function(){
+		  $('body').modalmanager('loading');
 		 SP.ajax($("#validationform2"),options);
 	 })
 	 
@@ -386,4 +402,42 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 				$("#planId").append("<option value="+ $(this).attr('href') + ">"+ $(this).text() +"</option>");
 		 });
 	 }
+	 
+	 function openNet(){
+		 if(!getSelectedData()){
+			  return ;
+		  }
+		 $('body').modalmanager('loading');
+			$("#oper").attr('action',"${ctx}/simcard/open");
+			SP.ajax($("#oper"),options);
+	}
+
+	function closeNet(){
+		if(!getSelectedData()){
+			  return ;
+		  }
+		    $('body').modalmanager('loading');
+			$("#oper").attr('action',"${ctx}/simcard/close");
+			SP.ajax($("#oper"),options);
+	}
+	
+	function closeOrOpenCard(){
+		 netType=-1;
+		 var iccids="";
+		 $.each(dataTableObj.rows('.row_selected').data(),function(i,n){
+			 if(netType==-1 && netType!=-2){
+				 netType=n.netType;
+			 }else if(netType!=n.netType){
+				 netType=-2;
+			 }
+				 iccids=iccids+n.id+",";
+		 }
+		 );
+		 if(netType==-2){
+			  bootbox.alert("请选择同一网络类型的物联网卡!"); 
+			   return false;
+		 }
+		 $('#myids').val(iccids.substring(0,iccids.length-1))
+		 return true;
+	}
 </script>

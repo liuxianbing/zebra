@@ -55,6 +55,7 @@
 	                  if (p.complete){
 	                	  p.complete();
 	                  }else{
+	                	  $('body').modalmanager('removeLoading')
 	                  }
 	              },
 	              success: function (res){
