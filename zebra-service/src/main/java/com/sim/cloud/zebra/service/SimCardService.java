@@ -349,4 +349,10 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 		}
 		return failList;
 	}
+	
+	public List<SimCard> selectByAccount(String account){
+		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
+		wrapper.eq("account", account);
+		return selectList(wrapper);
+	}
 }
