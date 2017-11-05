@@ -2,8 +2,10 @@ package com.sim.cloud.zebra.common.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 日期操作辅助类
@@ -206,4 +208,35 @@ public final class DateUtil {
 		}
 		return n;
 	}
+	/**
+	   * 获取两个日期之间的所有日期
+	   *
+	   * @param dateFirst
+	   * @param dateSecond
+	   * @return
+	   */
+	  public static List<String> displayAllDayDate(String dateFirst, String dateSecond) {
+		  String format="yyyy-MM-dd";
+		  if(dateFirst.length()==8 && dateSecond.length()==8){
+			  format="yyyyMMdd";
+		  }
+	    SimpleDateFormat dateFormat1 = new SimpleDateFormat(format);
+	    SimpleDateFormat dateFormat2 = new SimpleDateFormat(format);
+	    SimpleDateFormat dateFormat3 = new SimpleDateFormat("yyyy-MM-dd");
+	    List<String> dateList = new ArrayList<String>();
+	    try {
+	      Date dateOne = dateFormat1.parse(dateFirst);
+	      Date dateTwo = dateFormat2.parse(dateSecond);
+
+	      Calendar calendar = Calendar.getInstance();
+	      calendar.setTime(dateOne);
+	      while (calendar.getTime().compareTo(dateTwo) <= 0) {
+	        dateList.add(dateFormat3.format(calendar.getTime()));
+	        calendar.add(Calendar.DAY_OF_MONTH, 1);
+	      }
+	    } catch (Exception e) {
+	    }
+
+	    return dateList;
+	  }
 }
