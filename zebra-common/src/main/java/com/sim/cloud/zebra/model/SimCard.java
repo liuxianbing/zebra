@@ -1,5 +1,8 @@
 package com.sim.cloud.zebra.model;
 
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.sim.cloud.zebra.common.util.CardDeviceStatusEnum;
+
 /**
  * @author liuxianbing:
  * @version 创建时间：2017年10月14日 下午12:26:30 类说明 物联网卡
@@ -12,6 +15,9 @@ public class SimCard extends BaseModel {
 	public static final int TEST_READY_NAME=1;
 	public static final int INVENTORY_NAME=2;
 	public static final int ACTIVATION_READY_NAME=3;
+	
+	public static final int NET_OPEN=1;
+	public static final int NET_CLOSE=0;
 
 	private static final long serialVersionUID = -3969900141839401630L;
 	protected String phone;
@@ -37,7 +43,29 @@ public class SimCard extends BaseModel {
 	protected String terminalId; // 设备ID
 	
 	
+	@TableField(exist = false)
+	protected String netTypeStr;
+	@TableField(exist = false)
+	protected String objTypeStr;
 	
+	
+	
+	
+	public String getNetTypeStr() {
+		if(netType==1){
+			netTypeStr= "开启";
+		}else{
+			netTypeStr= "关闭";
+		}
+		return netTypeStr;
+	}
+
+	public String getObjTypeStr() {
+		if(null!=objType)
+			objTypeStr=CardDeviceStatusEnum.getEnumByStatus(objType).getSimStatus();
+		return objTypeStr;
+	}
+
 	public String getTerminalId() {
 		return terminalId;
 	}
@@ -189,4 +217,14 @@ public class SimCard extends BaseModel {
 	public void setObjType(Integer objType) {
 		this.objType = objType;
 	}
+
+	@Override
+	public String toString() {
+		return "SimCard [phone=" + phone + ", iccid=" + iccid + ", uid=" + uid + ", type=" + type + ", netType="
+				+ netType + ", objType=" + objType + ", usedFlow=" + usedFlow + ", remark=" + remark + ", packageId="
+				+ packageId + ", openTime=" + openTime + ", expireTime=" + expireTime + ", lastSyncTime=" + lastSyncTime
+				+ ", account=" + account + ", operator=" + operator + ", usedMessages=" + usedMessages
+				+ ", usedMinutes=" + usedMinutes + ", cid=" + cid + ", ip=" + ip + ", terminalId=" + terminalId + "]";
+	}
+	
 }
