@@ -342,7 +342,7 @@ public class JasperClient {
 	public Float getTerminalUsage(String iccid, String cycleStartDate) {
 		Float data = null;
 		try {
-			data = terminalClient.getTerminalUsage(iccid, cycleStartDate);
+			data = billingClient.getTerminalUsage(iccid, cycleStartDate);
 		} catch (Exception e) {
 			log.error("getTerminalUsageDataDetails failed", e);
 		}

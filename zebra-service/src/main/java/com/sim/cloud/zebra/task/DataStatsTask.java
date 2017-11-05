@@ -41,14 +41,13 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Scheduled(cron="0 10 0 * * *") // 00:10:00 every day
-	//@Scheduled(fixedRate=1000 * 60 * 30) // 30 minutes
+	//@Scheduled(fixedRate=1000 * 60 * 1) // 30 minutes
 	public void syncDayData() {
 		log.info("############## Start sync day data. #######################");
 		
 		// get users
 		Map<String, String> accounts = ZebraConfig.getAccounts();
 		
-		Map<String, Object> params = new HashMap<String, Object>();
 		String cycleStartDate = getYesterday();
 		StatisCardFlow dayData = null;
 		// get cards
@@ -56,8 +55,7 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 			try {
 				JasperClient jasperClient = JasperClient.getInstance(value);
 				
-				params.put("account", "unicom" + value.split(":")[0]);
-				List<SimCard> cardList = simCardService.queryList(params);
+				List<SimCard> cardList = simCardService.selectByAccount("unicom." + value.split(":")[0]);
 				
 				// save to db
 				for (SimCard sim : cardList) {
@@ -68,7 +66,7 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 						if (data != 0.0f) {
 							dayData = new StatisCardFlow();
 							dayData.setDay(cycleStartDate);
-							dayData.setFlow(data);
+							dayData.setFlow(data / 1024);
 							dayData.setIccid(sim.getIccid());
 							
 							this.insert(dayData);
@@ -84,7 +82,6 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 		}
 		
 		log.info("############## End sync day data. #######################");
-		
 	}
 	
 	/**
@@ -97,11 +94,6 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 		c.add(Calendar.DAY_OF_MONTH, -1);
 		
 		return dateFormat.format(c.getTime());
-	}
-	
-	// test
-	public static void main(String[] args) {
-		System.out.println(getYesterday());
 	}
 	
 }
