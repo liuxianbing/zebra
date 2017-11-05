@@ -40,6 +40,15 @@ public class SysUserService extends AbstractService<SysUserMapper, SysUser> {
 		return selectList(wrapper);
 	}
 	
+	public SysUser selectByPhone(String phone){
+		EntityWrapper<SysUser> wrapper=new EntityWrapper<>();
+		wrapper.eq("phone", phone);
+		List<SysUser> list=selectList(wrapper);
+		if(list.size()>0){
+			return list.get(0);
+		}
+		return null;
+	}
 
 	// public List<SysUser> selectMutiTablePage(Pagination
 	// pagination,EntityWrapper wrapper){
