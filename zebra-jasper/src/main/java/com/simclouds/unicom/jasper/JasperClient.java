@@ -140,7 +140,24 @@ public class JasperClient {
     	try {
     		List<String> iccids = terminalClient.getModifiedTerminals(startTime);
     		
-    		simCards = getTerminalDetails(iccids);
+    		if (iccids.size() > 50) {
+    			simCards = new ArrayList<SimCard>();
+    			
+    			int split = iccids.size() / 50;
+    			int from = 0;
+    			int to = 0;
+    			for (int i = 0; i <= split; i++) {
+    				from = 50 * i;
+    				to = 50 * (i + 1);
+    				if (to > iccids.size()) {
+    					to = iccids.size();
+    				}
+    				
+    				simCards.addAll(getTerminalDetails(iccids.subList(from, to)));
+    			}
+    		} else {
+    			simCards = getTerminalDetails(iccids);
+    		}
 		} catch (Exception e) {
 			log.error("get terminal list failed", e);
 		}
@@ -148,7 +165,6 @@ public class JasperClient {
     	return simCards;
     }
     
-
     /**
      * get terminal detail
      * 
@@ -205,6 +221,7 @@ public class JasperClient {
     			simCards.add(simCard);
     		}
 		} catch (Exception e) {
+			System.out.println("get terminal detail failed");
 			log.error("get terminal detail failed", e);
 		}
     	
