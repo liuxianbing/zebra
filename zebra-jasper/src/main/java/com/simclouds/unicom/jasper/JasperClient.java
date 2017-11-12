@@ -2,7 +2,6 @@ package com.simclouds.unicom.jasper;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,7 @@ import javax.xml.soap.SOAPException;
 import org.apache.log4j.Logger;
 
 import com.sim.cloud.zebra.common.util.Constants;
+import com.sim.cloud.zebra.common.util.DateUtil;
 import com.sim.cloud.zebra.model.SimCard;
 import com.simclouds.unicom.jasper.rest.SmsClient;
 import com.simclouds.unicom.jasper.soap.BillingClient;
@@ -214,7 +214,7 @@ public class JasperClient {
     			simCard.setOperator(3); // unicom
     			simCard.setPhone(terminalMap.get("msisdn"));
     			simCard.setAccount("unicom." + terminalClient.getUsername());
-    			simCard.setLastSyncTime(new Date().toLocaleString());
+    			simCard.setLastSyncTime(DateUtil.getDateTime());
     			simCard.setType(typeMap.get(terminalClient.getUsername())); // type
     			simCard.setTerminalId(terminalMap.get("terminalId"));
     			
