@@ -52,7 +52,7 @@ public abstract class AbstractController {
 	 * @return
 	 */
 	protected boolean checkIfManager(){
-		if(getCurrUser()!=null && getCurrUser().getCreateUserId()==0l){
+		if(getCurrUser()!=null && getCurrUser().getRole()==SysUser.ROLE_SYS){
 			return true;
 		}
 		return false;
@@ -107,7 +107,6 @@ public abstract class AbstractController {
 		 }).forEach(e->{
 			 res2.put(e.getKey(), e.getValue());
 		 });
-		 System.out.println(res);
 		 return res2;
 	}
 	

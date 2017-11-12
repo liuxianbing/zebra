@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+       <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ include file="../fragments/taglibs.jsp"%>
 <jsp:include page="../fragments/meta.jsp" />
@@ -7,6 +7,9 @@
 <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
 <style>
 <!--
+th {
+    background-color: #cddae3;
+}
 .address {
 	height: 40px;
 	border: 1px solid #ddd;
@@ -21,7 +24,6 @@
 	cursor: pointer
 }
 
-}
 .address-over {
 	border: 1px solid #20a0ff;
 }
@@ -43,7 +45,7 @@
 	line-height:30px;
 }
 .address .default {
-	margin-left: 20px
+	margin-left: 25px
 }
 thead th{
     background-color:#dce5ea;
@@ -82,11 +84,14 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 			</section>
 			<!-- Main content -->
 			<section class="content" style="padding: 30px">
+			<form action="" id='form' method="post"></form>
+			<form:form onsubmit="return false" action="${ctx}/cart/saveOrder" method="post" 
+				class="validationform form-horizontal" id="validationform">
 				<p class="lead">收货人信息</p>
 				<c:forEach items="${addressList }" var="ad">
-					<div class="row address">
+					<div class="row  address">
 						<div class="form-group">
-							<label> <input type="radio" name="add" class="minimal"
+							<label> <input type="radio" name="addrId" class="minimal"
 								value=${ad.id } <c:if test="${ad.opt==1 }">checked</c:if>>
 								${ad.userName } &nbsp;&nbsp;&nbsp; ${ad.area }
 								&nbsp;&nbsp;&nbsp;${ad.location } &nbsp;&nbsp;&nbsp;${ad.phone }
@@ -112,31 +117,31 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 					<button type="button" data-target="#addressloc" id="editBtn"
 						style="display: none" data-toggle="modal" class="btn btn-default">none</button>
 				</div>
-				<form action="" id='form' method="post"></form>
 			</section>
 			<section class="godlist" style="padding:20px">
 				<p class="lead">商品清单</p>
 				<table class="table table-bordered table-hover">
 				   <thead>
+				     <tr>
 				      <th width="30%">商品详情</th>
 				       <th width="10%">套餐价格</th>
 				        <th  width="20%">订购周期</th>
-				         <th  width="10%">单张卡费</th>
-				         <th  width="10%">卡片数量</th>
+				         <th  width="20%">卡片数量</th>
 				         <th  width="20%">小计</th>
+				         </tr>
 				   </thead>
 				   <tbody>
-				   <td>商品详情</td>
-				   <td>套餐价格</td>
-				   <td>订购周期</td>
-				   <td>单张卡费</td>
-				   <td>卡片数量</td>
-				   <td>小计</td>
+				   <c:forEach items="${ goodsList}" var="gl">
+				   <tr>
+				   <td>${gl.name }</td>
+				   <td>${gl.price }</td>
+				   <td>${gl.term }月</td>
+				   <td class="num">${gl.num }</td>
+				   <td class="sum"><fmt:formatNumber value="${gl.price*gl.num }" pattern="#0.00" /></td>
+				    </tr>
+				   </c:forEach>
 				   </tbody>
 				</table>
-				<form:form onsubmit="return false" action="${ctx}/cart/addOrder"
-				method="post" class="validationform form-horizontal"
-				id="validat">
 				<div class="row" style="padding-bottom:20px; border-bottom: 1px solid #ddd;margin-right:0px;margin-left:0px">
 				<div class="col-md-1">
 						<label for="inputEmail3" class="control-label">订单备注</label>
@@ -150,35 +155,40 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 						<label for="inputEmail3" class="control-label">配送方式</label>
 					</div>
 					<div class="col-md-8">
-					 <a class="btn btn-app">
-			                <span class="kuaidi">中通快递</span>
-			                 <span class="kcon">3-5天，4元起</span>
+					 <a class="btn btn-app isselected" lang="0">
+			                <span class="kuaidi isselected">中通快递</span>
+			                 <span class="kcon isselected">3-5天，4元起</span>
 			              </a>
-			              <a class="btn btn-app">
+			              <a class="btn btn-app" lang="1">
 			                <span class="kuaidi">顺丰快递</span>
 			                 <span class="kcon">1-3天，12元起</span>
 			              </a>
 			              <input type="text" style="margin-left:30px;display:inline;width:180px"
 							class="form-control  validate[required,custom[number]]"
-							name="price" id="price" placeholder="价格">
+							name="deliverCost" onblur="changeDeliver()" id="deliverCost" placeholder="快递价格">
+							<input type="hidden" name="deliverType" id="deliverType" value="0" />
 					</div>
 				</div>
 				<div class="row" style="padding-bottom:20px;margin-top:20px; border-bottom: 1px solid #ddd;margin-right:0px;margin-left:0px">
 				  <div class="col-md-12 cont" style="text-align: right;">
 				   <div class="col-md-10 color-666">总卡数</div>
-				   <div class="col-md-2 f-size-l3">3张</div>
+				   <div class="col-md-2 f-size-l3" id='cardNum'></div>
+				   <input type="hidden" name="cardCount" id="cardCount" value="" />
 				  </div>
 				  <div class="col-md-12 cont" style="text-align: right;">
-				  <div class="col-md-10 color-666">总计卡费</div>
-				   <div class="col-md-2 f-size-l3 ">￥111</div>
+				  <div class="col-md-10 color-666">总计卡费￥</div>
+				   <div class="col-md-2 f-size-l3 " id='cardSpend'></div>
 				  </div>
 				  <div class="col-md-12 cont" style="text-align: right;">
-				   <div class="col-md-10 color-666">运费</div>
-				   <div class="col-md-2 f-size-l3 ">￥8</div>
+				   <div class="col-md-10 color-666">运费￥</div>
+				   <div class="col-md-2 f-size-l3 "  id='deliverSpend'>0</div>
 				  </div>
 				   <div class="col-md-12 cont" style="text-align: right;">
-				    <div class="col-md-10 color-666">应付金额</div>
-				   <div class="col-md-2 f-size-l3 ">￥88</div>
+				    <div class="col-md-10 color-666">应付金额￥</div>
+				    <input type="hidden" name="totalCost" id="totalCost" />
+				    <input type="hidden" name="records" id="records" value="${records}" />
+				    <input type="hidden" name="uid"  value="${uid}" />
+				   <div class="col-md-2 f-size-l3 "  id='totalSpend'></div>
 				  </div>
 				  <div class="col-md-12 cont" style="text-align: right;">
 				  	根据运营商规则,物联网卡一经售出不予退换
@@ -218,7 +228,7 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 				<div class="row">
 					<div class="col-md-3">
 						<label for="inputEmail3" class="control-label">收货人</label> <input
-							type="hidden" name="uid" value="2" /> <input type="hidden"
+							type="hidden" name="uid" value="${uid }" /> <input type="hidden"
 							name="area" id="area" value="" />
 					</div>
 					<div class="col-md-8">
@@ -314,6 +324,26 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 </body>
 </html>
 <script>
+function initTotalPrice(){
+	  var tao=0;
+	  $.each($(".sum"),function(i,n){
+			tao=parseFloat($(this).text())+tao;
+		})
+	var num=0;
+	  $.each($(".num"),function(i,n){
+		  num=parseInt($(this).text())+num;
+		})
+		$("#cardNum").html(num)
+		$("#cardCount").val(num)
+		$("#cardSpend").html(tao.toFixed(2))
+		$("#totalSpend").html(tao.toFixed(2))
+}
+initTotalPrice();
+function changeDeliver(){
+	var tot=parseFloat($("#totalSpend").text())+parseFloat($("#deliverCost").val())
+	$("#totalSpend").html(tot.toFixed(2))
+	$("#deliverSpend").html($("#deliverCost").val())
+}
 $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	overflownDIV: ".form", promptPosition:"bottomRight" });
 	
@@ -404,6 +434,20 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			initCounty($('#city').val());
 		}
 	});
+	
+	$("#submit").click(function(){
+		var opt = {}
+		$("#totalCost").val($("#totalSpend").text())
+		opt.success = function(e) {
+			toastr.success('操作成功');
+			window.location.href="${ctx}/cart/pay?id="+e.id;
+		}
+		if($('input:radio[name="addrId"]:checked').length==0){
+			alert("请选择地址");
+			return;
+		}
+		SP.ajax($("#validationform"),opt);
+	});
 
 	$("#submitAddr").click(
 			function() {
@@ -418,7 +462,6 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 						bootbox.alert(data.msg);
 					}
 				}
-				$('body').modalmanager('loading');
 				$("#area").val(
 						$("#province").find("option:selected").text() + ' '
 								+ $("#city").find("option:selected").text()
@@ -428,7 +471,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			})
 
 	function appendAddr(e) {
-		var appendAddress = '<div class="row address"><div class="form-group"><label> <input type="radio" value='+e.id+' name="add" class="minimal">'
+		var appendAddress = '<div class="row address"><div class="form-group"><label> <input type="radio" value='+e.id+' name="addrId" class="minimal">'
 				+ e.userName
 				+ ' '
 				+ $("#area").val()
@@ -462,7 +505,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 				var myoo = $(this).parent().find('label');
 				var mthis = $(this);
 				var options = {};
-				options.url = "${ctx}/cart/setDefaultAddr?uid=2&id=" + obj.id;
+				options.url = "${ctx}/cart/setDefaultAddr?uid=${uid}&id=" + obj.id;
 				options.success = function(e) {
 					toastr.success('操作成功');
 					$('.default').remove();
@@ -525,6 +568,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			$(".btn-app").find('span').removeClass('isselected')
 			$(this).addClass('isselected')
 			$(this).find('span').addClass('isselected')
+			$("#deliverType").val($(this).attr("lang"))
 		}
 	})
 </script>

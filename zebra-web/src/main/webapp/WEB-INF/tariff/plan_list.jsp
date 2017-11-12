@@ -61,12 +61,20 @@
 	options.aaSorting=[[ 0, "asc" ]];
 	options.aoColumns=[
 		 { "sTitle": "计划名称",  "sClass": "center","sWidth":"80","mDataProp": "name"},
-		 { "sTitle": "类型","sClass": "center" ,"sWidth":"100","mDataProp": "type"},
+		 { "sTitle": "流量类型",  "sClass": "center" ,"sWidth":"75", "mDataProp": "type","mRender": function ( data, type, full ) {
+			 if(data==0) return '独享';
+			 return '共享';
+		 }
+	 },
+	 { "sTitle": "联通账号","sClass": "center" ,"sWidth":"100","mDataProp": "account"},
 		 { "sTitle": "流量","sClass": "center" ,"sWidth":"100","mDataProp": "flow"},
        { "sTitle": "费用",  "sClass": "center" ,"sWidth":"75", "mDataProp": "cost"},
 	   { "sTitle": "短信数",  "sClass": "center","sWidth":"80","mDataProp": "messages"},
 	   { "sTitle": "通话分钟数",  "sClass": "center","sWidth":"80","mDataProp": "callMinutes"},
-	   { "sTitle": "运营商", "sClass": "center" ,"sWidth":"90","mDataProp": "operator"}
+	   { "sTitle": "运营商",  "sClass": "center","sWidth":"90","mDataProp": "operator","mRender": function ( data, type, full ) {
+			 return '中国联通';
+			 }
+		 }
 		];
 	function loadTable(){
 		if(oTable){

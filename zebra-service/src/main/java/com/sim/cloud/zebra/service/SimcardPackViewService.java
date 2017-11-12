@@ -41,6 +41,8 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	
 	@Autowired
 	private SysUserService sysUserService;
+	@Autowired
+	private CompanyService companyService;
 	
 	
 	/**
@@ -63,6 +65,19 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	}
 	
 	/**
+	 * 查询用户下套餐的卡片列表
+	 * @param uid
+	 * @param packId
+	 * @return
+	 */
+	public List<SimcardPackageView> selectUserPackCards(Long uid,Long packId){
+		Map<String,Object> map=new HashMap<>();
+		map.put("uid", uid);
+		map.put("package_id", packId);
+		return selectByMap(map);
+	}
+	
+	/**
 	 * 流量池详细
 	 * @param uid
 	 * @param flow
@@ -79,11 +94,17 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 		Map<Integer,List<SimcardPackageView>> cards=list.stream().collect(Collectors.groupingBy(SimcardPackageView::getNetType));
 		SimcardPackageView cardFlow=new SimcardPackageView();
 		cardFlow.setUid(uid);
+		
+		String companyName="";
+		if(user.getCid()>0l){
+			companyName=companyService.selectById(user.getCid()).getName();
+		}
+		
 		cardFlow.setPackageUsed((float) list.stream().mapToDouble(m->m.getPackageUsed()).sum());
 		cardFlow.setPackageLeft( (float) list.stream().mapToDouble(m->m.getPackageLeft()).sum());
 		cardFlow.setFlow(list.stream().mapToInt(m->m.getFlow()).sum());
 		cardFlow.setLastSyncTime(list.stream().max((a,b)-> a.getLastSyncTime().compareTo(b.getLastSyncTime())).get().getLastSyncTime());
-		cardFlow.setPhone(user.getPhone()+"-"+user.getUserName());
+		cardFlow.setPhone(user.getPhone()+"-"+user.getUserName()+"-"+companyName);
 		Map<String,Integer> mapCard=new HashMap<>();
 		cards.entrySet().stream().forEach(e->{
 			mapCard.put(JasperUtils.getStatusStringMap().get("STATUS_"+e), e.getValue().size());
@@ -118,7 +139,11 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 			fpv.setActiveNum(mapInner.get(SimCard.ACTIVATED_NAME)==null?0:mapInner.get(SimCard.ACTIVATED_NAME).size());
 			fpv.setStockNum(mapInner.get(SimCard.INVENTORY_NAME)==null?0:mapInner.get(SimCard.INVENTORY_NAME).size());
 			fpv.setBlockNum(mapInner.get(SimCard.RETIRED_NAME)==null?0:mapInner.get(SimCard.RETIRED_NAME).size());
-			fpv.setLastSyncTime(e.getValue().stream().max((a,b)-> a.getLastSyncTime().compareTo(b.getLastSyncTime())).get().getLastSyncTime());
+			fpv.setTestNum(mapInner.get(SimCard.TEST_READY_NAME)==null?0:mapInner.get(SimCard.TEST_READY_NAME).size());
+			fpv.setAllNum(e.getValue().size());
+			fpv.setLastSyncTime(e.getValue().stream().max((a,b)-> 
+			a.getLastSyncTime().compareTo(b.getLastSyncTime())).get().
+					getLastSyncTime());
 			  return fpv;
 					}).collect(Collectors.toList());
 		
@@ -149,6 +174,9 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 			FlowPoolVo fpv=new FlowPoolVo();
 			fpv.setFlow(flow);
 			SysUser user=sysUserService.selectById(Long.parseLong(e.getKey().split("-")[1]));
+			if(user.getCid()>0l){
+				fpv.setCompanyName(companyService.selectById(user.getCid()).getName());
+			}
 			fpv.setUserName(user.getUserName());
 			fpv.setPhone(user.getPhone());
 			Map<Integer,List<SimcardPackageView>> mapInner=

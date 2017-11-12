@@ -44,6 +44,7 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/fonts-googleapi.css">
-  
+  <!-- 
   <script src="${pageContext.request.contextPath}/assets/plugins/pace/pace.min.js"></script>
    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/plugins/pace/themes/pace-theme-center-radar.css">
+    -->

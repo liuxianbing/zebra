@@ -16,6 +16,9 @@
 			<if test="cm.state !=null ">
 			  and state=#{cm.state}
 			</if>
+			<if test="cm.cid !=null ">
+			  and cid=#{cm.cid}
+			</if>
 		</where>
 	</select>
 	

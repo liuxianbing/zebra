@@ -12,18 +12,35 @@
 	text-align: center
 }
 
+.sing{
+line-height: 45px;
+text-align: center;
+border-bottom:1px solid #a4bfce;
+border-left:1px solid #a4bfce;
+border-right:1px solid #a4bfce
+}
+
 .ordertitle {
 	background-color: #dce5ea;
 	height: 40px;
 	text-align: left;
 	padding: 7px;
-	border: 1px solid #a4bfce
+	border: 1px solid #a4bfce;
+	margin-top:10px
+}
+.otitle div{
+padding-top:10px
+}
+.otherdivr{
+margin:0:auto;
+padding-top:5px;border-right:1px solid #a4bfce;
+text-align:center;height:100%;border-bottom:1px solid #a4bfce
 }
 -->
 </style>
 </head>
 
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini" style="height: 100%;">
 	<div class="wrapper">
 
 		<jsp:include page="../fragments/menu.jsp" />
@@ -46,8 +63,36 @@
 					<div class="col-md-1">操作</div>
 				</div>
 				<c:forEach items="${page.records }" var="pr">
-				<div class="row ordertitle">${pr.createTime }
-					订单号:${pr.orderCode }</div>
+				<div class="row ordertitle">${pr.createTime } 订单号:${pr.orderCode }</div>
+				<div class="row"  style="height:${fn:length(pr.contents)*46}px">
+					<div class="col-md-8 ">
+					  <c:forEach items="${pr.contents}" var="pc"> 
+					     <div class="row sing">
+					     <div class="col-md-4" style="width:40%">${pc.name }</div>
+						<div class="col-md-2" style="width:19%">${pc.price }</div>
+						<div class="col-md-2" style="width:19%">${pc.term }</div>
+						<div class="col-md-2" style="width:6%">0</div>
+						<div class="col-md-2" style="width:16%;padding-left:40px">${pc.num }</div>
+						</div>
+					  </c:forEach>
+					</div>
+					<div class="col-md-2 otherdivr" >
+					<p>${pr.totalCost }</p>
+					<p>
+					<c:if test="${pr.deliverCost>0.0 }">
+					(含运费：￥${pr.deliverCost})
+					</c:if>
+					<c:if test="${pr.deliverCost==0.0 }">
+					 包邮
+					</c:if>
+					</p>
+					</div>
+					<div class="col-md-1 otherdivr">${pr.orderNextStatus }</div>
+					<div class="col-md-1 otherdivr">
+					<p><a href="${ctx }/cart/detail?id=${pr.id}">查看详情</a></p>
+					</div>
+					</div>
+					
 				</c:forEach>
 				
 

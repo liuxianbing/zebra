@@ -1,7 +1,10 @@
 package com.sim.cloud.zebra.web;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.sim.cloud.zebra.common.util.CartCardEnum;
 import com.sim.cloud.zebra.model.CartCard;
 import com.sim.cloud.zebra.model.OrderGoods;
 import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SysAddress;
 import com.sim.cloud.zebra.model.SysArea;
 import com.sim.cloud.zebra.service.CartCardService;
+import com.sim.cloud.zebra.service.FinanceService;
 import com.sim.cloud.zebra.service.OrderGoodsService;
 import com.sim.cloud.zebra.service.PackageService;
 import com.sim.cloud.zebra.service.SysAddressService;
@@ -40,8 +45,9 @@ public class ShopCardController extends AbstractController{
 	@Autowired
 	private SysUserService sysUserService;
 	
+	
 	@Autowired
-	private PackageService packageService;
+	private FinanceService financeService;
 	
 	@Autowired
 	private SysAddressService sysAddressService;
@@ -54,8 +60,22 @@ public class ShopCardController extends AbstractController{
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String toList(Model model,@RequestParam Long uid) {
 		model.addAttribute("user", sysUserService.selectById(uid));
-		model.addAttribute("goodsList",cartCardService.selectList(null));
+		model.addAttribute("goodsList",cartCardService.selectCarts(uid, CartCard.INCART));
 		return "purchase/cart_list";
+	}
+	
+	@ApiOperation(value = "订单详细页面")
+	@RequestMapping(value = "/detail", method = RequestMethod.GET)
+	public String detail(Model model,@RequestParam Long id) {
+		OrderGoods og=orderGoodsService.selectById(id);
+		model.addAttribute("order", og);
+		model.addAttribute("addr", sysAddressService.selectById(og.getAddrId()));
+		 List<CartCard> list=cartCardService.selectByOrderId(id);
+			model.addAttribute("goodsList",list);
+			model.addAttribute("uid", og.getUid());
+			model.addAttribute("records",list.stream().map(m->m.getId()+"").collect(Collectors.joining(",")));
+			
+		return "purchase/order_detail";
 	}
 	
 	@ApiOperation(value = "购卡记录列表页面")
@@ -64,15 +84,61 @@ public class ShopCardController extends AbstractController{
 		Map<String,Object> params=extractFromRequest();
 		Page<OrderGoods> page=
 				orderGoodsService.selectPage(params,OrderGoods.class);
+		page.getRecords().parallelStream().forEach(e->{
+			e.setContents(cartCardService.selectByOrderId(e.getId()));
+		});
 		model.addAttribute("page", page);
 		return "purchase/buy_record";
 	}
 	
+	@ApiOperation(value = "更改订单状态")
+	@RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
+	public @ResponseBody Map<String, String> updateStatus(@RequestParam Long id,
+			@RequestParam Integer type){
+		Map<String, String> map=new HashMap<>();
+		map.put("res", orderGoodsService.updateOrderStatus(id,type)+"");
+		return map;
+	}
+	
+	@ApiOperation(value = "支付页面")
+	@RequestMapping(value = "/pay", method = RequestMethod.GET)
+	public String payPage(Model model,@RequestParam Long id) {
+		OrderGoods og=orderGoodsService.selectById(id);
+		model.addAttribute("order",og );
+		model.addAttribute("bance", financeService.selectBance(og.getUid()));
+		return "purchase/pay";
+	}
+	
+	@ApiOperation(value = "支付")
+	@RequestMapping(value = "/pay", method = RequestMethod.POST)
+	public @ResponseBody Map<String, String> pay(@RequestParam Long id){
+		Map<String, String> map=new HashMap<>();
+		map.put("res", orderGoodsService.updateOrderStatus(id,CartCardEnum.PAYOK_ORDER.getStatus())+"");
+		return map;
+	}
+	
+	@ApiOperation(value = "保存清单")
+	@RequestMapping(value = "setlement", method = RequestMethod.POST, produces = { "application/json" })
+	public @ResponseBody Map<String, String> setlement(@RequestParam String ids) {
+		List<CartCard> list=Arrays.asList(ids.split(",")).stream().map(m->{
+			CartCard cc=new CartCard();
+			cc.setId(Long.parseLong(m.split("_")[0]));
+			cc.setNum(Integer.parseInt(m.split("_")[1]));
+			return cc;
+		}).collect(Collectors.toList());
+		cartCardService.updateBatchById(list);
+		return SUCCESS;
+	}
+	
 	@ApiOperation(value = "订单页面")
 	@RequestMapping(value = "/order", method = RequestMethod.GET)
-	public String toOrder(Model model) {
+	public String toOrder(Model model,@RequestParam Long uid) {
 		model.addAttribute("provinceList", sysAddressService.selectAllProvinces());
-		model.addAttribute("addressList", sysAddressService.selectSelfAddress(2l));
+		model.addAttribute("addressList", sysAddressService.selectSelfAddress(uid));
+		 List<CartCard> list=cartCardService.selectCarts(uid, CartCard.INCART);
+		model.addAttribute("goodsList",list);
+		model.addAttribute("uid", uid);
+		model.addAttribute("records",list.stream().map(m->m.getId()+"").collect(Collectors.joining(",")));
 		return "purchase/order";
 	}
 	
@@ -80,6 +146,20 @@ public class ShopCardController extends AbstractController{
 	@RequestMapping(value = "/queryCity", method = RequestMethod.POST)
 	public @ResponseBody List<SysArea> queryArea(@RequestParam Long id,@RequestParam Integer type){
 		return sysAddressService.selectParentId(id,type);
+	}
+	
+	@ApiOperation(value = "删除一条购物记录")
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public @ResponseBody Map<String, String> delOneCart(@RequestParam Long id){
+		cartCardService.deleteById(id);
+		return SUCCESS;
+	}
+	
+	@ApiOperation(value = "去结算")
+	@RequestMapping(value = "/saveRecords", method = RequestMethod.POST)
+	public @ResponseBody  Map<String, String> saveRecords(@RequestBody List<CartCard> list){
+		cartCardService.insertOrUpdateBatch(list);
+		return SUCCESS;
 	}
 	
 	@ApiOperation(value = "设置默认地址")
@@ -111,9 +191,18 @@ public class ShopCardController extends AbstractController{
 	@RequestMapping(value = "/buy", method = RequestMethod.GET)
 	public String toBuy(Model model) {
 		model.addAttribute("userList", sysUserService.selectCustomers());
-		model.addAttribute("packageList", packageService.selectSystemPacks());
+	//	model.addAttribute("packageList", packageService.selectSystemPacks());
 		return "purchase/buy";
 	}
+	
+	@ApiOperation(value = "提交订单")
+	@RequestMapping(value = "/saveOrder", method = RequestMethod.POST)
+	public @ResponseBody OrderGoods saveOrder(@RequestBody OrderGoods cc) {
+		List<Long> params=Arrays.asList(cc.getRecords().split(",")).stream().map(m->Long.parseLong(m)).collect(Collectors.toList());
+		orderGoodsService.saveOrder(cc,params);
+		return cc;
+	}
+	
 	
 	@ApiOperation(value = "购买卡片")
 	@RequestMapping(value = "/buy", method = RequestMethod.POST)

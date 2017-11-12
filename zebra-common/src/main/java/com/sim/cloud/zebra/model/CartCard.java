@@ -5,6 +5,9 @@ package com.sim.cloud.zebra.model;
 * 类说明 
 */
 public class CartCard extends BaseModel{
+	
+	public static final Integer INCART=0;
+	public static final Integer ORDERED=1;
 
 	private Long uid;
 	private Long cid;
@@ -16,9 +19,16 @@ public class CartCard extends BaseModel{
 	private Long packageId;
 	private Integer operator;
 	private Integer type;//1:共享
+	private String name;
 	
 	
 	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	public Integer getOperator() {
 		return operator;
 	}

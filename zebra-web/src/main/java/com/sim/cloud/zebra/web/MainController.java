@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sim.cloud.zebra.common.util.CartCardEnum;
 import com.sim.cloud.zebra.common.util.JackSonUtil;
 import com.sim.cloud.zebra.model.TariffPlan;
 import com.sim.cloud.zebra.service.CompanyService;
+import com.sim.cloud.zebra.service.FinanceService;
+import com.sim.cloud.zebra.service.OrderGoodsService;
 import com.sim.cloud.zebra.service.SimCardService;
 import com.sim.cloud.zebra.service.SimcardPackViewService;
 import com.sim.cloud.zebra.service.SysUserService;
@@ -36,6 +39,11 @@ public class MainController  extends AbstractController {
 	@Autowired
 	private SimCardService simcardService;
 	
+	@Autowired
+	private FinanceService financeService;
+	
+	@Autowired
+	private OrderGoodsService orderGoodsService;
 	/**
 	 * 列表页面
 	 * @param model
@@ -56,8 +64,9 @@ public class MainController  extends AbstractController {
 		model.addAttribute("customerSize", customerSize);
 		model.addAttribute("authSize", authSize);
 		model.addAttribute("cardSize", simcardService.statisCardCount(uid));
-		model.addAttribute("orderSize", 100);
-		model.addAttribute("money", 1000.98);
+		model.addAttribute("orderSize", orderGoodsService.selectList(null).stream().
+				filter(f->f.getType()==CartCardEnum.SUCCESS_ORDER.getStatus()).count());
+		model.addAttribute("money", financeService.selectBance(getCurrUser().getId()));
 		
 		
 		//common

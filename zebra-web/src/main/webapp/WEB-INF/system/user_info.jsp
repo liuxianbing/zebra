@@ -31,7 +31,9 @@
 					<ul class="nav nav-tabs">
 						<li class="active"><a href="#activity" data-toggle="tab">基本信息</a></li>
 						<li><a href="#timeline" data-toggle="tab">修改密码</a></li>
-						<li><a href="#settings" data-toggle="tab">企业信息</a></li>
+						<c:if test="${CURRENT_USER.role==1 }">
+						  <li><a href="#settings" data-toggle="tab">企业信息</a></li>
+						</c:if>
 					</ul>
 					<div class="tab-content">
 						<div class="active tab-pane" id="activity">
@@ -162,9 +164,11 @@
 								</div>
 							</form:form>
 						</div>
+						<c:if test="${CURRENT_USER.role==1 }">
 						<div class="tab-pane" id="settings">
 							<jsp:include page="auth_fragment.jsp" />
 						</div>
+						</c:if>
 					</div>
 				</div>
 

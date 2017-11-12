@@ -47,10 +47,22 @@ public class SimCard extends BaseModel {
 	protected String netTypeStr;
 	@TableField(exist = false)
 	protected String objTypeStr;
+	@TableField(exist = false)
+	String typeStr;
 	
 	
 	
 	
+	
+	public String getTypeStr() {
+		if(type==1){
+			typeStr= "共享卡";
+		}else{
+			typeStr= "独享卡";
+		}
+		return typeStr;
+	}
+
 	public String getNetTypeStr() {
 		if(netType==1){
 			netTypeStr= "开启";

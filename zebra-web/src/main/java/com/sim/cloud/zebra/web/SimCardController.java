@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.sim.cloud.zebra.common.util.CardDeviceStatusEnum;
 import com.sim.cloud.zebra.common.util.Constants;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.model.Company;
@@ -70,9 +71,16 @@ public class SimCardController extends AbstractController {
 	@ApiOperation(value = "物联网卡列表页面")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String toList(Model model) {
-		model.addAttribute("userList", sysUserService.selectCustomers());
+		List<SysUser>  list;
+		if(checkIfManager()){
+			list=sysUserService.selectCustomers().stream().filter(f->f.getAuth()==1).collect(Collectors.toList());
+		}else{
+			list=sysUserService.selectCommonUser(getCurrUser().getCid());
+		}
+		model.addAttribute("userList",list );
 		model.addAttribute("planList", tariffPlanService.selectList(null));
 		model.addAttribute("termList", Constants.TERM_LIST);
+		 model.addAttribute("deviceStatus",CardDeviceStatusEnum.values());
 		return "simcard/card_list";
 	}
 
@@ -87,7 +95,7 @@ public class SimCardController extends AbstractController {
 		if (card.getUid() != null) {
 			user = sysUserService.selectById(card.getUid());
 		}
-		if (user.getCid() != null) {
+		if (user!=null && user.getCid() != null) {
 			company = companyService.selectById(user.getCid());
 		}
 		if (card.getPackageId() != null) {
@@ -187,13 +195,11 @@ public class SimCardController extends AbstractController {
 	@RequestMapping(value = "alloc", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody Map<String, String> alloc(@RequestBody Map<String, Object> params) {
 		if(!checkIfManager()){
-			throw new RuntimeException("无权限操作!");
+			//throw new RuntimeException("无权限操作!");
 		}
 		List<String> iccidsList = Arrays.asList(params.get("iccid").toString());
 		List<String> list = simcardService.saveCardPlanRel(iccidsList, Arrays.asList(params.get("ids").toString()),
-				Float.parseFloat(params.get("externalQuote").toString()),
-				Long.parseLong(params.get("planId").toString()), Long.parseLong(params.get("uid").toString()),
-				Integer.parseInt(params.get("term").toString()), params.get("remark").toString());
+				Long.parseLong(params.get("packageId").toString()), Long.parseLong(params.get("uid").toString()));
 		Map<String, String> map = new HashMap<>();
 		if (null != list && list.size() > 0) {
 			String msg = list.stream().collect(Collectors.joining(","));
@@ -203,6 +209,17 @@ public class SimCardController extends AbstractController {
 		}
 		return SUCCESS;
 	}
+	
+	
+	
+	@ApiOperation(value = "卡片分配")
+	@RequestMapping(value = "dist", method = RequestMethod.POST, produces = { "application/json" })
+	public @ResponseBody Map<String, String> distribute(@RequestParam String ids,Long uid) {
+		simcardService.allocCardToUsers( Arrays.asList(ids.split(",")),uid);
+		return SUCCESS;
+	}
+	
+	
 
 	/**
 	 * 物联网卡请求
@@ -217,7 +234,10 @@ public class SimCardController extends AbstractController {
 		Map<Long, SysUser> userMap =new HashMap<>();
 		boolean ismana=checkIfManager();
 		if(!ismana){
-			params.put("uid", getCurrUser().getId());
+			if(getCurrUser().getRole()==SysUser.ROLE_USER){
+				params.put("uid", getCurrUser().getId());
+			}
+			params.put("cid", getCurrUser().getCid());
 		}else{
 			userMap.putAll(sysUserService.selectCustomers().stream()
 					.collect(Collectors.toMap(SysUser::getId, c -> c)));

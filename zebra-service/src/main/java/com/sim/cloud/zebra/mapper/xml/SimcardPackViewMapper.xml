@@ -21,7 +21,11 @@
 			<if test="cm.uid !=null ">
 			  and uid=#{cm.uid}
 			</if>
+			<if test="cm.cid !=null ">
+			  and cid=#{cm.cid}
+			</if>
 		</where>
 	</select>
+	
 	
 </mapper>

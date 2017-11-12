@@ -1,5 +1,6 @@
 package com.sim.cloud.zebra.model;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 /**
@@ -12,6 +13,9 @@ import com.baomidou.mybatisplus.annotations.TableName;
 @TableName("sys_user")
 public class SysUser extends BaseModel {
 
+	public static final int ROLE_SYS=0;
+	public static final int ROLE_MANAGER=1;
+	public static final int ROLE_USER=2;
 	private static final long serialVersionUID = 3821528241569575012L;
 	public static final int able = 1; // 账户启用
 	public static final int disable = 0; // 账户禁用
@@ -23,10 +27,43 @@ public class SysUser extends BaseModel {
 	private String phone;
 	private String address;
 	private String remark;//备注
+	
+	private Integer role;//用户角色 0:超级管理员 1：普通管理员 2:普通用户
 
+	private Integer auth;//是否认证
 	private Integer status = SysUser.able;// 用户的状态
 	private Long cid;
 
+	@TableField(exist = false)
+	private String authStr;
+
+	
+	
+	public String getAuthStr() {
+		if(auth==1){
+			authStr="认证通过";
+		}else{
+			authStr="未认证";
+		}
+		return authStr;
+	}
+
+
+	public Integer getAuth() {
+		return auth;
+	}
+
+	public void setAuth(Integer auth) {
+		this.auth = auth;
+	}
+
+	public Integer getRole() {
+		return role;
+	}
+
+	public void setRole(Integer role) {
+		this.role = role;
+	}
 
 	public Long getCid() {
 		return cid;

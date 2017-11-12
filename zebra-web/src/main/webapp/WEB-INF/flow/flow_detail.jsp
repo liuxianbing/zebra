@@ -37,6 +37,11 @@ padding:15px
     padding: 0 0% 0 0;
     font-size: 14px;
 }
+.bootbox-alert,.bootbox-confirm{
+	background: none;
+	border:none;
+	box-shadow:none;
+}
 </style>
 </head>
 
@@ -97,11 +102,13 @@ padding:15px
 				<form:form onsubmit="return false" action="" method="post" id="oper">
 				  <input type='hidden' name="ids" id="ids" />
 				</form:form>
+				  <c:if test="${CURRENT_USER.role==0 }">
 				<p class="btn_table" style='margin-left:5px'>
 				    <button type="button"  class="btn  margin btn-success disabled">打开网络</button>
 				    
 				    <button type="button"   class="btn  margin btn-primary disabled">关闭网络</button>
-				<p>
+				</p>
+				</c:if>
 				<table id="card_list" class="table table-bordered table-hover">
 				</table>
 			</section>
@@ -294,15 +301,24 @@ opt.success=function(data){
   };
 
 function openNet(){
+	bootbox.confirm('是否确认打开网络？', function(result) {
+		if(result){
 	 $('body').modalmanager('loading');
 		$("#oper").attr('action',"${ctx}/simcard/open");
 		SP.ajax($("#oper"),opt);
+		}
+	});
 }
 
 function closeNet(){
-	    $('body').modalmanager('loading');
-		$("#oper").attr('action',"${ctx}/simcard/close");
-		SP.ajax($("#oper"),opt);
+	bootbox.confirm('是否确认关闭网络？', function(result) {
+		  if(result){
+			  $('body').modalmanager('loading');
+				$("#oper").attr('action',"${ctx}/simcard/close");
+				SP.ajax($("#oper"),opt);
+		  }
+	});
+	   
 }
 
 

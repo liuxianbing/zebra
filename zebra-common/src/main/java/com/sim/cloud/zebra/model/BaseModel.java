@@ -20,8 +20,6 @@ public abstract class BaseModel implements Serializable {
 	protected String updateTime=DateUtil.getDateTime();
     protected Long createUserId;         // 创建人ID
     protected Integer status;            // 删除状态  0-未删除  1-删除
-    
-
 
 	@TableField(exist = false)
 	protected String keyword;

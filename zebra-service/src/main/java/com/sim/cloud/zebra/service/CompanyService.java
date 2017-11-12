@@ -27,13 +27,18 @@ public class CompanyService  extends AbstractService<CompanyMapper, Company> {
 	 * @param company
 	 */
 	public void saveAuthInfo(Company company){
-		boolean isupd=company.getId()!=null && company.getId()>0l;
+	//	boolean isupd=company.getId()!=null && company.getId()>0l;
 		this.insertOrUpdate(company);
-		if(!isupd){
 			SysUser su=new SysUser();
 			su.setId(company.getUid());
 			su.setCid(company.getId());
+			company=selectById(company.getId());
+			try {
+				su.setAuth((company.getLegalAuth()+company.getBusinessAuth())/2);
+			} catch (Exception e) {
+				su.setAuth(0);
+			}
+			
 			sysUserMapper.updateById(su);
-		}
 	}
 }

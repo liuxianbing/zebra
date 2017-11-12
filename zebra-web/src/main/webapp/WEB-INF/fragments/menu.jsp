@@ -3,11 +3,11 @@
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 	<header class="main-header">
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="#" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>A</b>LT</span>
+      <span class="logo-mini">SimClouds</span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Admin</b>LTE</span>
+      <span class="logo-lg"><b>Admin</b>SimClouds</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -33,7 +33,7 @@
                   <small>Member since Nov. 2012</small>
                 </p>
               </li>
-              <!-- Menu Body -->
+              <!-- Menu Body 
               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
@@ -46,8 +46,8 @@
                     <a href="#">Friends</a>
                   </div>
                 </div>
-                <!-- /.row -->
               </li>
+              -->
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
@@ -102,6 +102,7 @@
             <i class="fa fa-home"></i> <span>首页</span>           
           </a>
         </li>
+        <c:if test="${CURRENT_USER.auth==1 }">
           <li class="treeview">
           <a href="#">
             <i class="fa fa-cc-mastercard"></i>
@@ -111,26 +112,15 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${ctx }/simcard/list"><i class="fa fa-list-alt"></i> 卡片列表</a></li>
-            <li><a href="${ctx }/flow/self"><i class="fa fa-hourglass-2"></i> 我的流量池</a></li>
-             <li><a href="${ctx }/cart/buy"><i class="fa fa-hourglass-2"></i> 购买正式卡</a></li>
-              <li><a href="${ctx }/cart/order"><i class="fa fa-hourglass-2"></i> 订单</a></li>
-               <li><a href="${ctx }/cart/record"><i class="fa fa-hourglass-2"></i>购卡记录</a></li>
+            <li><a href="${ctx }/simcard/list"><i class="fa fa-list-alt"></i>卡片列表</a></li>
+            <c:if test="${CURRENT_USER.role>=1 }">
+            <li><a href="${ctx }/flow/self"><i class="fa fa-hourglass-2"></i>我的流量池</a></li>
+            </c:if>
           </ul>
         </li>
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-gears"></i>
-            <span>设置</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="${ctx }/user/account"><i class="fa fa-user"></i> 账户设置</a></li>
-          </ul>
-        </li>
-        <c:if 	test="${CURRENT_USER.createUserId==null || CURRENT_USER.createUserId==0 }">
+        </c:if>
+      
+       <c:if test="${CURRENT_USER.role==0 }">
         <li class="treeview">
           <a href="#">
             <i class="fa fa-puzzle-piece"></i>
@@ -140,13 +130,60 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${ctx }/tariffplan/list"><i class="fa fa-paper-plane"></i> 资费计划管理</a></li>
-            <li><a href="${ctx }/pack/list"><i class="fa fa-paper-plane"></i> 系统套餐管理</a></li>
+            <li><a href="${ctx }/tariffplan/list"><i class="fa fa-paper-plane"></i>资费计划管理</a></li>
+            <li><a href="${ctx }/pack/list"><i class="fa fa-paper-plane"></i>系统套餐管理</a></li>
              <li><a href="${ctx }/flow/list"><i class="fa fa-tasks"></i>客户流量池</a></li>
-              <li><a href="${ctx }/user/list"><i class="fa fa-users"></i> 客户管理</a></li>
+              <li><a href="${ctx }/user/list"><i class="fa fa-users"></i>客户管理</a></li>
           </ul>
         </li>
         </c:if>
+          <li class="treeview">
+          <a href="#">
+            <i class="fa fa-gears"></i>
+            <span>设置</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="${ctx }/user/account"><i class="fa fa-user"></i>账户设置</a></li>
+              <c:if test="${CURRENT_USER.role==1 }">
+              <li><a href="${ctx }/user/list"><i class="fa fa-users"></i>用户列表</a></li>
+              </c:if>
+          </ul>
+        </li>
+        <c:if test="${CURRENT_USER.role<=1 }">
+          <li class="treeview">
+          <a href="#">
+            <i class="fa fa-puzzle-piece"></i>
+            <span>在线购卡</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+          <c:if test="${CURRENT_USER.role==0 }">
+            <li><a href="${ctx }/cart/buy"><i class="fa fa-paper-plane"></i>购买卡</a></li>
+            </c:if>
+            <li><a href="${ctx }/cart/record"><i class="fa fa-paper-plane"></i>购卡记录</a></li>
+          </ul>
+        </li>
+        </c:if>
+         <li class="treeview">
+          <a href="#">
+            <i class="fa fa-puzzle-piece"></i>
+            <span>财务</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="${ctx }/finance/list"><i class="fa fa-paper-plane"></i>账户余额</a></li>
+            <c:if test="${CURRENT_USER.role==0 }">
+            <li><a href="${ctx }/finance/add"><i class="fa fa-paper-plane"></i>账户充值</a></li>
+            </c:if>
+          </ul>
+        </li>
       </ul>
     </section>
     <!-- /.sidebar -->

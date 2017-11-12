@@ -13,13 +13,13 @@
 			<div class="form-group">
 				<label for="inputEmail3" class="col-sm-4 control-label">企业工商认证</label>
 				<div class="col-sm-8">
-				  <c:if test="${CURRENT_USER.createUserId>0 }">
+				    <c:if test="${CURRENT_USER.role==1 }">
 				      <c:choose>
 				      <c:when test="${company.businessAuth ==1 }"><i class="fa fa-fw fa-check-circle bg-green" style="width:110px;line-height:23px">已认证</i></c:when>
 				      <c:otherwise><i class="fa fa-fw fa-check-circle bg-yellow" style="width:110px;line-height:23px">未认证</i></c:otherwise>
 				      </c:choose>
 				  </c:if>
-				   <c:if test="${CURRENT_USER.createUserId==0 }">
+				     <c:if test="${CURRENT_USER.role==0 }">
 					<label class="radio-inline"> <input type="radio"
 						name="businessAuth" id="businessAuth1" value="1"
 						${company.businessAuth ==1 ?'checked':''}> 已认证
@@ -104,13 +104,13 @@
 			<div class="form-group">
 				<label for="inputEmail3" class="col-sm-4 control-label">企业法人认证</label>
 				<div class="col-sm-8">
-				 <c:if test="${CURRENT_USER.createUserId>0 }">
+				   <c:if test="${CURRENT_USER.role==1 }">
 				      <c:choose>
 				      <c:when test="${company.legalAuth ==1 }"><i class="fa fa-fw fa-check-circle bg-green" style="width:110px;line-height:23px">已认证</i></c:when>
 				       <c:otherwise><i class="fa fa-fw fa-check-circle bg-yellow" style="width:110px;line-height:23px">未认证</i></c:otherwise>
 				      </c:choose>
 				  </c:if>
-				   <c:if test="${CURRENT_USER.createUserId==0 }">
+				     <c:if test="${CURRENT_USER.role==0 }">
 					<label class="radio-inline"> <input type="radio"
 						name="legalAuth" id="legalAuth1" value="1"
 						${company.legalAuth ==1 ?'checked':''}> 已认证
@@ -137,6 +137,9 @@
 			</div>
 		</div>
 	</div>
+	
+		<input type="hidden" name="id" value="${company.id }"> <input
+						type="hidden" name="uid" id="uids" value="${uid}" />
 	
 	<div class="row">
 	<c:if test="${company.legalAuth==null || company.legalAuth==0 }">
@@ -280,6 +283,10 @@ $('#submitLegal').click(function(){
 	SP.ajax($("#validationformLegal"),options);
 });
 $('#submitBusiness').click(function(){
+	var options={}
+	options.success=function(){
+		
+	}
 	SP.ajax($("#validationformBusiness"),options);
 });
 if('${company.businessUrl}'==''){

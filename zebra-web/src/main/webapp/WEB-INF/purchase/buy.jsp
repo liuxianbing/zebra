@@ -54,7 +54,7 @@
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">选择客户</label>
 			                  <div class="col-sm-8">
-			                   <select id="uid" class="form-control select2" name="uid"
+			                   <select id="uid" class="form-control select2  validate[required]" name="uid"
 								style="float: left;" data-placeholder="选择客户">
 								 <c:forEach items="${userList }" var="ul" >
 								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
@@ -69,7 +69,7 @@
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">运营商</label>
 			                  <div class="col-sm-8">
-			                   <select id="operator" class="form-control select2" name="operator"
+			                   <select id="operator" class="form-control select2  validate[required]" name="operator"
 								style="float: left;" data-placeholder="运营商">
 								 <option value="3">中国联通</option>
 								</select>
@@ -77,6 +77,7 @@
 			                </div>
 						  </div>
 					</div>
+					<!-- 
 					<div class="row" >
 						   <div class="col-md-12">
 						  	 <div class="form-group">
@@ -91,15 +92,17 @@
 			                </div>
 						  </div>
 					</div>
+					 -->
 					<div class="row" >
 					<div class="col-md-12">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">选择套餐</label>
 			                  <div class="col-sm-8">
-			                    <select id="packageId" class="form-control select2" name="packageId"
+			                    <select id="packageId" class="form-control select2  validate[required]" name="packageId"
 								style="float: left;" data-placeholder="选择套餐">
 								</select>
 								<input type="hidden" name="flow" id='flow' />
+								<input type="hidden" name="name" id='name' />
 			                  </div>
 			                </div>
 						  </div>
@@ -108,7 +111,7 @@
 						  <div class="col-md-12">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">套餐价格</label>
-			                  <div class="col-sm-8">
+			                  <div class="col-sm-1">
 			                    <input type="text"  class="form-control" readonly="readonly"
 			                    name="price" id="price" placeholder="套餐价格" value="">
 			                  </div>
@@ -119,9 +122,9 @@
 						  <div class="col-md-12">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">订购周期(月)</label>
-			                  <div class="col-sm-1">
+			                  <div class="col-sm-3">
 			                   <div class="input-group spinner" data-trigger="spinner">
-							          <input type="text" id="term" name="term" class="form-control text-center validate[required,custom[integer]]" 
+							          <input type="text" id="term" name="term"  class="form-control text-center validate[required,custom[integer]]" 
 							          data-max="36" data-min="1" value="1" data-rule="quantity">
 							          <div class="input-group-addon">
 							            <a href="javascript:;" class="spin-up" data-spin="up"><i class="fa fa-caret-up"></i></a>
@@ -136,7 +139,7 @@
 						  <div class="col-md-12">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">订购数量</label>
-			                  <div class="col-sm-1">
+			                  <div class="col-sm-3">
 			                   <div class="input-group spinner" data-trigger="spinner">
 							          <input type="text" id="num" name="num" class="form-control text-center validate[required,custom[integer]]" 
 							          data-max="3000" data-min="1" value="1" data-rule="quantity">
@@ -199,11 +202,18 @@ data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
 </html>
 <script>
 $(".select2").select2({ allowClear:false}).on("change", function(e) {
-	if($(this).attr("id")=="type"){
+	if($(this).attr("id")=="uid"){
 		initPackSelect($(this).val())
 	}else if($(this).attr("id")=="packageId"){
-		 $("#price").val( $("#pack_"+$(this).val()).attr("lang"));
-		 $("#flow").val( $("#pack_"+$(this).val()).attr("tabindex"))
+		var mmid=$(this).val();
+		 $.each(currentPackage, function(key, value) {
+			 if(value.id==mmid){
+				 $("#price").val( value.externalQuote);
+				 $("#flow").val(value.flow);
+			 }
+		});
+		// $("#price").val( $("#pack_"+$(this).val()).attr("lang"));
+		// $("#flow").val( $("#pack_"+$(this).val()).attr("tabindex"))
 	}
 });
 $(".validationform").validationEngine({ relative: true, relativePadding:false,
@@ -217,14 +227,15 @@ options.success=function(e){
 	}
 }
 $('#submit').click(function(){
+	$("#name").val("中国联通-"+$("#flow").val()+"MB套餐")
 	SP.ajax($("#validationform"),options);
 });
 
+var currentPackage;
 
-
-initPackSelect(0);
+initPackSelect($("#uid").val());
 //初始化资费计划选择
-function initPackSelect(type){
+function initPackSelectOld(type){
 	 $("#packageId").empty();
 	 $("#allPackage").find("a."+type).each(function (index,domEle){
 			$("#packageId").append("<option value="+ $(this).attr('href') + ">"+ $(this).text() +"</option>");
@@ -240,4 +251,24 @@ $('.spinner').spinner('changed',function(e, newVal, oldVal){
     $("#buy").click(function(){
 	  window.location.href="${ctx}/cart/buy"
   })
+  
+  function initPackSelect(uid){
+  var options={}
+  options.url="${ctx}/pack/selfPacks?uid="+uid
+  $("#packageId").empty();
+  options.success = function(e) {
+	  $.each(e, function(key, value) {
+			$("#packageId").append("<option value="+ value.id + ">" + value.name+ "</option>");
+		});
+	  currentPackage=e;
+	  
+		 $.each(e, function(key, value) {
+			 if(value.id==$("#packageId").val()){
+				 $("#price").val( value.externalQuote);
+				 $("#flow").val(value.flow);
+			 }
+		});
+  }
+  SP.ajax($("#validationform"), options, false);
+  }
 </script>

@@ -33,12 +33,25 @@ public class FlowPoolVo implements Serializable {
 	
 	private long allNum;
 	
+	private String companyName;
+	
 	
 
 	
 	
+	public void setAllNum(long allNum) {
+		this.allNum = allNum;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
 	public long getAllNum() {
-		allNum=getActiveNum()+getStockNum()+getBlockNum();
 		return allNum;
 	}
 
@@ -72,7 +85,7 @@ public class FlowPoolVo implements Serializable {
 
 	public int getLeftPercent() {
 		if(getTotalPool()>0){
-			leftPercent=(int) (getLeftPool()*100/getTotalPool());
+			leftPercent=(int) (getUsePool()*100/getTotalPool());
 		}
 		return leftPercent;
 	}

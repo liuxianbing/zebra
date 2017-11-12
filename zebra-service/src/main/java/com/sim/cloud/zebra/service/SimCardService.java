@@ -19,6 +19,7 @@ import com.sim.cloud.zebra.mapper.PackageMapper;
 import com.sim.cloud.zebra.mapper.SimCardMapper;
 import com.sim.cloud.zebra.mapper.SysUserMapper;
 import com.sim.cloud.zebra.mapper.TariffPlanMapper;
+import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SimCard;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
@@ -161,29 +162,31 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 //			return list.get(0);
 //		}
 //	}
+	
+	/**
+	 * 卡片分配
+	 * @param idsList
+	 * @param uid
+	 */
+	public void allocCardToUsers(List<String> idsList,Long uid){
+		for (String id : idsList) {
+			SimCard card = new SimCard();
+			card.setId(Long.parseLong(id));
+			card.setUid(uid);
+			super.updateById(card);
+		}
+	}
 
 	/**
 	 * 划拨物联卡
 	 * @return
 	 */
-	public List<String> saveCardPlanRel(List<String> iccidsList, List<String> idsList, Float externalQuote, Long planId,
-			Long uid, Integer term, String remark) {
-		TariffPlan tp = tariffPlanMapper.selectById(planId);
+	public List<String> saveCardPlanRel(List<String> iccidsList, List<String> idsList, Long packId,
+			Long uid) {
+	    Package pack=	packageMapper.selectById(packId);
+	    String planName=tariffPlanMapper.selectById(pack.getPlanId()).getName();
 		SysUser user = sysUserMapper.selectById(uid);
 		// 保存用户套餐
-		com.sim.cloud.zebra.model.Package pack = new com.sim.cloud.zebra.model.Package();
-		pack.setPlatQuote(tp.getCost());
-		pack.setExternalQuote(externalQuote);
-		pack.setFlow(tp.getFlow());
-		pack.setAccount(tp.getAccount());
-		pack.setOperator(tp.getOperator());
-		pack.setTerm(term);
-		pack.setPlanId(planId);
-		pack.setCardType(tp.getType());
-		pack.setUid(uid);
-		pack.setRemark(remark);
-		pack.setCreateTime(DateUtil.getDateTime());
-		packageMapper.insert(pack);
 
 		String nowDate = DateUtil.getDate();
 		
@@ -197,7 +200,7 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 			card.setUid(uid);
 			card.setCid(user.getCid());
 			card.setOpenTime(nowDate);
-			card.setPackageId(pack.getId());
+			card.setPackageId(packId);
 			super.updateById(card);
 		}
 
@@ -213,9 +216,10 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 		List<String> errorIccids = new ArrayList<>();
 		
 		// 更新jasper
-		String accountInfo = ZebraConfig.getAccounts().get(tp.getAccount());
+		String accountInfo = ZebraConfig.getAccounts().get(pack.getAccount());
+		System.out.println(accountInfo+"&&&&&&&&"+pack.getAccount());
 		JasperClient jasperClient = JasperClient.getInstance(accountInfo);
-		errorIccids.addAll(jasperClient.changeRatePlan(iccidsList, tp.getName()));
+		errorIccids.addAll(jasperClient.changeRatePlan(iccidsList, planName));
 		
 		try {
 			if ( errorIccids.size() > 0) {// 失败的卡信息还原

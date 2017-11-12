@@ -117,10 +117,12 @@
 							</div>
 							<div class="box-body">
 								<div class="row">
-									<div class="col-md-6" id="shareFlow" style="min-height: 250px">
+									<div class="col-md-12" id="shareFlow" style="min-height: 250px">
 									</div>
+									<!-- 
 									<div class="col-md-6" id="singleFlow" style="min-height: 250px">
 									</div>
+									 -->
 								</div>
 							</div>
 						</div>
@@ -305,6 +307,7 @@ flowOption.series=[
 			}
 	}
 ]
+/*
 flowOption.xAxis[0].data=[];
 var sf=JSON2.parse('${singleFlow}');
 $.each(sf,function(i,n){
@@ -313,4 +316,5 @@ $.each(sf,function(i,n){
 flowOption.series[0].name="独享流量使用占比";
 flowOption.series[0].data=sf;
 echarts.init(document.getElementById("singleFlow")).setOption(flowOption);
+*/
 </script>

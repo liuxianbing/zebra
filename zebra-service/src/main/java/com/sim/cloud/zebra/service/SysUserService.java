@@ -36,7 +36,14 @@ public class SysUserService extends AbstractService<SysUserMapper, SysUser> {
 	 */
 	public List<SysUser> selectCustomers() {
 		EntityWrapper<SysUser> wrapper=new EntityWrapper<>();
-		wrapper.gt("create_user_id", 0);
+		wrapper.eq("role", SysUser.ROLE_MANAGER);
+		return selectList(wrapper);
+	}
+	
+	public List<SysUser> selectCommonUser(Long cid) {
+		EntityWrapper<SysUser> wrapper=new EntityWrapper<>();
+		wrapper.eq("role", SysUser.ROLE_USER);
+		wrapper.eq("cid", cid);
 		return selectList(wrapper);
 	}
 	

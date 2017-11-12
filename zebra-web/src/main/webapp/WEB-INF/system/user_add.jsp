@@ -15,10 +15,18 @@
 		<div class="content-wrapper">
 		 <!-- Content Header (Page header)-->
 		    <section class="content-header">
+		    	  <c:if test="${CURRENT_USER.role==0 }">
 		      <h1>
-		      	  用户管理
-		        <small>>创建用户</small>
+		      	  客户管理
+		        <small>创建客户</small>
 		      </h1>
+		      </c:if>
+		      <c:if test="${CURRENT_USER.role==1 }">
+		       <h1>
+		      	  用户列表
+		        <small>创建用户</small>
+		      </h1>
+		      </c:if>
 		    </section>
 			<!-- Main content -->
 			<section class="content">

@@ -31,9 +31,9 @@ public enum CardDeviceStatusEnum {
 		this.simStatus = simStatus;
 	}
 	
-	private static Map<Integer, CardDeviceStatusEnum> map = new HashMap<Integer, CardDeviceStatusEnum>();//将code和name存到map，用于根据code获取name
+	public static Map<Integer, CardDeviceStatusEnum> map = new HashMap<Integer, CardDeviceStatusEnum>();//将code和name存到map，用于根据code获取name
 	private static Map<String, CardDeviceStatusEnum> vrMap = new HashMap<String, CardDeviceStatusEnum>();//将code和name存到map，用于根据code获取name
-    private static List<CardDeviceStatusEnum> list = new ArrayList<CardDeviceStatusEnum>();
+	private static List<CardDeviceStatusEnum> list = new ArrayList<CardDeviceStatusEnum>();
     static {
         for (CardDeviceStatusEnum spaceEnum : CardDeviceStatusEnum.values()) {
             map.put(spaceEnum.status, spaceEnum);

@@ -19,7 +19,7 @@
 #validationform .row{
 margin-top:15px
 }
-.bootbox-alert{
+.bootbox-alert,.bootbox-confirm{
 	background: none;
 	border:none;
 	box-shadow:none;
@@ -69,12 +69,11 @@ margin-top:15px
 							<select id="objType" class="form-control select2" name="objType"
 								style="float: left;" data-placeholder="设备状态">
 								<option value=" " selected="selected">全部设备</option>
-								 <option value="0" >库存</option>
-								  <option value="1" >已激活</option>
-								  <option value="2" >已停卡</option>
+								<c:forEach items="${deviceStatus }" var="ds">
+									<option value="${ds.status }" >${ds.simStatus }</option>
+								</c:forEach>
 							</select>
 						</div>
-						 <c:if 	test="${CURRENT_USER.createUserId==null || CURRENT_USER.createUserId==0 }">
 						<div class="col-sm-2 col-md-2">
 							<select id="uid" class="form-control select2" name="uid"
 								style="float: left;" data-placeholder="关联客户">
@@ -85,19 +84,24 @@ margin-top:15px
 								  </c:forEach>
 							</select>
 						</div>
-						</c:if>
 				<div class="col-sm-2 col-md-2">
 					 <button type="button" id="searchButton" onclick="loadTable()" class="btn btn-primary">查询</button>
                 </div>
 					</div>
 				</form:form>
-				<p class="btn_table">
+				<div class="btn_table">
+				    <c:if test="${CURRENT_USER.role==0 }">
 				    <button type="button" id="huabo"  class="btn  margin btn-success disabled">划拨</button>
 				    <button type="button" id="rmBtn"  class="btn  margin btn-primary disabled">备注</button>
-				 <button type="button"  class="btn  margin btn-info disabled">打开网络</button>
-				    <button type="button"   class="btn  margin btn-warning disabled">关闭网络</button>
-				
-				<p>
+				  	<button type="button"  class="btn  margin btn-default disabled">卡重置</button>
+				  	 <button type="button"  class="btn  margin btn-info disabled">打开网络</button>
+				    <button type="button"   class="btn  margin btn-danger disabled">关闭网络</button>
+				  </c:if>
+				   <c:if test="${CURRENT_USER.role==1 }">
+				   <button type="button"  class="btn  margin btn-waring disabled">卡分配</button>
+				   </c:if>
+				   
+				</div>
 				<table id="card_list" class="table table-bordered table-hover">
 				</table>
 			</section>
@@ -107,6 +111,37 @@ margin-top:15px
 		<jsp:include page="../fragments/bottom.jsp" />
 	</div>
 	
+	<div id="distDiv" class="modal"  data-keyboard="true" data-backdrop="static">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"
+			aria-hidden="true"></button>
+		<h4 class="modal-title">卡片分配</h4>
+	</div>
+	<div class="modal-body" style="overflow: hidden;">
+				<form:form onsubmit="return false" action="${ctx}/simcard/dist" method="post" 
+				class="validationform form-horizontal" id="validationform3">
+						<div class="row" >
+						  <div class="col-md-3">
+						  	  <label for="inputEmail3" class="control-label">关联客户</label>
+						  </div>
+						   <div class="col-md-9">
+						     <select id="uidInnerss" class="form-control select2" name="uidss"
+								style="float: left;" data-placeholder="关联客户">
+								  <c:forEach items="${userList }" var="ul" >
+								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
+								  </c:forEach>
+							</select>
+						  </div>
+					</div>
+				</form:form>
+	</div>
+	<div class="modal-footer">
+	<button type="button" id="submitDist"   class="btn btn-primary">提交</button>
+			
+		<button type="button" data-dismiss="modal" id="closeupload3"
+			class="btn btn-default">关闭</button>
+	</div>
+</div>
 	
 	<div id="remarkDiv" class="modal"  data-keyboard="true" data-backdrop="static">
 	<div class="modal-header">
@@ -166,7 +201,7 @@ margin-top:15px
 						  	  <label for="inputEmail3" class="control-label">关联客户</label>
 						  </div>
 						   <div class="col-md-9">
-						     <select id="uid" class="form-control select2" name="uid"
+						     <select id="uidInner" onchange="initPackSelect(this.value)" class="form-control select2" name="uid"
 								style="float: left;" data-placeholder="关联客户">
 								  <c:forEach items="${userList }" var="ul" >
 								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
@@ -179,11 +214,12 @@ margin-top:15px
 						  	  <label for="inputEmail3" class="control-label">关联套餐</label>
 						  </div>
 						   <div class="col-md-9">
-						     <select id="planId" class="form-control select2" name="planId"
+						     <select id="packageId" class="form-control select2  validate[required]" name="packageId"
 								style="float: left;" data-placeholder="关联套餐">
 							</select>
 						  </div>
 					</div>
+					<!-- 
 					<div class="row" >
 						  <div class="col-md-3">
 						  	  <label for="inputEmail3" class="control-label">套餐期限</label>
@@ -206,16 +242,8 @@ margin-top:15px
 			                    name="externalQuote" id="externalQuote"  placeholder="自定义套餐价格">
 						  </div>
 					</div>
-					<div class="row" >
-						  <div class="col-md-3">
-						  	  <label for="inputEmail3" class="control-label">套餐备注</label>
-						  </div>
-						   <div class="col-md-5">
-							 <textarea rows="3" cols="10" style="height:80px" 
-								   class="form-control" value=""   name="remark" >
-							     </textarea>
-						  </div>
-					</div>
+					 -->
+					
 				</form:form>
 	</div>
 	<div class="modal-footer">
@@ -229,6 +257,7 @@ margin-top:15px
 
 <button class="btn blue"  id="hb" data-target="#business" data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
 <button class="btn blue"  id="rm" data-target="#remarkDiv" data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
+<button class="btn blue"  id="dis" data-target="#distDiv" data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
 
 <div style="display:none" id="allPlan">
     <c:forEach items="${planList }" var="pl" >
@@ -245,11 +274,10 @@ margin-top:15px
 		src="${ctx }/assets/plugins/datatables.net/js/jquery.dataTables.js"></script>
 	<script type="text/javascript"
 		src="${ctx }/assets/plugins/datatables.net-bs/js/dataTables.bootstrap2.js"></script>
-		
 		<script src="${ctx}/assets/plugins/validation/jquery.validationEngine.js" type="text/javascript"></script>
-	<script
-		src="${ctx}/assets/plugins/validation/jquery.validationEngine-cn.js"
-		type="text/javascript"></script>
+	<script src="${ctx}/assets/plugins/validation/jquery.validationEngine-cn.js" type="text/javascript"></script>
+		
+		
 	<script src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
 	<script src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
 		
@@ -258,6 +286,7 @@ margin-top:15px
 </html>
 <script>
 var dataTableObj;
+var ids="";
 $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	overflownDIV: ".form", promptPosition:"bottomRight" });
     $("#searchform").find(".select2").select2({ allowClear:false}).on("select2-selecting", function(e) {
@@ -268,7 +297,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	var options={};
     
     options.success=function(data){
-    	 $(".btn-default").trigger('click');
+    	 $(".modal").find(".btn-default").trigger('click');
     	  if(data.result=='success'){
     		  toastr.success('操作成功');
     	  }else{
@@ -290,17 +319,21 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			 }
 		 },
 		 { "sTitle": "电话号码","sClass": "center" ,"sWidth":"100","mDataProp": "phone"},
-		 { "sTitle": "卡类型","sClass": "center" ,"sWidth":"100","mDataProp": "type"},
+		 { "sTitle": "运营商",  "sClass": "center","sWidth":"90","mDataProp": "operator","mRender": function ( data, type, full ) {
+			 return '中国联通';
+			 }
+		 },
+		 { "sTitle": "卡类型","sClass": "center" ,"sWidth":"100","mDataProp": "typeStr"},
 		 { "sTitle": "关联用户", "asSorting": [ ],"sClass": "center" ,"sWidth":"100","mDataProp": "userInfo"},
-       { "sTitle": "网络状态",  "sClass": "center" ,"sWidth":"75", "mDataProp": "netTypeStr"},
+       { "sTitle": "网络状态",  "sClass": "center" ,"sWidth":"90", "mDataProp": "netTypeStr"},
 	   { "sTitle": "设备状态",  "sClass": "center","sWidth":"80","mDataProp": "objTypeStr"},
 	   { "sTitle": "设备名称",  "sClass": "center","sWidth":"80","mDataProp": "terminalId"},
-	   { "sTitle": "本月用量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "usedFlow"},
+	   { "sTitle": "本月用量(MB)",  "sClass": "center","sWidth":"95","mDataProp": "usedFlow"},
 	   { "sTitle": "套餐价格",  "sClass": "center","sWidth":"80","mDataProp": "externalQuote"},
-	   { "sTitle": "套餐总量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "flow"},
-	   { "sTitle": "套餐已用(MB)",  "sClass": "center","sWidth":"80","mDataProp": "packageUsed"},
-	   { "sTitle": "套餐剩余(MB)",  "sClass": "center","sWidth":"80","mDataProp": "packageLeft"},
-	   { "sTitle": "最近同步时间",  "sClass": "center","sWidth":"80","mDataProp": "lastSyncTime"},
+	   { "sTitle": "套餐总量(MB)",  "sClass": "center","sWidth":"95","mDataProp": "flow"},
+	   { "sTitle": "套餐已用(MB)",  "sClass": "center","sWidth":"95","mDataProp": "packageUsed"},
+	   { "sTitle": "套餐剩余(MB)",  "sClass": "center","sWidth":"95","mDataProp": "packageLeft"},
+	   { "sTitle": "最近同步时间",  "sClass": "center","sWidth":"100","mDataProp": "lastSyncTime"},
 	   { "sTitle": "备注", "sClass": "center" ,"sWidth":"90","mDataProp": "remark"}
 		];
 	function loadTable(){
@@ -330,14 +363,17 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		        	getSelectedData();
 		        }else if($(this).hasClass('btn-primary')){
 		        	remarkCards();
-		        }else if($(this).hasClass('btn-info') && netType==0){
+		        }else if($(this).hasClass('btn-info')){
 		        	openNet();
-		        }else if($(this).hasClass('btn-warning') && netType==1){
+		        }else if($(this).hasClass('btn-danger')){
 		        	closeNet();
-		        }else{
-		      	  bootbox.alert("请选择其他卡片状态!"); 
-		   	      return false;
-		     }
+		        }else if($(this).hasClass('btn-default')){
+		        	getIDS();
+		        	resetCards();
+		        }else if($(this).hasClass('btn-waring')){
+		        	getIDS();
+		        	 $("#dis").trigger('click')
+		        }
 			});
 	
 	 
@@ -367,7 +403,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			  bootbox.alert("请选择同一类型的物联网卡!"); 
 			   return;
 		 }
-		 initPlanSelect(cardType)
+		// initPlanSelect(cardType)
 		 $('#iccid').val(iccids.substring(0,iccids.length-1))
 		  $('#ids').val(ids.substring(0,ids.length-1))
 		 var tips="当前可分配的ICCID"+suc+"个,无法分配的ICCID"+(dataTableObj.rows('.row_selected').data().length-suc)+"个";
@@ -395,31 +431,75 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		 $('#remarkIds').val(ids.substring(0,ids.length-1))
 		  $("#rm").trigger('click')
 	 }
-	 //初始化资费计划选择
+	 //初始化资费计划选择*
+	 /*
 	 function initPlanSelect(type){
 		 $("#planId").empty();
 		 $("#allPlan").find("a."+type).each(function (index,domEle){
 				$("#planId").append("<option value="+ $(this).attr('href') + ">"+ $(this).text() +"</option>");
 		 });
-	 }
+	 }*/
 	 
 	 function openNet(){
-		 if(!getSelectedData()){
+		 if(!closeOrOpenCard()){
 			  return ;
 		  }
+		 bootbox.confirm('是否确认打开网络？', function(result) {
+			  if(result){
 		 $('body').modalmanager('loading');
 			$("#oper").attr('action',"${ctx}/simcard/open");
 			SP.ajax($("#oper"),options);
+			  }
+			});
 	}
 
 	function closeNet(){
-		if(!getSelectedData()){
+		if(!closeOrOpenCard()){
 			  return ;
 		  }
+		bootbox.confirm('是否确认关闭网络？', function(result) {
+			if(result){
 		    $('body').modalmanager('loading');
 			$("#oper").attr('action',"${ctx}/simcard/close");
 			SP.ajax($("#oper"),options);
+			}
+		});
 	}
+	
+	$("#submitDist").click(function(){
+		options.url="${ctx}/simcard/dist?ids="+ids+"&uid="+$("#uidInnerss").val();
+			SP.ajax($("#validationform3"),options);
+	})
+	
+	function resetCards(){
+		bootbox.confirm('是否确认重置卡片？', function(result) {
+			if(result){
+				options.url="${ctx}/simcard/dist?ids="+ids+"&uid=0";
+				SP.ajax($("#validationform3"),options);
+			}
+		});
+	}
+	
+	 function getIDS(){
+		 var iccids="";
+		  ids="";
+		 suc=0;
+		 var cardType=-1;
+		 $.each(dataTableObj.rows('.row_selected').data(),function(i,n){
+			 if(cardType==-1){
+				 cardType=n.type;
+			 }else if(cardType!=n.type){
+				 cardType=-2;
+			 }
+			 if(n.netType==0 || n.objType==2){
+			 }else{
+				 iccids=iccids+n.iccid+",";
+				 ids=ids+n.id+",";
+				 suc++;
+			 }
+		 } );
+		
+	 }
 	
 	function closeOrOpenCard(){
 		 netType=-1;
@@ -440,4 +520,24 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		 $('#myids').val(iccids.substring(0,iccids.length-1))
 		 return true;
 	}
+	
+	
+	function initPackSelect(uid){
+		  var options={}
+		  options.url="${ctx}/pack/selfPacks?uid="+uid
+		  $("#packageId").empty();
+		  options.success = function(e) {
+			  $.each(e, function(key, value) {
+					$("#packageId").append("<option value="+ value.id + ">" + value.name+"--"+value.flow+ "MB</option>");
+				});
+		  }
+		  SP.ajax($("#validationform"), options, false);
+		  }
+	
+	$("#uid").change(function(){
+		initPackSelect($(this).val());
+		});
+	<c:if test="${CURRENT_USER.role==0 }">
+	initPackSelect($("#uidInner").val());
+	</c:if>
 </script>

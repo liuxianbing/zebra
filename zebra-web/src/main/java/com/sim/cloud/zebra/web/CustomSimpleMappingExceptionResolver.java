@@ -19,7 +19,7 @@ public class CustomSimpleMappingExceptionResolver extends SimpleMappingException
   @Override
   protected ModelAndView doResolveException(HttpServletRequest request,
       HttpServletResponse response, Object handler, Exception ex) {
-
+	  ex.printStackTrace();
     String viewName = determineViewName(ex, request);
     if (viewName != null) {// JSP格式返回
       if (!(request.getHeader("accept").indexOf("application/json") > -1
@@ -36,11 +36,11 @@ public class CustomSimpleMappingExceptionResolver extends SimpleMappingException
       } else {// JSON格式返回
     	  Map<String,String> res=new HashMap<>();
         try {
-        	if(ex.getMessage().contains("Duplicate entry")){
+        	if(null!=ex.getMessage() && ex.getMessage().contains("Duplicate entry")){
         		int be=ex.getMessage().lastIndexOf("for key");
         		int en=ex.getMessage().lastIndexOf("_UNIQUE");
         		res.put("msg", "字段"+ex.getMessage().substring(be+9,en)+"取值已经存在");
-        	}else if(ex.getMessage().length()>=50){
+        	}else if(null!=ex.getMessage() && ex.getMessage().length()>=50){
         		res.put("msg", "系统走神了,请稍候再试.");
         	}else{
         		res.put("msg", ex.getMessage());

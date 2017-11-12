@@ -27,9 +27,12 @@ import com.sim.cloud.zebra.common.util.DateUtil;
 import com.sim.cloud.zebra.common.util.PropertiesUtil;
 import com.sim.cloud.zebra.common.util.DateUtil.DATE_PATTERN;
 import com.sim.cloud.zebra.model.Company;
+import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.service.CompanyService;
+import com.sim.cloud.zebra.service.PackageService;
 import com.sim.cloud.zebra.service.SysUserService;
+import com.sim.cloud.zebra.service.TariffPlanService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +51,12 @@ public class CustomerController  extends AbstractController {
 	private SysUserService sysUserService;
 	@Autowired
 	private CompanyService companyService;
+	
+	@Autowired
+	private PackageService packageUserService;
+	
+	@Autowired
+	private TariffPlanService tariffPlanService;
 	/**
 	 * 列表页面
 	 * @param model
@@ -84,7 +93,6 @@ public class CustomerController  extends AbstractController {
 			}
 			
 		}
-		System.out.println(company);
 		model.addAttribute("uid", getCurrUser().getId());
 		model.addAttribute("company", company);
 		
@@ -111,7 +119,14 @@ public class CustomerController  extends AbstractController {
 	public @ResponseBody Map<String,String>  addOrUpdate(Model model,@RequestBody SysUser user) {
 		if(user.getId()==null || user.getId()==0l){
 			user.setCreateTime(DateUtil.getDateTime());
+			user.setCreateUserId(getCurrUser().getId());
 			user.setPasswd(DigestUtils.md5Hex(user.getPhone().substring(6)+"_sim"));
+		}
+		if(checkIfManager()){
+			user.setRole(SysUser.ROLE_MANAGER);
+		}else{
+			user.setRole(SysUser.ROLE_USER);
+			user.setCid(getCurrUser().getCid());
 		}
 		sysUserService.insertOrUpdate(user);
 		return SUCCESS;
@@ -125,7 +140,13 @@ public class CustomerController  extends AbstractController {
 	@ApiOperation(value = "客户管理列表请求")
 	@RequestMapping(value = "list", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody DataTableParameter<SysUser> list() {
-		Page<SysUser> page=sysUserService.query(extractFromRequest());
+		Map<String,Object> map=extractFromRequest();
+		if(checkIfManager()){
+			map.put("role", SysUser.ROLE_MANAGER);
+		}else{
+			map.put("role", SysUser.ROLE_USER);
+		}
+		Page<SysUser> page=sysUserService.query(map);
 		return new DataTableParameter<SysUser>(page.getTotal(),
 				request.getParameter("sEcho"),page.getRecords());
 	}
@@ -144,12 +165,12 @@ public class CustomerController  extends AbstractController {
 	
 	@ApiOperation(value = "企业认证")
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> auth(@RequestBody Company company) {
+	public @ResponseBody Company auth(@RequestBody Company company) {
 		companyService.saveAuthInfo(company);
 		if(!checkIfManager()){
 			getCurrUser().setCid(company.getId());
 		}
-		return SUCCESS;
+		return company;
 	}
 	
 	/**
@@ -205,5 +226,33 @@ public class CustomerController  extends AbstractController {
 		   res.put("filePath", url+File.separator+storeName);
 		   return res;
 	 }
+	 
+	 
+	 /**
+		 * 列表页面
+		 * @param model
+		 * @return
+		 */
+		@ApiOperation(value = "用户套餐列表页面")
+		@RequestMapping(value = "/packlist", method = RequestMethod.GET)
+		public String toPackList(Model model,@RequestParam Long id) {
+			model.addAttribute("id", id);
+			model.addAttribute("user", sysUserService.selectById(id));
+			model.addAttribute("planList", tariffPlanService.selectList(null));
+			return "tariff/user_package";
+		}
+		
+		/**
+		 * 列表页面
+		 * @param model
+		 * @return
+		 */
+		@ApiOperation(value = "用户套餐列表请求")
+		@RequestMapping(value = "packlist", method = RequestMethod.POST, produces = { "application/json" })
+		public @ResponseBody DataTableParameter<Package> packList() {
+			Page<Package> page=packageUserService.selectPage(extractFromRequest(),Package.class);
+			return new DataTableParameter<Package>(page.getTotal(),
+					request.getParameter("sEcho"),page.getRecords());
+		}
 	
 }

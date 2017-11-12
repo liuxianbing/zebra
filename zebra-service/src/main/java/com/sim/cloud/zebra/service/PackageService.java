@@ -32,16 +32,17 @@ public class PackageService extends AbstractService<PackageMapper, Package> {
 		Long pid=pack.getPlanId();
 		TariffPlan tp =tariffPlanMapper.selectById(pid);
 		pack.setPlatQuote(tp.getCost());
-		pack.setFlow(tp.getFlow());
+		//pack.setFlow(tp.getFlow());
+		pack.setRealFlow(tp.getFlow());
 		pack.setAccount(tp.getAccount());
 		pack.setOperator(tp.getOperator());
 		pack.setCardType(tp.getType());
 		super.insertOrUpdate(pack);
 	}
 	
-	public List<Package> selectSystemPacks(){
+	public List<Package> selectUserPacks(Long uid){
 		EntityWrapper<Package> wrapper=new EntityWrapper<>();
-		wrapper.ge("type", 1);
+		wrapper.eq("uid", uid);
 		return selectList(wrapper);
 	}
 	

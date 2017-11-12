@@ -46,11 +46,11 @@ padding:15px
 								</tr>
 								<tr>
 									<th>设备状态:</th>
-									<td>${card.objType }</td>
+									<td>${card.objTypeStr }</td>
 								</tr>
 								<tr>
 									<th>网络状态:</th>
-									<td>${card.netType }</td>
+									<td>${card.netTypeStr }</td>
 								</tr>
 								<tr>
 									<th>IP地址:</th>
@@ -237,9 +237,12 @@ var cardOption = {
 	        }
 	    ]
 	};
-var saasChart = echarts.init(document.getElementById("cardStatis"));
-saasChart.setOption(cardOption);
-
+	if('${card.packageUsed}'==0 && '${card.packageLeft}'==0){
+		$("#cardStatis").html("还没有绑定套餐,暂无流量统计信息")
+	}else{
+		echarts.init(document.getElementById("cardStatis")).setOption(cardOption);
+	}
+	
 var flowChart = echarts.init(document.getElementById("flowStatis"));
 
 var flowOption = {
