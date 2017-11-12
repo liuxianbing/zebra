@@ -103,6 +103,7 @@ public class TerminalClient extends AbstractClient {
         	return writeGetModifiedTerminalsResponse(response);
         } else {
             SOAPFault fault = response.getSOAPBody().getFault();
+            System.out.println(fault.getFaultString());
             log.error("Method: getModifiedTerminals Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
         
@@ -195,6 +196,7 @@ public class TerminalClient extends AbstractClient {
         if (!response.getSOAPBody().hasFault()) {
         	return writeGetTerminalDetailsResponse(response);
         } else {
+        	response.writeTo(System.out);
             SOAPFault fault = response.getSOAPBody().getFault();
             log.error("Method: getTerminalDetails Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
