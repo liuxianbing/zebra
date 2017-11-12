@@ -8,7 +8,6 @@ import com.sim.cloud.zebra.model.SimCard;
 * @version 创建时间：2017年10月14日 下午1:02:00 
 * 类说明 
 */
-	public interface SimCardMapper extends BaseMapper<SimCard> {
-
+public interface SimCardMapper extends BaseMapper<SimCard> {
 
 }

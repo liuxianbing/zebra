@@ -12,4 +12,5 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 	List<SysUser> selectUsers(SysUser users);
 
 	List<SysUser> selectMutiTablePage(Pagination pagination, EntityWrapper<SysUser> wrapper);
+	
 }
