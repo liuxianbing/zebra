@@ -41,7 +41,6 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Scheduled(cron="0 10 0 * * *") // 00:10:00 every day
-	//@Scheduled(fixedRate=1000 * 60 * 1) // 30 minutes
 	public void syncDayData() {
 		log.info("############## Start sync day data. #######################");
 		

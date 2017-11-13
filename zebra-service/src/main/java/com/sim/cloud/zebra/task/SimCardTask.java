@@ -1,7 +1,6 @@
 package com.sim.cloud.zebra.task;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class SimCardTask extends AbstractService<SimCardMapper, SimCard> {
 	private Date lastSyncTime = null;
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	
-	@Scheduled(fixedRate=1000 * 60 * 30) // 30 minutes
+	@Scheduled(initialDelay=1000 * 60 * 10, fixedRate=1000 * 60 * 30) // 30 minutes
 	public void syncUnicomSimCards() {
 		log.info("############## Start sync simcard data. #######################");
 		

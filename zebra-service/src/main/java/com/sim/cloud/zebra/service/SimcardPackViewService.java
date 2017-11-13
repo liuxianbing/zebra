@@ -78,6 +78,19 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	}
 	
 	/**
+	 * 查询指定客户、指定套餐的卡片列表
+	 * @param cid
+	 * @param packId
+	 * @return
+	 */
+	public List<SimcardPackageView> selectCompanyPackCards(Long cid,Long packId){
+		Map<String,Object> map=new HashMap<>();
+		map.put("cid", cid);
+		map.put("package_id", packId);
+		return selectByMap(map);
+	}
+	
+	/**
 	 * 流量池详细
 	 * @param uid
 	 * @param flow
