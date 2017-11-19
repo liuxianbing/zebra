@@ -44,10 +44,10 @@ public class SimCardTask extends AbstractService<SimCardMapper, SimCard> {
 		
 		// start time
 		String startTime = null;
-		if (lastSyncTime != null) {
-			startTime = this.getStartTime(lastSyncTime);
-		} 
-		lastSyncTime = new Date();
+//		if (lastSyncTime != null) {
+//			startTime = this.getStartTime(lastSyncTime);
+//		} 
+//		lastSyncTime = new Date();
 		
 		// get cards
 		for (String value : accounts.values()) {
