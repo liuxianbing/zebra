@@ -61,7 +61,7 @@ public class MonthBillTask {
 	 * 用户：套餐：卡：流量：计费规则
 	 * 
 	 */
-	//@Scheduled(cron="0 10 0 * * *") // 00:10:00 every day
+	@Scheduled(cron="0 10 1 1 * *") // 00:10:00 every month 
 	//@Scheduled(fixedRate=1000 * 60 * 3) // only for test
 	public void calMonthBill() {
 		// get users
