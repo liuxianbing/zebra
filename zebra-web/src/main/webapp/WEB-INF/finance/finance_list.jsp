@@ -33,7 +33,7 @@
 								style="float: left;" data-placeholder="客户账号">
 								     <option value=" ">全部客户</option>
 								  <c:forEach items="${userList }" var="ul" >
-								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
+								     <option value="${ul.id }" >${ul.userName }-${ul.companyName }</option>
 								  </c:forEach>
 								</select>
 			                  </div>
@@ -61,7 +61,9 @@
 </body>
 </html>
 <script>
-
+$(".select2").select2({ allowClear:false}).on("change", function(e) {
+	loadTable()
+})
 	var options={};
      var oTable;
      var selectData;
@@ -70,7 +72,13 @@
 	options.aoColumns=[
 		 { "sTitle": "交易时间",  "sClass": "center","sWidth":"80","mDataProp": "createTime"},
 		 { "sTitle": "交易类型","sClass": "center" ,"sWidth":"100","mDataProp": "typeStr"},
-       { "sTitle": "交易编号",  "sClass": "center" ,"sWidth":"75", "mDataProp": "orderCode"},
+		 { "sTitle": "用户信息","sClass": "center" ,"sWidth":"180","mDataProp": "userInfo"},
+       { "sTitle": "交易编号", "asSorting":[],"sClass": "center","sWidth":"120",
+    	   "mDataProp": "orderCode","mRender": function ( data, type, full ) {
+    		   if(data==null) return '无';
+			 return '<a href="${ctx}/cart/detail?id='+full.orderId+'">'+data+'</a>';
+			 }
+		 },
        { "sTitle": "金额","sClass": "center" ,"sWidth":"100","mDataProp": "money"},
 	   { "sTitle": "账号余额",  "sClass": "center","sWidth":"80","mDataProp": "balance"}
 		];

@@ -2,6 +2,7 @@ package com.sim.cloud.zebra.web;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,8 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.FinanceEnum;
+import com.sim.cloud.zebra.model.Company;
 import com.sim.cloud.zebra.model.Finance;
+import com.sim.cloud.zebra.model.OrderGoods;
 import com.sim.cloud.zebra.model.SimcardPackageView;
+import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.service.FinanceService;
 import com.sim.cloud.zebra.service.SysUserService;
 
@@ -41,7 +45,12 @@ public class FinanceController  extends AbstractController{
 	@ApiOperation(value = "页面")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String toList(Model model) {
-		model.addAttribute("userList", sysUserService.selectCustomers());
+		List<SysUser> list=sysUserService.selectCustomers().stream().
+				filter(f->f.getAuth()==1).collect(Collectors.toList());
+		list.parallelStream().filter(f->f.getCid()!=null && f.getCid()>0l).forEach(e->{
+			e.setCompanyName(companyService.selectById(e.getCid()).getName());
+		});
+		model.addAttribute("userList", list);
 		model.addAttribute("bance", financeService.selectBance(getCurrUser().getId()));
 		return "finance/finance_list";
 	}
@@ -49,7 +58,12 @@ public class FinanceController  extends AbstractController{
 	@ApiOperation(value = "add")
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String toAdd(Model model) {
-		model.addAttribute("userList", sysUserService.selectCustomers());
+		List<SysUser> list=sysUserService.selectCustomers().stream().
+				filter(f->f.getAuth()==1).collect(Collectors.toList());
+		list.parallelStream().filter(f->f.getCid()!=null && f.getCid()>0l).forEach(e->{
+			e.setCompanyName(companyService.selectById(e.getCid()).getName());
+		});
+		model.addAttribute("userList", list);
 		return "finance/finance_add";
 	}
 	
@@ -57,6 +71,12 @@ public class FinanceController  extends AbstractController{
 	@RequestMapping(value = "list", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody DataTableParameter<Finance> list() {
 		Page<Finance> page=financeService.selectPage(extractFromRequest(), Finance.class);
+		Map<Long, SysUser> userList =sysUserService.selectList(null).stream()
+				.collect(Collectors.toMap(SysUser::getId, c -> c));
+		page.getRecords().stream().forEach(e->{
+			e.setUserInfo(userList.get(e.getUid()).getUserName());
+		});
+				
 		return new DataTableParameter<Finance>(page.getTotal(),
 				request.getParameter("sEcho"),page.getRecords());
 	}
@@ -64,7 +84,10 @@ public class FinanceController  extends AbstractController{
 	@ApiOperation(value = "add请求")
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public @ResponseBody Map<String, String> addFinance(@RequestBody Finance fa){
-		financeService.insertFinance(fa.getUid(),FinanceEnum.CHONGZHI.getType(),fa.getMoney());
+		OrderGoods og=new OrderGoods();
+		og.setTotalCost(fa.getMoney());
+		og.setUid(fa.getUid());
+		financeService.insertFinance(og,FinanceEnum.CHONGZHI.getType());
 		return SUCCESS;
 	}
 }

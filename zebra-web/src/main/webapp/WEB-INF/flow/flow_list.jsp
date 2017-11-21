@@ -12,7 +12,6 @@
 	 <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal.css"
 	rel="stylesheet" type="text/css" />
 	
-<link rel="shortcut icon" href="${ctx}/assets/img/fav.ico" />
 <style>
 #validationform .row{
 margin-top:15px
@@ -40,7 +39,7 @@ margin-top:15px
 		    </section>
 			<!-- Main content -->
 			<section class="content">
-				<form:form onsubmit="return false" action="${ctx}/simcard/list" method="post" id="searchform">
+				<form:form onsubmit="return false" action="${ctx}/flow/list" method="post" id="searchform">
 					<div class="row" style="padding: 10px">
 						<div class="col-sm-2 col-md-2"
 							style="padding-left: 8px; padding-right: 0px">
@@ -51,8 +50,17 @@ margin-top:15px
 							<select id="flow" class="form-control select2" name="flow"
 								style="float: left;" data-placeholder="流量大小">
 								<option value=" " selected="selected">全部流量</option>
-								  <c:forEach items="${planList }" var="ul" >
-								     <option value="${ul.flow }" >${ul.flow }MB</option>
+								  <c:forEach items="${flowList }" var="ul" >
+								     <option value="${ul }" >${ul }MB</option>
+								  </c:forEach>
+							</select>
+						</div>
+						<div class="col-sm-3 col-md-3">
+							<select id="cid" class="form-control select2" name="cid"
+								style="float: left;" data-placeholder="">
+								<option value=" " selected="selected">全部企业</option>
+								  <c:forEach items="${companyList }" var="ul" >
+								     <option value="${ul }" >${ul.name }</option>
 								  </c:forEach>
 							</select>
 						</div>
@@ -103,7 +111,7 @@ var dataTableObj;
 	options.aaSorting=[[ 0, "asc" ]];
 	options.aoColumns=[
 		 { "sTitle": "流量池规格",  "sClass": "center","sWidth":"220","mDataProp": "flowName","mRender": function ( data, type, full ) {
-			 return '<a href="${ctx}/flow/detail?flow='+full.flow+'&phone='+full.phone+'">'+data+'</a>';
+			 return '<a href="${ctx}/flow/detail?flow='+full.flow+'&cid='+full.cid+'">'+data+'</a>';
 			 }
 		 },
 		 { "sTitle": "流量池总计","sClass": "center" ,"sWidth":"100","mDataProp": "totalPool"},
@@ -115,8 +123,7 @@ var dataTableObj;
 	   { "sTitle": "库存卡量",  "sClass": "center","sWidth":"80","mDataProp": "stockNum"},
 	   { "sTitle": "卡总量",  "sClass": "center","sWidth":"80","mDataProp": "allNum"},
 	   { "sTitle": "最近同步时间",  "sClass": "center","sWidth":"90","mDataProp": "lastSyncTime"},
-	   { "sTitle": "用户账号",  "sClass": "center","sWidth":"80","mDataProp": "phone"},
-	   { "sTitle": "用户名", "sClass": "center" ,"sWidth":"90","mDataProp": "userName"}
+	   { "sTitle": "企业名称", "sClass": "center" ,"sWidth":"90","mDataProp": "companyName"}
 		];
 	
 	function loadTable(){

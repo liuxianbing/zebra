@@ -1,6 +1,7 @@
 package com.sim.cloud.zebra.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,4 +33,12 @@ public class CartCardService  extends AbstractService<CartCardMapper, CartCard> 
 		return selectList(wrapper);
 	}
 	
+	public List<CartCard> selectUserAllocPacks(Long cid){
+	EntityWrapper<CartCard> wrapper=new EntityWrapper<>();
+	wrapper.eq("cid", cid);
+	wrapper.eq("status", 1);
+	wrapper.eq("type", CartCard.ORDERE_OK);
+	return selectList(wrapper).stream().
+	filter(f->f.getNum()>f.getAllocNum()).collect(Collectors.toList());
+	}
 }

@@ -130,7 +130,7 @@
 			<div class="form-group">
 				<label for="inputEmail3" class="col-sm-4 control-label">法人身份证号码</label>
 				<div class="col-sm-8">
-				<input type="text" class="form-control  validate[required,custom[idCode]]"
+				<input type="text" class="form-control  validate[required]"
 						name="legalCode" id="legalCode"
 						value="${company.legalCode }" placeholder="法人身份证号码">
 				</div>
@@ -138,7 +138,7 @@
 		</div>
 	</div>
 	
-		<input type="hidden" name="id" value="${company.id }"> <input
+		<input type="hidden" name="id" id="mmid" value="${company.id }"> <input
 						type="hidden" name="uid" id="uids" value="${uid}" />
 	
 	<div class="row">
@@ -280,12 +280,18 @@
 <script src="${pageContext.request.contextPath}/assets/plugins/jquery.min.js"></script>
 <script>
 $('#submitLegal').click(function(){
+	var options={}
+	options.success=function(data){
+		 toastr.success('操作成功');
+		 $("#mmid").val(data.id)
+	}
 	SP.ajax($("#validationformLegal"),options);
 });
 $('#submitBusiness').click(function(){
 	var options={}
-	options.success=function(){
-		
+	options.success=function(data){
+		 toastr.success('操作成功');
+		 $("#mmid").val(data.id)
 	}
 	SP.ajax($("#validationformBusiness"),options);
 });

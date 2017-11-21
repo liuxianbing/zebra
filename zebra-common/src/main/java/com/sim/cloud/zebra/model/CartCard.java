@@ -8,6 +8,7 @@ public class CartCard extends BaseModel{
 	
 	public static final Integer INCART=0;
 	public static final Integer ORDERED=1;
+	public static final Integer ORDERE_OK=2;//支付完成
 
 	private Long uid;
 	private Long cid;
@@ -20,9 +21,16 @@ public class CartCard extends BaseModel{
 	private Integer operator;
 	private Integer type;//1:共享
 	private String name;
+	private Integer allocNum;//分配出去的卡片数量
 	
 	
 	
+	public Integer getAllocNum() {
+		return allocNum;
+	}
+	public void setAllocNum(Integer allocNum) {
+		this.allocNum = allocNum;
+	}
 	public String getName() {
 		return name;
 	}

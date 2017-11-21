@@ -38,6 +38,34 @@ public final class DateUtil {
 	public static final String format(Object date) {
 		return format(date, DATE_PATTERN.YYYY_MM_DD);
 	}
+	
+	public static String addMonth(String date, int num) {
+	    Date d = defaultSimpleDateFormatToDate(date);
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.clear();
+	    calendar.setTime(d);
+	    calendar.add(Calendar.MONTH, num);
+	    return defaultSimpleDateFormatToString(calendar.getTime());
+	  }
+	
+	 public static Date defaultSimpleDateFormatToDate(String date) {
+		    SimpleDateFormat defaultDate = new SimpleDateFormat("yyyy-MM-dd");
+		    try {
+		      return defaultDate.parse(date);
+		    } catch (ParseException e) {
+		      e.printStackTrace();
+		    }
+		    return null;
+		  }
+
+		  public static String defaultSimpleDateFormatToString(Date date) {
+		    SimpleDateFormat defaultDate = new SimpleDateFormat("yyyy-MM-dd");
+		    return defaultDate.format(date);
+		  }
+	
+	
+	
+	
 
 	/**
 	 * 格式化日期

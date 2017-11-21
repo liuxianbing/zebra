@@ -149,11 +149,11 @@
 								</div>
 								<div class="row">
 									<div class="form-group">
-										<label for="inputEmail3" class="col-sm-2 control-label">再次新密码</label>
+										<label for="inputEmail3" class="col-sm-2 control-label">重复新密码</label>
 										<div class="col-sm-4">
 											<input type="password"
 												class="form-control  validate[required,maxSize[16],minSize[6]]"
-												id="againPwd" name="againPwd" placeholder="原始密码">
+												id="againPwd" name="againPwd" placeholder="新密码">
 										</div>
 									</div>
 								</div>

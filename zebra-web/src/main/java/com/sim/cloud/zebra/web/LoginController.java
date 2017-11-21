@@ -58,4 +58,11 @@ public class LoginController extends AbstractController {
 		  return "login";
 	  }
 	
+	@ApiOperation(value = "无权限")
+	  @RequestMapping(value = "/error", method = RequestMethod.GET)
+	  public String error(Model model) {
+		request.getSession().invalidate();
+		  return "error/error";
+	  }
+	
 }

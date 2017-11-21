@@ -56,14 +56,15 @@
 					<div class="col-md-1 cont ">0</div>
 					<div class="col-md-2  " style="padding-top:20px" >
 						<div class="input-group spinner" data-trigger="spinner">
-				          <input type="text" lang="${gl.id }" class="form-control text-center" data-max="500" data-min="1" value="${gl.num }" data-rule="quantity">
+				          <input type="text" alt="${gl.term }" lang="${gl.id }" class="form-control text-center" 
+				          data-max="500" data-min="1" value="${gl.num }" data-rule="quantity">
 				          <div class="input-group-addon">
 				            <a href="javascript:;" class="spin-up" data-spin="up"><i class="fa fa-caret-up"></i></a>
 				            <a href="javascript:;" class="spin-down" data-spin="down"><i class="fa fa-caret-down"></i></a>
 				          </div>
 				        </div>
 					</div>
-					<div class="col-md-2 cont sum"><fmt:formatNumber value="${gl.price*gl.num }" pattern="#0.00" /></div>
+					<div class="col-md-2 cont sum"><fmt:formatNumber value="${gl.price*gl.num*gl.term }" pattern="#0.00" /></div>
 					<div class="col-md-1 cont" style="margin-right: 10px">
 						<button type="button" onclick="removeRecord(${gl.id})" class="btn btn-box-tool" data-widget="remove">
 						<i class="fa fa-remove"></i></button>
@@ -108,7 +109,8 @@
 <script>
 $('.spinner').spinner('changed',function(e, newVal, oldVal){
 	var sng=$(this).parent().parent().parent().find('.single').text();
-	$(this).parent().parent().parent().find('.sum').html((parseFloat(sng).toFixed(2)*newVal).toFixed(2))
+	var term=parseInt($(this).attr('alt'))
+	$(this).parent().parent().parent().find('.sum').html((parseFloat(sng).toFixed(2)*newVal*term).toFixed(2))
 	initTotalPrice()
   });
 initTotalPrice();

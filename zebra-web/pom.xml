@@ -32,25 +32,25 @@
 	</properties>
 
 	<dependencies>
-	
 
-<dependency>
-    <groupId>xmldsig</groupId>
-    <artifactId>xmldsig</artifactId>
-   <version>3.0</version>
-    <scope>system</scope>
-    <systemPath>${project.basedir}/lib/xmldsig.jar</systemPath>
-</dependency>
 
-<dependency>
-    <groupId>com.sun.xml.wss</groupId>
-    <artifactId>xws-security</artifactId>
-   <version>3.0</version>
-    <scope>system</scope>
-    <systemPath>${project.basedir}/lib/xws-security-3.0.jar</systemPath>
-</dependency>
+		<dependency>
+			<groupId>xmldsig</groupId>
+			<artifactId>xmldsig</artifactId>
+			<version>3.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/xmldsig.jar</systemPath>
+		</dependency>
 
-	<dependency>
+		<dependency>
+			<groupId>com.sun.xml.wss</groupId>
+			<artifactId>xws-security</artifactId>
+			<version>3.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/xws-security-3.0.jar</systemPath>
+		</dependency>
+
+		<dependency>
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>jstl-impl</artifactId>
 			<version>1.2</version>
@@ -61,8 +61,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--  -->
-		 <dependency>
+		<!-- -->
+		<dependency>
 			<groupId>com.simcloud</groupId>
 			<artifactId>zebra-service</artifactId>
 			<version>${project.version}</version>
@@ -73,8 +73,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		 <dependency>
+
+		<dependency>
 			<groupId>com.simcloud</groupId>
 			<artifactId>zebra-jasper</artifactId>
 			<version>${project.version}</version>
@@ -85,8 +85,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		 <dependency>
+
+		<dependency>
 			<groupId>com.simcloud</groupId>
 			<artifactId>zebra-common</artifactId>
 			<version>${project.version}</version>
@@ -97,7 +97,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -170,8 +170,8 @@
 			<artifactId>assertj-core</artifactId>
 			<version>${assertj.version}</version>
 		</dependency>
-		
-			<dependency>
+
+		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
 			<version>1.6.1</version>
@@ -195,7 +195,7 @@
 			<version>1.0.27</version>
 		</dependency>
 		<!-- 日志文件管理包 -->
-			<dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.4</version>
@@ -248,14 +248,14 @@
 			<version>2.6.10</version>
 		</dependency>
 		<dependency>
-			 <groupId>org.mybatis.caches</groupId>
+			<groupId>org.mybatis.caches</groupId>
 			<artifactId>mybatis-ehcache</artifactId>
 			<version>1.1.0</version>
 			<exclusions>
-			 <exclusion>
-			 	<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache-core</artifactId>
-			 </exclusion>
+				<exclusion>
+					<groupId>net.sf.ehcache</groupId>
+					<artifactId>ehcache-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -323,20 +323,18 @@
 			<version>1.3.1</version>
 		</dependency>
 	</dependencies>
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	<profiles>
 		<profile>
 			<id>product</id>
 			<properties>
-			    <!-- 
-				<sys.jdbc.config.path>file:/home/config/iBase4J/jdbc-sys.properties</sys.jdbc.config.path>
-				<system.config.path>file:/home/config/iBase4J/system.properties</system.config.path>
-				 -->
+				<!-- <sys.jdbc.config.path>file:/home/config/iBase4J/jdbc-sys.properties</sys.jdbc.config.path> 
+					<system.config.path>file:/home/config/iBase4J/system.properties</system.config.path> -->
 			</properties>
 			<build>
 				<resources>
@@ -374,6 +372,22 @@
 				<pluginManagement>
 					<plugins>
 						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-war-plugin</artifactId>
+							<configuration>
+								<webResources>
+									<resource>
+										<directory>${project.basedir}/lib</directory>
+										<targetPath>WEB-INF/lib</targetPath>
+										<filtering>true</filtering>
+										<includes>
+											<include>**/*.jar</include>
+										</includes>
+									</resource>
+								</webResources>
+							</configuration>
+						</plugin>
+						<plugin>
 							<groupId>org.apache.tomcat.maven</groupId>
 							<artifactId>tomcat7-maven-plugin</artifactId>
 							<version>2.2</version>
@@ -389,21 +403,14 @@
 							<configuration>
 								<warDirectory>target/${project.name}</warDirectory>
 								<path>/</path>
-								
+
 								<contextReloadable>true</contextReloadable>
 								<uriEncoding>UTF-8</uriEncoding>
 								<port>443</port>
-								<!--  
-								<httpsPort>443</httpsPort>
-								<keystorePass>123456</keystorePass>
-								<keystoreFile>D:\tomcat.keystore</keystoreFile>
-								-->
-								<!--  
-								<url>http://localhost:8082/manager</url>
-								<server>tomcat</server>
-								<username>admin</username>
-								<password>admin</password>
-								-->
+								<!-- <httpsPort>443</httpsPort> <keystorePass>123456</keystorePass> 
+									<keystoreFile>D:\tomcat.keystore</keystoreFile> -->
+								<!-- <url>http://localhost:8082/manager</url> <server>tomcat</server> 
+									<username>admin</username> <password>admin</password> -->
 								<contextReloadable>true</contextReloadable>
 								<systemProperties>
 									<webapps>
@@ -449,6 +456,22 @@
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<configuration>
+						<webResources>
+							<resource>
+								<directory>${project.basedir}/lib</directory>
+								<targetPath>WEB-INF/lib</targetPath>
+								<filtering>true</filtering>
+								<includes>
+									<include>**/*.jar</include>
+								</includes>
+							</resource>
+						</webResources>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.3</version>
 					<configuration>
@@ -474,14 +497,14 @@
 					</executions>
 				</plugin>
 				<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<warName>ROOT</warName>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
-			</plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.6</version>
+					<configuration>
+						<warName>ROOT</warName>
+						<failOnMissingWebXml>false</failOnMissingWebXml>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

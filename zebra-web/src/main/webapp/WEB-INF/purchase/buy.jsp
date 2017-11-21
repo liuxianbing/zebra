@@ -38,9 +38,11 @@
 		      	  商店
 		        <small>
 		        </small>
-		        <a href="${ctx }/cart/list"  style="float:right;margin-right:10px;font-size:12px">
+		        <a href="${ctx }/cart/list" id="cart"  style="float:right;margin-right:10px;font-size:12px">
              		 <i class="fa fa-shopping-cart" style="font-size:16px"></i>
+             		 <!-- 
              		 <span class="label label-success" style="margin-right:45px;">4</span>
+             		  -->
              		<font style="font-size:14px">&nbsp;&nbsp;&nbsp;购物车</font> 
             </a>
 		      </h1>
@@ -57,7 +59,7 @@
 			                   <select id="uid" class="form-control select2  validate[required]" name="uid"
 								style="float: left;" data-placeholder="选择客户">
 								 <c:forEach items="${userList }" var="ul" >
-								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
+								     <option  value="${ul.id }" >${ul.userName }-${ul.companyName }</option>
 								  </c:forEach>
 								</select>
 			                  </div>
@@ -77,22 +79,20 @@
 			                </div>
 						  </div>
 					</div>
-					<!-- 
 					<div class="row" >
 						   <div class="col-md-12">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">套餐类型</label>
 			                  <div class="col-sm-8">
-			                   <select id="type" class="form-control select2" name="type"
+			                   <select id="cardType" class="form-control select2" name="cardType"
 								style="float: left;" data-placeholder="套餐类型">
-								 <option value="0">独享</option>
-								 <option value="1">共享</option>
+								 <option value="0">单卡</option>
+								 <option value="1">流量卡</option>
 								</select>
 			                  </div>
 			                </div>
 						  </div>
 					</div>
-					 -->
 					<div class="row" >
 					<div class="col-md-12">
 						  	 <div class="form-group">
@@ -111,7 +111,7 @@
 						  <div class="col-md-12">
 						  	 <div class="form-group">
 			                  <label for="inputEmail3" class="col-sm-2 control-label">套餐价格</label>
-			                  <div class="col-sm-1">
+			                  <div class="col-sm-3">
 			                    <input type="text"  class="form-control" readonly="readonly"
 			                    name="price" id="price" placeholder="套餐价格" value="">
 			                  </div>
@@ -204,16 +204,18 @@ data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
 $(".select2").select2({ allowClear:false}).on("change", function(e) {
 	if($(this).attr("id")=="uid"){
 		initPackSelect($(this).val())
+		$("#cart").attr('href',"${ctx}/cart/list?uid="+$(this).val())
 	}else if($(this).attr("id")=="packageId"){
 		var mmid=$(this).val();
 		 $.each(currentPackage, function(key, value) {
 			 if(value.id==mmid){
 				 $("#price").val( value.externalQuote);
 				 $("#flow").val(value.flow);
+				 $("#name").val(value.name);
 			 }
 		});
-		// $("#price").val( $("#pack_"+$(this).val()).attr("lang"));
-		// $("#flow").val( $("#pack_"+$(this).val()).attr("tabindex"))
+	}else if($(this).attr("id")=="cardType"){
+		initPackSelect($("#uid").val())
 	}
 });
 $(".validationform").validationEngine({ relative: true, relativePadding:false,
@@ -227,38 +229,32 @@ options.success=function(e){
 	}
 }
 $('#submit').click(function(){
-	$("#name").val("中国联通-"+$("#flow").val()+"MB套餐")
+	//$("#name").val( $("#name").val())
 	SP.ajax($("#validationform"),options);
 });
 
 var currentPackage;
 
 initPackSelect($("#uid").val());
-//初始化资费计划选择
-function initPackSelectOld(type){
-	 $("#packageId").empty();
-	 $("#allPackage").find("a."+type).each(function (index,domEle){
-			$("#packageId").append("<option value="+ $(this).attr('href') + ">"+ $(this).text() +"</option>");
-	 });
-	 $("#price").val( $("#pack_"+$("#packageId").val()).attr("lang"));
-	 $("#flow").val( $("#pack_"+$("#packageId").val()).attr("tabindex"))
-}
+
 $('.spinner').spinner('changed',function(e, newVal, oldVal){
   });
   $("#toCartList").click(function(){
 	  window.location.href="${ctx}/cart/list?uid="+$("#uid").val();
   })
     $("#buy").click(function(){
-	  window.location.href="${ctx}/cart/buy"
+	  //window.location.href="${ctx}/cart/buy"
   })
   
   function initPackSelect(uid){
   var options={}
-  options.url="${ctx}/pack/selfPacks?uid="+uid
+  options.url="${ctx}/pack/selfUserPacks?uid="+uid
   $("#packageId").empty();
   options.success = function(e) {
 	  $.each(e, function(key, value) {
-			$("#packageId").append("<option value="+ value.id + ">" + value.name+ "</option>");
+		     if(value.cardType==$("#cardType").val()){
+		    	 $("#packageId").append("<option value="+ value.id + ">" + value.name+ "</option>");
+		     }
 		});
 	  currentPackage=e;
 	  
@@ -266,9 +262,11 @@ $('.spinner').spinner('changed',function(e, newVal, oldVal){
 			 if(value.id==$("#packageId").val()){
 				 $("#price").val( value.externalQuote);
 				 $("#flow").val(value.flow);
+				 $("#name").val(value.name);
 			 }
 		});
   }
   SP.ajax($("#validationform"), options, false);
   }
+  $("#cart").attr('href',"${ctx}/cart/list?uid="+$("#uid").val())
 </script>

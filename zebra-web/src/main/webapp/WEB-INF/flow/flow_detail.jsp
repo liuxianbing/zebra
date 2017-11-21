@@ -86,7 +86,7 @@ padding:15px
 					<div class="row" style="padding-left:20px">
 						<div class="col-sm-3 col-md-3"
 							style="padding-left: 8px; padding-right: 0px">
-							<input type="hidden" name="uid" value="${cardflow.uid }" />
+							<input type="hidden" name="cid" value="${cardflow.cid }" />
 							<input type="hidden" name='flow' value="${flow }" />
 						 <div class="input-group input-group-sm">
                 <input type="text" class="form-control" name="iccid" style="height:40px" placeholder="请输入ICCID">

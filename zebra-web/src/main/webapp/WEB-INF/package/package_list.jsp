@@ -16,8 +16,8 @@
 		 <!-- Content Header (Page header)-->
 		    <section class="content-header">
 		      <h1>
-		      	 资费计划管理	
-		        <small>系统套餐列表</small>
+		      	 套餐管理	
+		        <small>套餐列表</small>
 		      </h1>
 		    </section>
 			<!-- Main content -->
@@ -31,6 +31,16 @@
 								     <option value=" ">全部套餐类型</option>
 								  <c:forEach items="${planList }" var="pl" >
 								     <option value="${pl.id }" >${pl.name}--${pl.flow }MB</option>
+								  </c:forEach>
+							</select>
+						</div>
+						<input type="hidden" name="status" value="1" />
+						<div class="col-sm-2 col-md-2">
+							<select id="planId" class="form-control select2" name="planId"
+								style="float: left;" data-placeholder="">
+								     <option value=" ">全部企业</option>
+								  <c:forEach items="${companyList }" var="pl" >
+								     <option value="${pl.id }" >${pl.name}</option>
 								  </c:forEach>
 							</select>
 						</div>
@@ -73,25 +83,25 @@
      var oTable;
      var selectData;
 	options.sAjaxSource="${ctx}/pack/list";
-	options.aaSorting=[[ 0, "asc" ]];
+	options.aaSorting=[[ 0, "desc" ]];
 	options.aoColumns=[
 		 { "sTitle": "ID", "bVisible":false, "sClass": "center","sWidth":"80","mDataProp": "id"},
 		 { "sTitle": "套餐名称",  "sClass": "center","sWidth":"80","mDataProp": "name"},
-		 { "sTitle": "套餐用户",  "sClass": "center","sWidth":"80","mDataProp": "userName"},
+		 { "sTitle": "套餐用户", "asSorting": [ ],  "sClass": "center","sWidth":"80","mDataProp": "userName"},
 		 { "sTitle": "对外套餐流量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "flow"},
 		 { "sTitle": "实际套餐流量(MB)",  "sClass": "center","sWidth":"80","mDataProp": "realFlow"},
 		 { "sTitle": "对外价格","sClass": "center" ,"sWidth":"100","mDataProp": "externalQuote"},
 		 { "sTitle": "平台价格","sClass": "center" ,"sWidth":"100","mDataProp": "platQuote"},
 		 { "sTitle": "联通账号","sClass": "center" ,"sWidth":"100","mDataProp": "account"},
-		 { "sTitle": "流量类型",  "sClass": "center" ,"sWidth":"75", "mDataProp": "type","mRender": function ( data, type, full ) {
-			 if(data==0) return '独享';
-			 return '共享';
+		 { "sTitle": "流量类型",  "sClass": "center" ,"sWidth":"75", "mDataProp": "cardType","mRender": function ( data, type, full ) {
+			 if(data==0) return '单卡';
+			 return '流量卡';
 		 }
 	 },
-       { "sTitle": "套餐类型",  "sClass": "center" ,"sWidth":"75", "mDataProp": "packageType","mRender": function ( data, type, full ) {
+       /*{ "sTitle": "套餐类型",  "sClass": "center" ,"sWidth":"75", "mDataProp": "packageType","mRender": function ( data, type, full ) {
 			 return '按月套餐';
 		 }
-	 },
+	 },*/
        { "sTitle": "运营商",  "sClass": "center","sWidth":"90","mDataProp": "id","mRender": function ( data, type, full ) {
 			 return '中国联通';
 			 }

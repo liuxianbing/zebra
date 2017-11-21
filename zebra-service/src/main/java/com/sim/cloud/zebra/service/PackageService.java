@@ -1,6 +1,7 @@
 package com.sim.cloud.zebra.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.sim.cloud.zebra.core.AbstractService;
+import com.sim.cloud.zebra.mapper.CartCardMapper;
 import com.sim.cloud.zebra.mapper.PackageMapper;
 import com.sim.cloud.zebra.mapper.TariffPlanMapper;
+import com.sim.cloud.zebra.model.CartCard;
 import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.TariffPlan;
 
@@ -23,6 +26,8 @@ import com.sim.cloud.zebra.model.TariffPlan;
 public class PackageService extends AbstractService<PackageMapper, Package> {
 	@Autowired
 	private TariffPlanMapper tariffPlanMapper;
+	@Autowired
+	private CartCardMapper cartCardMapper;
 	
 	/**
 	 * 添加或修改系统套餐
@@ -36,13 +41,14 @@ public class PackageService extends AbstractService<PackageMapper, Package> {
 		pack.setRealFlow(tp.getFlow());
 		pack.setAccount(tp.getAccount());
 		pack.setOperator(tp.getOperator());
-		pack.setCardType(tp.getType());
+		//pack.setCardType(tp.getType());
 		super.insertOrUpdate(pack);
 	}
 	
-	public List<Package> selectUserPacks(Long uid){
+	public List<Package> selectCompanyPacks(Long cid){
 		EntityWrapper<Package> wrapper=new EntityWrapper<>();
-		wrapper.eq("uid", uid);
+		wrapper.eq("cid", cid);
+		wrapper.eq("status", 1);
 		return selectList(wrapper);
 	}
 	

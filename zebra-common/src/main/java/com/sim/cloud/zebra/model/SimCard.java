@@ -34,6 +34,7 @@ public class SimCard extends BaseModel {
 	protected String lastSyncTime;// 最近同步时间
 	protected String account;// 账号license
 	protected Integer operator;// 运营商      1-移动、2-电信、3-联通	
+	private Long cartCardId;//订单ID
 
 	protected Integer usedMessages;//已经使用的短信条数
 	protected Integer usedMinutes;//已使用通话分钟数
@@ -54,11 +55,19 @@ public class SimCard extends BaseModel {
 	
 	
 	
+	public Long getCartCardId() {
+		return cartCardId;
+	}
+
+	public void setCartCardId(Long cartCardId) {
+		this.cartCardId = cartCardId;
+	}
+
 	public String getTypeStr() {
-		if(type==1){
-			typeStr= "共享卡";
+		if(type==2){
+			typeStr= "流量卡";
 		}else{
-			typeStr= "独享卡";
+			typeStr= "单卡";
 		}
 		return typeStr;
 	}
@@ -151,6 +160,9 @@ public class SimCard extends BaseModel {
 	}
 
 	public String getOpenTime() {
+		if(openTime!=null && openTime.length()>10){
+			openTime=openTime.substring(0, 10);
+		}
 		return openTime;
 	}
 
@@ -159,6 +171,9 @@ public class SimCard extends BaseModel {
 	}
 
 	public String getExpireTime() {
+		if(expireTime!=null && expireTime.length()>10){
+			expireTime=expireTime.substring(0, 10);
+		}
 		return expireTime;
 	}
 

@@ -14,7 +14,7 @@
         <div style="float:left">
            </div>
            <div style="float:left;margin-left:40px">
-           <h3 style="margin-top:60px" ><i class="fa fa-warning text-red" ></i> ${msg }</h3>
+           <h3 style="margin-top:60px" ><i class="fa fa-warning text-red" ></i> 无权限访问</h3>
            </div>
              
       </div>

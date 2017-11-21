@@ -17,11 +17,30 @@ public class Finance extends BaseModel{
 	private Float money,balance;
 	private String orderCode;
 	
+	private Long orderId;
+	
+	
 	@TableField(exist = false)
 	private String typeStr;
 	
+	@TableField(exist = false)
+	private String userInfo;
 	
+
 	
+	public Long getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
+	}
+	
+	public String getUserInfo() {
+		return userInfo;
+	}
+	public void setUserInfo(String userInfo) {
+		this.userInfo = userInfo;
+	}
 	public String getTypeStr() {
 		typeStr=FinanceEnum.getEnumByStatus(type).getTypeStr();
 		return typeStr;

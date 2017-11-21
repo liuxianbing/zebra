@@ -21,6 +21,17 @@ import com.sim.cloud.zebra.common.util.HttpCode;
 import com.sim.cloud.zebra.common.util.InstanceUtil;
 import com.sim.cloud.zebra.common.util.WebUtil;
 import com.sim.cloud.zebra.model.SysUser;
+import com.sim.cloud.zebra.service.CartCardService;
+import com.sim.cloud.zebra.service.CompanyService;
+import com.sim.cloud.zebra.service.FinanceService;
+import com.sim.cloud.zebra.service.OrderGoodsService;
+import com.sim.cloud.zebra.service.PackageService;
+import com.sim.cloud.zebra.service.SimCardService;
+import com.sim.cloud.zebra.service.SimcardPackViewService;
+import com.sim.cloud.zebra.service.StatisCardFlowService;
+import com.sim.cloud.zebra.service.SysAddressService;
+import com.sim.cloud.zebra.service.SysUserService;
+import com.sim.cloud.zebra.service.TariffPlanService;
 
 /**
  * 控制器基类
@@ -32,6 +43,33 @@ public abstract class AbstractController {
 	protected final Logger logger = LogManager.getLogger();
 
 	protected static final Map<String, String> SUCCESS = new HashMap<String, String>();
+	
+	@Autowired
+	protected SimcardPackViewService simCardServiceView;
+	
+	@Autowired
+	protected TariffPlanService tariffPlanService;
+	
+	@Autowired
+	protected SysUserService sysUserService;
+	
+
+	@Autowired
+	protected SimCardService simcardService;
+	@Autowired
+	protected CompanyService companyService;
+	@Autowired
+	protected PackageService packageService;
+	@Autowired
+	protected StatisCardFlowService statisCardFlowService;
+	@Autowired
+	protected FinanceService financeService;
+	@Autowired
+	protected SysAddressService sysAddressService;
+	@Autowired
+	protected OrderGoodsService orderGoodsService;
+	@Autowired
+	protected CartCardService cartCardService;
 	
 	static{
 		SUCCESS.put("result", "success");
@@ -80,6 +118,21 @@ public abstract class AbstractController {
 	/** 设置响应代码 */
 	protected ResponseEntity<ModelMap> setModelMap(ModelMap modelMap, HttpCode code) {
 		return setModelMap(modelMap, code, null);
+	}
+	
+	protected Map<String,Object> extractFromRequest(Map<String,Object> params){
+		 Map<String,Object> res2=new HashMap<>();
+		 params.entrySet().stream().filter(e->{
+			 if(!(e.getValue() instanceof String[])){
+				 if(StringUtils.isBlank(e.getValue().toString())){
+					 return false;
+				 }
+			 }
+			 return true;
+		 }).forEach(e->{
+			 res2.put(e.getKey(), e.getValue());
+		 });
+		 return res2;
 	}
 	/**
 	 * 从request获取参数 转化为Map类型

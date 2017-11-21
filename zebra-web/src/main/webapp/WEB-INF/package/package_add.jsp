@@ -16,7 +16,7 @@
 			<!-- Content Header (Page header)-->
 			<section class="content-header">
 				<h1>
-					资费计划管理 <small> <c:if test="${pack.id==null }">创建套餐</c:if>
+					套餐管理 <small> <c:if test="${pack.id==null }">创建套餐</c:if>
 						<c:if test="${pack.id!=null }">更新套餐</c:if>
 					</small>
 				</h1>
@@ -67,6 +67,21 @@
 							</div>
 						</div>
 					</div>
+					
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="inputEmail3" class="col-sm-2 control-label">卡片功能</label>
+								<div class="col-sm-8">
+									<select id="cardType" class="form-control select2" name="cardType"
+										style="float: left;" data-placeholder="卡片功能">
+												<option value="0">单卡套餐</option>
+												<option value="1">流量池套餐</option>
+									</select> 
+								</div>
+							</div>
+						</div>
+					</div>
 
 					<div class="row">
 						<div class="col-md-12">
@@ -77,7 +92,7 @@
 										style="float: left;" data-placeholder="套餐类型">
 										<c:forEach items="${planList }" var="pl">
 											<option value="${pl.id }"
-												<c:if test="${pack.planId==pl.id }">selected</c:if>>${pl.name}--${pl.flow }MB</option>
+												<c:if test="${pack.planId==pl.id }">selected</c:if>>${pl.name}--${pl.flow }MB--${pl.cost }元</option>
 										</c:forEach>
 									</select> <input type="hidden" name="id" value="${pack.id }"> 
 										<input type="hidden" name="type" value="1">
@@ -90,12 +105,12 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="inputEmail3" class="col-sm-2 control-label">关联客户</label>
+								<label for="inputEmail3" class="col-sm-2 control-label">关联企业</label>
 								<div class="col-sm-8">
-									 <select id="uid" class="form-control select2" name="uid"
-								style="float: left;" data-placeholder="关联客户">
-								  <c:forEach items="${userList }" var="ul" >
-								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
+									 <select id="cid" class="form-control select2" name="cid"
+								style="float: left;" data-placeholder="关联企业">
+								  <c:forEach items="${companyList }" var="ul" >
+								     <option value="${ul.id }" >${ul.name }</option>
 								  </c:forEach>
 							</select>
 								</div>

@@ -3,6 +3,7 @@ package com.sim.cloud.zebra.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,24 +31,31 @@ public class OrderGoodsService extends AbstractService<OrderGoodsMapper, OrderGo
 	@Autowired
 	private FinanceService financeService;
 	
-	public boolean updateOrderStatus(Long id,Integer type){
+	
+	public boolean updateOrderStatus(OrderGoods order){
 		String now=DateUtil.getDateTime();
-		OrderGoods order=new OrderGoods();
-		order.setId(id);
-		order.setType(type);
-		if(type==CartCardEnum.PAYOK_ORDER.getStatus()){
+		if(order.getType()==CartCardEnum.PAYOK_ORDER.getStatus()){
 			order.setPayTime(now);
-			OrderGoods tmp=selectById(id);
-			if(!financeService.insertFinance(tmp.getUid(), FinanceEnum.BUY_CARD.getType(), tmp.getTotalCost())){
+			OrderGoods tmp=selectById(order.getId());
+			if(!financeService.insertFinance(tmp, FinanceEnum.BUY_CARD.getType())){
 				return false;
 			}
-		}else if(type==CartCardEnum.CHECKOK_ORDER.getStatus()){
+			//批量更新卡片列表状态 为完成
+			cartCardService.updateBatchById(
+			cartCardService.selectByOrderId(order.getId()).stream()
+			.map(m->{
+				CartCard tt=new CartCard();
+				tt.setId(m.getId());
+				tt.setType(CartCard.ORDERE_OK);
+				return tt;
+			}).collect(Collectors.toList()));
+		}else if(order.getType()==CartCardEnum.CHECKOK_ORDER.getStatus()){
 			order.setAuditTime(now);
-		}else if(type==CartCardEnum.DELIVEROK_ORDER.getStatus()){
+		}else if(order.getType()==CartCardEnum.DELIVEROK_ORDER.getStatus()){
 			order.setOuterTime(now);
-		}else if(type==CartCardEnum.SUCCESS_ORDER.getStatus()){
+		}else if(order.getType()==CartCardEnum.SUCCESS_ORDER.getStatus()){
 			order.setSucTime(now);
-		}else if(type==CartCardEnum.CHECKFAIL_ORDER.getStatus()){
+		}else if(order.getType()==CartCardEnum.CHECKFAIL_ORDER.getStatus()){
 			order.setAuditTime(now);
 		}
 		updateById(order);

@@ -23,7 +23,9 @@ import com.sim.cloud.zebra.common.util.JackSonUtil;
 import com.sim.cloud.zebra.common.util.JasperUtils;
 import com.sim.cloud.zebra.model.FlowPoolVo;
 import com.sim.cloud.zebra.model.SimcardPackageView;
+import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
+import com.sim.cloud.zebra.service.PackageService;
 import com.sim.cloud.zebra.service.SimcardPackViewService;
 import com.sim.cloud.zebra.service.SysUserService;
 import com.sim.cloud.zebra.service.TariffPlanService;
@@ -41,19 +43,18 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/flow")
 public class FlowController extends AbstractController {
 
-	@Autowired
-	private SimcardPackViewService simCardServiceView;
-	
-	@Autowired
-	private TariffPlanService tariffPlanService;
-	
-	@Autowired
-	private SysUserService sysUserService;
 	
 	@ApiOperation(value = "个人流量池列表页面")
 	@RequestMapping(value = "/self", method = RequestMethod.GET)
 	public String toSelfList(Model model) {
-		model.addAttribute("list", simCardServiceView.selectSelfPoolList(getCurrUser().getId()));
+		Long cid=null;
+		Long uid=null;
+		if(getCurrUser().getRole()==SysUser.ROLE_MANAGER){
+			cid=getCurrUser().getCid();
+		}else if(getCurrUser().getRole()==SysUser.ROLE_USER){
+			uid=getCurrUser().getId();
+		}
+		model.addAttribute("list", simCardServiceView.selectSelfPoolList(uid,cid));
 		return "flow/self_flow";
 	}
 	
@@ -61,36 +62,34 @@ public class FlowController extends AbstractController {
 	@RequestMapping(value = "cardlist", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody DataTableParameter<SimcardPackageView> cardList() {
 		Map<String,Object> param=extractFromRequest();
-		Long uid;
-		if(!checkIfManager()){
+		Long uid=null;
+		Long cid=null;
+		if(getCurrUser().getRole()==SysUser.ROLE_MANAGER){
+			cid=getCurrUser().getCid();
+		}else if(getCurrUser().getRole()==SysUser.ROLE_USER){
 			uid=getCurrUser().getId();
 		}else{
-			uid=Long.parseLong(param.get("uid").toString());
+			cid=Long.parseLong(param.get("cid").toString());
 		}
 		String iccid=null;
 		if(null!=param.get("iccid")){
 			iccid=param.get("iccid").toString();
 		}
-		List<SimcardPackageView> list=simCardServiceView.selectFlowCards(uid, Integer.parseInt(param.get("flow").toString()),
+		List<SimcardPackageView> list=simCardServiceView.selectFlowCards(uid,cid, Integer.parseInt(param.get("flow").toString()),
 				iccid);
 		return new DataTableParameter<SimcardPackageView>(list.size(),request.getParameter("sEcho"),list);
 	}
 	
 	@ApiOperation(value = "流量池详细页面")
 	@RequestMapping(value = "/detail", method = RequestMethod.GET)
-	public String toDetail(Model model,@RequestParam(required=false) String phone,@RequestParam Integer flow) {
-		if(!checkIfManager()){
-			phone=getCurrUser().getPhone();
+	public String toDetail(Model model,@RequestParam(required=false) Long cid,@RequestParam Integer flow) {
+		Long uid=null;
+		if(getCurrUser().getRole()==SysUser.ROLE_MANAGER){
+			cid=getCurrUser().getCid();
+		}else if(getCurrUser().getRole()==SysUser.ROLE_USER){
+			uid=getCurrUser().getId();
 		}
-		SimcardPackageView spv=simCardServiceView.statisFlowPool(phone, flow);
-		Map<String,Integer> res=new HashMap<>();
-		res.put("wo", 3);
-		res.put("ni", 4);
-//		try {
-//			spv.setRemark(JackSonUtil.getObjectMapper().writeValueAsString(res));
-//		} catch (JsonProcessingException e) {
-//			e.printStackTrace();
-//		}
+		SimcardPackageView spv=simCardServiceView.statisFlowPool(uid,cid, flow);
 		model.addAttribute("flow", flow);
 		model.addAttribute("cardflow",spv);
 		return "flow/flow_detail";
@@ -99,8 +98,13 @@ public class FlowController extends AbstractController {
 	@ApiOperation(value = "流量池列表页面")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String toList(Model model) {
-		model.addAttribute("planList", tariffPlanService.selectList(null).
-				stream().filter(f->f.getType()==TariffPlan.SHARE).collect(Collectors.toList()));
+		List<Integer> flowList=packageService.selectList(null).
+		stream().filter(f->f.getCardType()==TariffPlan.SHARE).map(m->m.getFlow()).distinct()
+		.collect(Collectors.toList());
+		model.addAttribute("flowList", flowList);
+		model.addAttribute("companyList",companyService.selectList(null).
+				stream().filter(f->f.getBusinessAuth()==1 && f.getLegalAuth()==1).
+				collect(Collectors.toList()) );
 		return "flow/flow_list";
 	}
 	/**
@@ -111,21 +115,26 @@ public class FlowController extends AbstractController {
 	@ApiOperation(value = "流量池列表请求")
 	@RequestMapping(value = "list", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody DataTableParameter<FlowPoolVo> list() {
-		List<Long> userIdList=new ArrayList<>();
+		List<Long> cidList=new ArrayList<>();
 		Integer flow=null;
 		if(StringUtils.isNoneBlank(request.getParameter("keyword"))){
 			Map<String,Object> params=new HashMap<>();
 			params.put("keyword", request.getParameter("keyword"));
-			userIdList=sysUserService.getBaseMapper().selectIdPage(params);
-			if(userIdList==null || userIdList.size()==0){
+			cidList.addAll(sysUserService.queryList(params).stream().filter(f->f.getCid()!=null && f.getCid()>0).
+					map(m->m.getCid()).distinct().collect(Collectors.toList()));
+			if( cidList.size()==0){
 				return new DataTableParameter<FlowPoolVo>(0,
 						request.getParameter("sEcho"),new ArrayList<>());
 			}
 		}
+		if(StringUtils.isNoneBlank(request.getParameter("cid"))){
+			cidList.clear();
+			cidList.add(Long.parseLong(request.getParameter("cid")));
+		}
 		if(StringUtils.isNoneBlank(request.getParameter("flow"))){
 			flow=Integer.parseInt(request.getParameter("flow"));
 		}
-		List<FlowPoolVo> list=simCardServiceView.selectAllPoolList(userIdList,flow);
+		List<FlowPoolVo> list=simCardServiceView.selectAllPoolList(cidList,flow);
 		return new DataTableParameter<FlowPoolVo>(list.size(),
 				request.getParameter("sEcho"),list);
 	}

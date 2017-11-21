@@ -4,26 +4,57 @@
 <jsp:include page="../fragments/meta.jsp" />
 <link rel="stylesheet" type="text/css"
 	href="${ctx}/assets/plugins/datatables.net-bs/css/dataTables.bootstrap.css" />
-	
-	<link rel="stylesheet"
+
+<link rel="stylesheet"
 	href="${ctx }/assets/plugins/validation/validationEngine.jquery.css" />
- <link href="${ctx }/assets/plugins/dropzone/css/dropzone.css" rel="stylesheet"/>
- <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css"
+<link href="${ctx }/assets/plugins/dropzone/css/dropzone.css"
+	rel="stylesheet" />
+<link
+	href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css"
 	rel="stylesheet" type="text/css" />
-	
-	 <link href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
-	
-	
+
+<link
+	href="${ctx}/assets/plugins/bootstrap-modal/css/bootstrap-modal.css"
+	rel="stylesheet" type="text/css" />
+
+
 <link rel="shortcut icon" href="${ctx}/assets/img/fav.ico" />
 <style>
-#validationform .row{
-margin-top:15px
+#validationform .row {
+	margin-top: 15px
 }
-.bootbox-alert,.bootbox-confirm{
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color: #bbb;
+    cursor: default;
+}
+.bootbox-alert, .bootbox-confirm {
 	background: none;
-	border:none;
-	box-shadow:none;
+	border: none;
+	box-shadow: none;
 }
+
+ .select2-drop {
+        z-index: 10050 !important;
+    }
+     .select2-search-choice-close {
+        margin-top: 0 !important;
+        right: 2px !important;
+        min-height: 10px;
+    }
+  .select2-search-choice-close:before {
+            color: black !important;
+        }
+    /*防止select2不会自动失去焦点*/
+ .select2-container {
+        z-index: 16000 !important;
+    }
+ 
+ .select2-drop-mask {
+        z-index: 15990 !important;
+    }
+   .select2-drop-active {
+        z-index: 15995 !important;
+    }
 </style>
 </head>
 
@@ -33,75 +64,89 @@ margin-top:15px
 		<jsp:include page="../fragments/menu.jsp" />
 		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper">
-		 <!-- Content Header (Page header)-->
-		    <section class="content-header">
-		      <h1>
-		      	  卡片管理
-		        <small>物联卡列表</small>
-		      </h1>
-		    </section>
+			<!-- Content Header (Page header)-->
+			<section class="content-header">
+				<h1>
+					卡片管理 <small>物联卡列表</small>
+				</h1>
+			</section>
 			<!-- Main content -->
 			<section class="content">
-				<form:form onsubmit="return false" action="${ctx}/simcard/list" method="post" id="searchform">
+				<form:form onsubmit="return false" action="${ctx}/simcard/list"
+					method="post" id="searchform">
 					<div class="row" style="padding: 10px">
 						<div class="col-sm-2 col-md-2"
 							style="padding-left: 8px; padding-right: 0px">
 							<input type="text" id="search_name" name="keyword"
 								class="form-control" placeholder="ICCID或电话号码或备注">
 						</div>
-						<div class="col-sm-1 col-md-1">
+						<div class="col-sm-2 col-md-2">
 							<select id="state" class="form-control select2" name="type"
-								style="float: left;" data-placeholder="卡类型">
+								style="float: left;z-index:1" data-placeholder="卡类型">
 								<option value=" " selected="selected">全部卡</option>
-								  <option value="1" >单卡</option>
-								  <option value="2" >流量卡</option>
+								<option value="1">单卡</option>
+								<option value="2">流量卡</option>
 							</select>
 						</div>
-							<div class="col-sm-1 col-md-1">
+						<div class="col-sm-2 col-md-2">
 							<select id="netType" class="form-control select2" name="netType"
 								style="float: left;" data-placeholder="网络状态">
 								<option value=" " selected="selected">全部网络</option>
-								  <option value="1" >开启</option>
-								  <option value="0" >关闭</option>
+								<option value="1">开启</option>
+								<option value="0">关闭</option>
 							</select>
 						</div>
-						<div class="col-sm-1 col-md-1">
+						<div class="col-sm-2 col-md-2">
 							<select id="objType" class="form-control select2" name="objType"
 								style="float: left;" data-placeholder="设备状态">
 								<option value=" " selected="selected">全部设备</option>
 								<c:forEach items="${deviceStatus }" var="ds">
-									<option value="${ds.status }" >${ds.simStatus }</option>
+									<option value="${ds.status }">${ds.simStatus }</option>
 								</c:forEach>
 							</select>
 						</div>
+						<c:if test="${CURRENT_USER.role==0 }">
 						<div class="col-sm-2 col-md-2">
-							<select id="uid" class="form-control select2" name="uid"
-								style="float: left;" data-placeholder="关联客户">
-								<option value=" " selected="selected">全部关联客户</option>
-								  <option value="0" >未关联</option>
-								  <c:forEach items="${userList }" var="ul" >
-								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
-								  </c:forEach>
+							<select id="cid" class="form-control select2" name="cid"
+								style="float: left;" data-placeholder="关联企业">
+								<option value=" " selected="selected">全部关联企业</option>
+								<option value="0">未关联</option>
+								<c:forEach items="${userList }" var="ul">
+									<option value="${ul.cid }">${ul.companyName }</option>
+								</c:forEach>
 							</select>
 						</div>
-				<div class="col-sm-2 col-md-2">
-					 <button type="button" id="searchButton" onclick="loadTable()" class="btn btn-primary">查询</button>
-                </div>
+						</c:if>
+						<div class="col-sm-2 col-md-2">
+							<button type="button" id="searchButton" onclick="loadTable()"
+								class="btn btn-primary">查询</button>
+						</div>
 					</div>
 				</form:form>
-				<div class="btn_table">
-				    <c:if test="${CURRENT_USER.role==0 }">
-				    <button type="button" id="huabo"  class="btn  margin btn-success disabled">划拨</button>
-				    <button type="button" id="rmBtn"  class="btn  margin btn-primary disabled">备注</button>
-				  	<button type="button"  class="btn  margin btn-default disabled">卡重置</button>
-				  	 <button type="button"  class="btn  margin btn-info disabled">打开网络</button>
-				    <button type="button"   class="btn  margin btn-danger disabled">关闭网络</button>
-				  </c:if>
-				   <c:if test="${CURRENT_USER.role==1 }">
-				   <button type="button"  class="btn  margin btn-waring disabled">卡分配</button>
-				   </c:if>
-				   
+				<div class="row">
+				<c:if test="${CURRENT_USER.role==0 }">
+					<div  style="display:inline">
+					<button type="button" id="batch" class="btn  margin btn-success">全部划拨</button>
+					</div>
+					</c:if>
+				<div class="btn_table" style="display:inline">
+					<c:if test="${CURRENT_USER.role==0 }">
+						<button type="button" id="huabo"
+							class="btn  margin btn-success disabled">划拨</button>
+						<button type="button" id="rmBtn"
+							class="btn  margin btn-primary disabled">备注</button>
+						<button type="button" class="btn  margin btn-default disabled">卡重置</button>
+						<button type="button" class="btn  margin btn-info disabled">打开网络</button>
+						<button type="button" class="btn  margin btn-danger disabled">关闭网络</button>
+						<button type="button" class="btn  margin bg-olive disabled">延期</button>
+						
+					</c:if>
+					<c:if test="${CURRENT_USER.role==1 }">
+						<button type="button" class="btn  margin btn-waring disabled">卡分配</button>
+					</c:if>
 				</div>
+				</div>
+				<div><label style="cursor:pointer"><input   type='checkbox' id="selectAll" style='margin-left:20px' name='gg' />全选</label></div>
 				<table id="card_list" class="table table-bordered table-hover">
 				</table>
 			</section>
@@ -110,129 +155,159 @@ margin-top:15px
 		<!-- /.content-wrapper -->
 		<jsp:include page="../fragments/bottom.jsp" />
 	</div>
-	
-	<div id="distDiv" class="modal"  data-keyboard="true" data-backdrop="static">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal"
-			aria-hidden="true"></button>
-		<h4 class="modal-title">卡片分配</h4>
-	</div>
-	<div class="modal-body" style="overflow: hidden;">
-				<form:form onsubmit="return false" action="${ctx}/simcard/dist" method="post" 
-				class="validationform form-horizontal" id="validationform3">
-						<div class="row" >
-						  <div class="col-md-3">
-						  	  <label for="inputEmail3" class="control-label">关联客户</label>
-						  </div>
-						   <div class="col-md-9">
-						     <select id="uidInnerss" class="form-control select2" name="uidss"
-								style="float: left;" data-placeholder="关联客户">
-								  <c:forEach items="${userList }" var="ul" >
-								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
-								  </c:forEach>
-							</select>
-						  </div>
+
+	<div id="distDiv" class="modal" data-keyboard="true"
+		data-backdrop="static">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true"></button>
+			<h4 class="modal-title">卡片分配</h4>
+		</div>
+		<div class="modal-body" style="overflow: hidden;">
+			<form:form onsubmit="return false" action="${ctx}/simcard/dist"
+				method="post" class="validationform form-horizontal"
+				id="validationform3">
+				<div class="row">
+					<div class="col-md-3">
+						<label for="inputEmail3" class="control-label">关联客户</label>
 					</div>
-				</form:form>
+					<div class="col-md-9">
+						<select id="uidInnerss" class="form-control select2" name="uidss"
+							style="float: left;width:280px" data-placeholder="关联客户">
+							<c:forEach items="${userList }" var="ul">
+								<option value="${ul.id }">${ul.phone }-${ul.userName }</option>
+							</c:forEach>
+						</select>
+					</div>
+				</div>
+			</form:form>
+		</div>
+		<div class="modal-footer">
+			<button type="button" id="submitDist" class="btn btn-primary">提交</button>
+
+			<button type="button" data-dismiss="modal" id="closeupload3"
+				class="btn btn-default">关闭</button>
+		</div>
 	</div>
-	<div class="modal-footer">
-	<button type="button" id="submitDist"   class="btn btn-primary">提交</button>
-			
-		<button type="button" data-dismiss="modal" id="closeupload3"
-			class="btn btn-default">关闭</button>
-	</div>
-</div>
-	
-	<div id="remarkDiv" class="modal"  data-keyboard="true" data-backdrop="static">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal"
-			aria-hidden="true"></button>
-		<h4 class="modal-title">添加备注</h4>
-	</div>
-	<div class="modal-body" style="overflow: hidden;">
-				<form:form onsubmit="return false" action="${ctx}/simcard/remark" method="post" 
-				class="validationform form-horizontal" id="validationform2">
-					<div class="row" >
-						  <div class="col-md-3">
-						  	  <label for="inputEmail3" class="control-label">备注信息</label>
-						  </div>
-						   <div class="col-md-9">
-						      <textarea rows="3" cols="10" style="height:80px" 
-								   class="form-control" value=""   name="remark" id="remark">
+
+	<div id="remarkDiv" class="modal" data-keyboard="true"
+		data-backdrop="static">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true"></button>
+			<h4 class="modal-title">添加备注</h4>
+		</div>
+		<div class="modal-body" style="overflow: hidden;">
+			<form:form onsubmit="return false" action="${ctx}/simcard/remark"
+				method="post" class="validationform form-horizontal"
+				id="validationform2">
+				<div class="row">
+					<div class="col-md-3">
+						<label for="inputEmail3" class="control-label">备注信息</label>
+					</div>
+					<div class="col-md-9">
+						<textarea rows="3" cols="10" style="height: 80px"
+							class="form-control" value="" name="remark" id="remark">
 							     </textarea>
-						  </div>
-						  <input type="hidden" name="ids" id="remarkIds" />
 					</div>
-				</form:form>
+					<input type="hidden" name="ids" id="remarkIds" />
+				</div>
+			</form:form>
+		</div>
+		<div class="modal-footer">
+			<button type="button" id="submitRemark" class="btn btn-primary">提交</button>
+
+			<button type="button" data-dismiss="modal" id="closeupload2"
+				class="btn btn-default">关闭</button>
+		</div>
 	</div>
-	<div class="modal-footer">
-	<button type="button" id="submitRemark"   class="btn btn-primary">提交</button>
-			
-		<button type="button" data-dismiss="modal" id="closeupload2"
-			class="btn btn-default">关闭</button>
-	</div>
-</div>
 	
 	
-	<div id="business" class="modal" 
-	data-keyboard="true" data-backdrop="static">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal"
-			aria-hidden="true"></button>
-		<h4 class="modal-title">划拨卡片</h4>
-	</div>
-	<div class="modal-body" style="overflow: hidden;">
-				<form:form onsubmit="return false" action="${ctx}/simcard/alloc" method="post" 
-				class="validationform form-horizontal" id="validationform">
-					<div class="row" >
+	<div id="delayDiv" class="modal" data-keyboard="true"
+		data-backdrop="static">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true"></button>
+			<h4 class="modal-title">延期卡片</h4>
+		</div>
+		<div class="modal-body" style="overflow: hidden;">
+			<form:form onsubmit="return false" action="${ctx}/simcard/delay"
+				method="post" class="validationform form-horizontal"
+				id="validationform4">
+				<div class="row" >
 						  <div class="col-md-3">
-						  	  <label for="inputEmail3" class="control-label">ICCID</label>
-						  	   <input type="hidden" name="ids" id="ids" />
+						  	  <label for="inputEmail3" class="control-label">延期卡片</label>
 						  </div>
+						  <input type="hidden" name="ids" id="delayIds" />
 						   <div class="col-md-9">
-						      <textarea rows="3" cols="10" style="height:80px" 
-								   class="form-control" readonly="readonly"  name="iccid" id="iccid">
-							     </textarea>
-							     <div style="color:#999" id="tips"></div>
-						  </div>
-					</div>
-					<div class="row" >
-						  <div class="col-md-3">
-						  	  <label for="inputEmail3" class="control-label">关联客户</label>
-						  </div>
-						   <div class="col-md-9">
-						     <select id="uidInner" onchange="initPackSelect(this.value)" class="form-control select2" name="uid"
-								style="float: left;" data-placeholder="关联客户">
-								  <c:forEach items="${userList }" var="ul" >
-								     <option value="${ul.id }" >${ul.phone }-${ul.userName }</option>
-								  </c:forEach>
-							</select>
-						  </div>
-					</div>
-					<div class="row" >
-						  <div class="col-md-3">
-						  	  <label for="inputEmail3" class="control-label">关联套餐</label>
-						  </div>
-						   <div class="col-md-9">
-						     <select id="packageId" class="form-control select2  validate[required]" name="packageId"
-								style="float: left;" data-placeholder="关联套餐">
-							</select>
-						  </div>
-					</div>
-					<!-- 
-					<div class="row" >
-						  <div class="col-md-3">
-						  	  <label for="inputEmail3" class="control-label">套餐期限</label>
-						  </div>
-						   <div class="col-md-9">
-						     <select id="term" class="form-control select2" name="term"
+						     <select id="term333" class="form-control select2" name="term"
 								style="float: left;" data-placeholder="套餐期限">
-								  <c:forEach items="${termList }" var="tm" >
+								  <c:forEach items="${termList2 }" var="tm" >
 								     <option value="${tm }" >${tm }月</option>
 								  </c:forEach>
 							</select>
 						  </div>
 					</div>
+			</form:form>
+		</div>
+		<div class="modal-footer">
+			<button type="button" id="submitDelay" class="btn btn-primary">提交</button>
+
+			<button type="button" data-dismiss="modal" id="closeupload2"
+				class="btn btn-default">关闭</button>
+		</div>
+	</div>
+
+
+	<div id="business" class="modal" data-keyboard="true"
+		data-backdrop="static">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true"></button>
+			<h4 class="modal-title">划拨卡片</h4>
+		</div>
+		<div class="modal-body" style="overflow: hidden;">
+			<form:form onsubmit="return false" action="${ctx}/simcard/alloc"
+				method="post" class="validationform form-horizontal"
+				id="validationform">
+				<div class="row">
+					<div class="col-md-3">
+						<label for="inputEmail3" class="control-label">ICCID</label> <input
+							type="hidden" name="ids" id="ids" />
+					</div>
+					<div class="col-md-9">
+						<textarea rows="3" cols="10" style="height: 80px"
+							class="form-control" readonly="readonly" name="iccid" id="iccid">
+							     </textarea>
+						<div style="color: #999" id="tips"></div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						<label for="inputEmail3" class="control-label">关联企业</label>
+					</div>
+					<div class="col-md-9">
+						<select id="uidInner" 
+							class="form-control select2" name="cid" style="float: left;width:400px"
+							data-placeholder="关联企业">
+							<c:forEach items="${userList }" var="ul">
+								<option value="${ul.cid }">${ul.companyName }</option>
+							</c:forEach>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						<label for="inputEmail3" class="control-label">关联订单</label>
+					</div>
+					<div class="col-md-9">
+						<select id="cartCardId" style="float: left;width:400px"
+							class="form-control select2  validate[required]" name="cartCardId"
+							style="float: left;" data-placeholder="关联套餐">
+						</select>
+					</div>
+				</div>
+				<!-- 
 					<div class="row" >
 						  <div class="col-md-3">
 						  	  <label for="inputEmail3" class="control-label">套餐价格</label>
@@ -243,45 +318,58 @@ margin-top:15px
 						  </div>
 					</div>
 					 -->
-					
-				</form:form>
+
+			</form:form>
+		</div>
+		<div class="modal-footer">
+			<button type="button" id="submitIccid" class="btn btn-primary">提交</button>
+
+			<button type="button" data-dismiss="modal" id="closeupload1"
+				class="btn btn-default">关闭</button>
+		</div>
 	</div>
-	<div class="modal-footer">
-	<button type="button" id="submitIccid"   class="btn btn-primary">提交</button>
-			
-		<button type="button" data-dismiss="modal" id="closeupload1"
-			class="btn btn-default">关闭</button>
+
+
+	<button class="btn blue" id="hb" data-target="#business"
+		data-toggle="modal" type='button' style="float: right; display: none">rr</button>
+	<button class="btn blue" id="rm" data-target="#remarkDiv"
+		data-toggle="modal" type='button' style="float: right; display: none">rr</button>
+	<button class="btn blue" id="dis" data-target="#distDiv"
+		data-toggle="modal" type='button' style="float: right; display: none">rr</button>
+		<button class="btn blue" id="delayTrigger" data-target="#delayDiv"
+		data-toggle="modal" type='button' style="float: right; display: none">rr</button>
+
+	<div style="display: none" id="allPlan">
+		<c:forEach items="${planList }" var="pl">
+			<a href="${pl.id }" class="${pl.type }">${pl.name}--${pl.flow }MB--￥${pl.cost }</a>
+		</c:forEach>
 	</div>
-</div>
 
-
-<button class="btn blue"  id="hb" data-target="#business" data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
-<button class="btn blue"  id="rm" data-target="#remarkDiv" data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
-<button class="btn blue"  id="dis" data-target="#distDiv" data-toggle="modal"   type='button' style="float:right;display:none">rr</button>
-
-<div style="display:none" id="allPlan">
-    <c:forEach items="${planList }" var="pl" >
-            <a href="${pl.id }" class="${pl.type }" >${pl.name}--${pl.flow }MB--￥${pl.cost }</a>
-	</c:forEach>
-</div>
-
-<form:form onsubmit="return false" action="" method="post" id="oper">
-				  <input type='hidden' name="ids" id="myids" />
-				</form:form>
+	<form:form onsubmit="return false" action="" method="post" id="oper">
+		<input type='hidden' name="ids" id="myids" />
+	</form:form>
 
 	<jsp:include page="../fragments/footer.jsp" />
 	<script type="text/javascript"
 		src="${ctx }/assets/plugins/datatables.net/js/jquery.dataTables.js"></script>
 	<script type="text/javascript"
 		src="${ctx }/assets/plugins/datatables.net-bs/js/dataTables.bootstrap2.js"></script>
-		<script src="${ctx}/assets/plugins/validation/jquery.validationEngine.js" type="text/javascript"></script>
-	<script src="${ctx}/assets/plugins/validation/jquery.validationEngine-cn.js" type="text/javascript"></script>
-		
-		
-	<script src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
-	<script src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
-		
-		
+	<script
+		src="${ctx}/assets/plugins/validation/jquery.validationEngine.js"
+		type="text/javascript"></script>
+	<script
+		src="${ctx}/assets/plugins/validation/jquery.validationEngine-cn.js"
+		type="text/javascript"></script>
+
+
+	<script
+		src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"
+		type="text/javascript"></script>
+	<script
+		src="${ctx}/assets/plugins/bootstrap-modal/js/bootstrap-modal.js"
+		type="text/javascript"></script>
+
+
 </body>
 </html>
 <script>
@@ -294,10 +382,26 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			loadTable();
 		})
 		
+		  $("#validationform").find(".select2").select2({ allowClear:false}).on("select2-selecting", function(e) {
+		}).on("change", function(e) {
+			if($(this).attr("id")=="uidInner"){
+				initPackSelect($(this).val())
+			}
+		})
+		 $("#validationform3").find(".select2").select2({ allowClear:false})
+    
+    $("#selectAll").click(function(e){
+    	$("#card_list").find('tbody').find('tr').trigger('click')
+    })
 	var options={};
+    
+    $(".btn-default").click(function(){
+    	$("#searchform").find(".select2").attr('disabled', false);
+    })
     
     options.success=function(data){
     	 $(".modal").find(".btn-default").trigger('click');
+    	 $("#searchform").find(".select2").attr('disabled', false);
     	  if(data.result=='success'){
     		  toastr.success('操作成功');
     	  }else{
@@ -311,19 +415,22 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
      var oTable;
      var selectData;
 	options.sAjaxSource="${ctx}/simcard/list";
-	options.aaSorting=[[ 0, "asc" ]];
+	options.aaSorting=[[ 1, "desc" ]];
 	options.aoColumns=[
+		 { "sTitle": "选择", "asSorting":[], "sClass": "center","sWidth":"80","mDataProp": "id","mRender": function ( data, type, full ) {
+			 return '<input type="checkbox" name="sks" value='+data+' />';
+		 }
+		 },
 		 { "sTitle": "ID", "bVisible":false, "sClass": "center","sWidth":"80","mDataProp": "id"},
-		 { "sTitle": "ICCID",  "sClass": "center","sWidth":"150","mDataProp": "iccid","mRender": function ( data, type, full ) {
+		 { "sTitle": "ICCID", "asSorting":[],"sClass": "center","sWidth":"180","mDataProp": "iccid","mRender": function ( data, type, full ) {
 			 return '<a href="${ctx}/simcard/detail?id='+full.id+'">'+data+'</a>';
 			 }
 		 },
-		 { "sTitle": "电话号码","sClass": "center" ,"sWidth":"100","mDataProp": "phone"},
+		 { "sTitle": "MSISDN","sClass": "center" ,"sWidth":"100","mDataProp": "phone"},
 		 { "sTitle": "运营商",  "sClass": "center","sWidth":"90","mDataProp": "operator","mRender": function ( data, type, full ) {
 			 return '中国联通';
 			 }
 		 },
-		 { "sTitle": "卡类型","sClass": "center" ,"sWidth":"100","mDataProp": "typeStr"},
 		 { "sTitle": "关联用户", "asSorting": [ ],"sClass": "center" ,"sWidth":"100","mDataProp": "userInfo"},
        { "sTitle": "网络状态",  "sClass": "center" ,"sWidth":"90", "mDataProp": "netTypeStr"},
 	   { "sTitle": "设备状态",  "sClass": "center","sWidth":"80","mDataProp": "objTypeStr"},
@@ -332,10 +439,18 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	   { "sTitle": "套餐价格",  "sClass": "center","sWidth":"80","mDataProp": "externalQuote"},
 	   { "sTitle": "套餐总量(MB)",  "sClass": "center","sWidth":"95","mDataProp": "flow"},
 	   { "sTitle": "套餐已用(MB)",  "sClass": "center","sWidth":"95","mDataProp": "packageUsed"},
-	   { "sTitle": "套餐剩余(MB)",  "sClass": "center","sWidth":"95","mDataProp": "packageLeft"},
-	   { "sTitle": "最近同步时间",  "sClass": "center","sWidth":"100","mDataProp": "lastSyncTime"},
+	 //  { "sTitle": "套餐剩余(MB)",  "sClass": "center","sWidth":"95","mDataProp": "packageLeft"},
+	   { "sTitle": "划拨时间",  "sClass": "center","sWidth":"95","mDataProp": "openTime"},
+	   { "sTitle": "到期时间",  "sClass": "center","sWidth":"95","mDataProp": "expireTime"},
+	   { "sTitle": "同步时间",  "sClass": "center","sWidth":"100","mDataProp": "lastSyncTime"},
 	   { "sTitle": "备注", "sClass": "center" ,"sWidth":"90","mDataProp": "remark"}
 		];
+	
+	var cartType= { "sTitle": "卡类型","sClass": "center" ,"sWidth":"100","mDataProp": "typeStr"}
+	  <c:if test="${CURRENT_USER.role==0 }">
+	  options.aoColumns.push(cartType)
+	  </c:if>
+	  
 	function loadTable(){
 		if(oTable){
 			 $("#card_list").empty();
@@ -348,6 +463,11 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	
 	$('#card_list').on('click', ' tbody tr', function () {	
         $(this).toggleClass('row_selected');
+        if($(this).hasClass('row_selected')){
+        	$(this).find("input[name='sks']").attr("checked","true");
+        }else{
+        	$(this).find("input[name='sks']").attr("checked",false);
+        }
         if(dataTableObj.rows('.row_selected').data().length>0){
         	$(".btn_table").find('button').removeClass('disabled')
         }else{
@@ -355,12 +475,14 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
         }
     } );
 	
+	
 	  $('.btn_table').on('click', 'button', function () {
 				  if($(this).hasClass('disabled')){
 					  return;
 				  }
+				  $("#searchform").find(".select2").attr('disabled', true);
 		        if($(this).hasClass('btn-success')){
-		        	getSelectedData();
+		        	getSelectedData(dataTableObj.rows('.row_selected').data());
 		        }else if($(this).hasClass('btn-primary')){
 		        	remarkCards();
 		        }else if($(this).hasClass('btn-info')){
@@ -373,6 +495,9 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		        }else if($(this).hasClass('btn-waring')){
 		        	getIDS();
 		        	 $("#dis").trigger('click')
+		        }else if($(this).hasClass('bg-olive')){
+		        	getIDS();
+		        	 $("#delayTrigger").trigger('click')
 		        }
 			});
 	
@@ -380,12 +505,15 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	loadTable();
 	var suc=0;
 	var netType=-1;
-	 function getSelectedData(){
+	var cardType=-1;
+	 function getSelectedData(myobj){
+		 initPackSelect($("#uidInner").val());
+		 
 		 var iccids="";
 		 var ids="";
 		 suc=0;
-		 var cardType=-1;
-		 $.each(dataTableObj.rows('.row_selected').data(),function(i,n){
+		 cardType=-1;
+		 $.each(myobj,function(i,n){
 			 if(cardType==-1){
 				 cardType=n.type;
 			 }else if(cardType!=n.type){
@@ -400,26 +528,43 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		 }
 		 );
 		 if(cardType<0){
-			  bootbox.alert("请选择同一类型的物联网卡!"); 
+			  bootbox.alert(cardType+"请选择同一类型的物联网卡!"); 
+			  $("#searchform").find(".select2").attr('disabled', false);
 			   return;
 		 }
 		// initPlanSelect(cardType)
 		 $('#iccid').val(iccids.substring(0,iccids.length-1))
 		  $('#ids').val(ids.substring(0,ids.length-1))
-		 var tips="当前可分配的ICCID"+suc+"个,无法分配的ICCID"+(dataTableObj.rows('.row_selected').data().length-suc)+"个";
+		 var tips="当前可分配的ICCID"+suc+"个,无法分配的ICCID"+(myobj.length-suc)+"个";
 		 $("#tips").html(tips);
 		 $("#hb").trigger('click')
 	 }
+	 
+	 $("#batch").click(function(){
+		 var opt = {}
+			opt.url="${ctx}/simcard/batch"
+			opt.success = function(e) {
+				getSelectedData(e)
+				 $("#searchform").find(".select2").attr('disabled', true);
+			}
+			SP.ajax($("#searchform"), opt);
+	 })
 	 $("#submitIccid").click(function(){
 		 if(suc==0){
 			   bootbox.alert("当前没有可分配的物联网卡"); 
 			   return;
 		 }
+		 if($("#cartCardId").val()==null){
+			 bootbox.alert("当前没有该用户的套餐"); 
+			 return;
+		 }
 		 $('body').modalmanager('loading');
+		 options.url="${ctx}/simcard/alloc";
 		 SP.ajax($("#validationform"),options);
 	 })
 	  $("#submitRemark").click(function(){
 		  $('body').modalmanager('loading');
+		  options.url="${ctx}/simcard/remark";
 		 SP.ajax($("#validationform2"),options);
 	 })
 	 
@@ -448,6 +593,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 			  if(result){
 		 $('body').modalmanager('loading');
 			$("#oper").attr('action',"${ctx}/simcard/open");
+			  options.url="${ctx}/simcard/open";
 			SP.ajax($("#oper"),options);
 			  }
 			});
@@ -460,6 +606,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		bootbox.confirm('是否确认关闭网络？', function(result) {
 			if(result){
 		    $('body').modalmanager('loading');
+		    options.url="${ctx}/simcard/close";
 			$("#oper").attr('action',"${ctx}/simcard/close");
 			SP.ajax($("#oper"),options);
 			}
@@ -480,11 +627,21 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		});
 	}
 	
+	$("#submitDelay").click(function(){
+		bootbox.confirm('是否确认延期卡片？', function(result) {
+			if(result){
+				$("#delayIds").val(ids)
+				options.url="${ctx}/simcard/delay";
+				SP.ajax($("#validationform4"),options);
+			}
+		});
+	})
+	
 	 function getIDS(){
 		 var iccids="";
 		  ids="";
 		 suc=0;
-		 var cardType=-1;
+		  cardType=-1;
 		 $.each(dataTableObj.rows('.row_selected').data(),function(i,n){
 			 if(cardType==-1){
 				 cardType=n.type;
@@ -498,7 +655,6 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 				 suc++;
 			 }
 		 } );
-		
 	 }
 	
 	function closeOrOpenCard(){
@@ -515,6 +671,7 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 		 );
 		 if(netType==-2){
 			  bootbox.alert("请选择同一网络类型的物联网卡!"); 
+			  $("#searchform").find(".select2").attr('disabled', false);
 			   return false;
 		 }
 		 $('#myids').val(iccids.substring(0,iccids.length-1))
@@ -524,20 +681,18 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	
 	function initPackSelect(uid){
 		  var options={}
-		  options.url="${ctx}/pack/selfPacks?uid="+uid
-		  $("#packageId").empty();
+		  options.url="${ctx}/pack/selfAllocPacks?cid="+uid
+		  $("#cartCardId").empty();
 		  options.success = function(e) {
 			  $.each(e, function(key, value) {
-					$("#packageId").append("<option value="+ value.id + ">" + value.name+"--"+value.flow+ "MB</option>");
+				     //if(cardType==(value.cardType+1)){packageId
+				    	 $("#cartCardId").append("<option value="+ value.id + ">" + 
+				    			 value.name+"--"+value.flow+ "MB---"+value.term+"月---￥"+value.price
+				    			 +"---"+(value.num-value.allocNum)+"张</option>");
+				   //  }
 				});
 		  }
 		  SP.ajax($("#validationform"), options, false);
 		  }
 	
-	$("#uid").change(function(){
-		initPackSelect($(this).val());
-		});
-	<c:if test="${CURRENT_USER.role==0 }">
-	initPackSelect($("#uidInner").val());
-	</c:if>
 </script>
