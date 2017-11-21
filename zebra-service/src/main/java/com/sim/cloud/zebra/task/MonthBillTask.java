@@ -78,7 +78,7 @@ public class MonthBillTask {
 			
 			// 获取所有资费计划
 			// TODO 获取当前用户名下所有的资费计划，方法？
-			List<Package> packageList = packageService.selectUserPacks(sysUser.getId());
+			List<Package> packageList = packageService.selectCompanyPacks(sysUser.getCid());
 			
 			for (Package tariffPlan : packageList) {
 				if (tariffPlan.getCardType() == 0) { // 独享，一个流量卡一个费用记录
