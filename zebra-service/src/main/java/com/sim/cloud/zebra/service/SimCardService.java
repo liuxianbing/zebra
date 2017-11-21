@@ -68,7 +68,7 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 	 */
 	public List<SimCard> selectNearlyExpireCards(String day){
 		EntityWrapper<SimCard> wrapper = new EntityWrapper<>();
-		wrapper.le("expire_time", day);
+		wrapper.eq("expire_time", day);
 		return selectList(wrapper);
 	}
 	
