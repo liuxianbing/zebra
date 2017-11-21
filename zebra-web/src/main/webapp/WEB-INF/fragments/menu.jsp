@@ -7,7 +7,7 @@
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">SimClouds</span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Admin</b>SimClouds</span>
+      <span class="logo-lg"><b></b>SimClouds</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -20,14 +20,17 @@
        		  		  <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <!-- 
               <img src="${ctx }/assets/img/user2-160x160.jpg" class="user-image" alt="User Image">
+               -->
               <span class="hidden-xs">${CURRENT_USER.phone }</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
+              <!-- 
                 <img src="${ctx }/assets/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-
+ -->
                 <p>
                   Alexander Pierce - Web Developer
                   <small>Member since Nov. 2012</small>
@@ -131,27 +134,13 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="${ctx }/tariffplan/list"><i class="fa fa-paper-plane"></i>资费计划管理</a></li>
-            <li><a href="${ctx }/pack/list"><i class="fa fa-paper-plane"></i>系统套餐管理</a></li>
+            <li><a href="${ctx }/pack/list"><i class="fa fa-paper-plane"></i>套餐管理</a></li>
              <li><a href="${ctx }/flow/list"><i class="fa fa-tasks"></i>客户流量池</a></li>
               <li><a href="${ctx }/user/list"><i class="fa fa-users"></i>客户管理</a></li>
           </ul>
         </li>
         </c:if>
-          <li class="treeview">
-          <a href="#">
-            <i class="fa fa-gears"></i>
-            <span>设置</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="${ctx }/user/account"><i class="fa fa-user"></i>账户设置</a></li>
-              <c:if test="${CURRENT_USER.role==1 }">
-              <li><a href="${ctx }/user/list"><i class="fa fa-users"></i>用户列表</a></li>
-              </c:if>
-          </ul>
-        </li>
+         
         <c:if test="${CURRENT_USER.role<=1 }">
           <li class="treeview">
           <a href="#">
@@ -169,6 +158,7 @@
           </ul>
         </li>
         </c:if>
+          <c:if test="${CURRENT_USER.role<=1 }">
          <li class="treeview">
           <a href="#">
             <i class="fa fa-puzzle-piece"></i>
@@ -178,10 +168,27 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="${ctx }/finance/list"><i class="fa fa-paper-plane"></i>账户余额</a></li>
+            <li><a href="${ctx }/finance/list"><i class="fa fa-paper-plane"></i>消费记录</a></li>
             <c:if test="${CURRENT_USER.role==0 }">
             <li><a href="${ctx }/finance/add"><i class="fa fa-paper-plane"></i>账户充值</a></li>
             </c:if>
+          </ul>
+        </li>
+        </c:if>
+         <li class="treeview">
+          <a href="#">
+            <i class="fa fa-gears"></i>
+            <span>设置</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="${ctx }/user/account"><i class="fa fa-user"></i>账户设置</a></li>
+              <c:if test="${CURRENT_USER.role==1 }">
+              <li><a href="${ctx }/user/list"><i class="fa fa-users"></i>用户列表</a></li>
+              <li><a href="${ctx }/user/packlist?id=${CURRENT_USER.id}"><i class="fa fa-users"></i>我的套餐</a></li>
+              </c:if>
           </ul>
         </li>
       </ul>

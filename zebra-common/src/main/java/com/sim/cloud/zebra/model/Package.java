@@ -25,10 +25,23 @@ public class Package extends BaseModel {
 	private Integer type; // 0:用户套餐 1：系统套餐
 	private Integer cardType;
 	private Integer realFlow;// 实际流量
+	private Long cid;
+	
+	
 
 	private String name;// 套餐名称
 	@TableField(exist = false)
 	private String userName;
+	
+	
+
+	public Long getCid() {
+		return cid;
+	}
+
+	public void setCid(Long cid) {
+		this.cid = cid;
+	}
 
 	public Integer getRealFlow() {
 		return realFlow;

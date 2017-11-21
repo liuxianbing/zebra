@@ -26,13 +26,28 @@ public class OrderGoods  extends BaseModel{
 	private Long addrId;
 	private String remark;
 	private Integer deliverType;
-	
+	private String deliverCode;//
 	private String orderTime,payTime,auditTime,outerTime,sucTime;
 	
 	@TableField(exist = false)
 	private String deliverStr;
+	@TableField(exist = false)
+	private String userInfo;
 	
 	
+	
+	public String getUserInfo() {
+		return userInfo;
+	}
+	public void setUserInfo(String userInfo) {
+		this.userInfo = userInfo;
+	}
+	public String getDeliverCode() {
+		return deliverCode;
+	}
+	public void setDeliverCode(String deliverCode) {
+		this.deliverCode = deliverCode;
+	}
 	public Integer getDeliverType() {
 		return deliverType;
 	}

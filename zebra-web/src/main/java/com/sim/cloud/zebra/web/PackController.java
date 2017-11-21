@@ -2,6 +2,7 @@ package com.sim.cloud.zebra.web;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.DateUtil;
+import com.sim.cloud.zebra.model.CartCard;
 import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
@@ -35,26 +37,25 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/pack")
 public class PackController  extends AbstractController {
 	
-	@Autowired
-	private PackageService packageService;
 	
-	@Autowired
-	private SysUserService sysUserService;
-	
-	@Autowired
-	private TariffPlanService tariffPlanService;
 
 	@ApiOperation(value = "套餐列表页面")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String toSelfList(Model model) {
-		model.addAttribute("userList", sysUserService.selectCustomers());
+		model.addAttribute("companyList",companyService.selectList(null).
+				stream().filter(f->f.getBusinessAuth()==1 && f.getLegalAuth()==1).
+				collect(Collectors.toList()) );
+		model.addAttribute("planList", tariffPlanService.selectList(null));
 		return "package/package_list";
 	}
 	
 	@ApiOperation(value = "套餐添加页面")
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String toAdd(Model model,@RequestParam(required=false) Long id) {
-		model.addAttribute("userList", sysUserService.selectCustomers());
+		
+		model.addAttribute("companyList",companyService.selectList(null).
+				stream().filter(f->f.getBusinessAuth()==1 && f.getLegalAuth()==1).
+				collect(Collectors.toList()) );
 		model.addAttribute("planList", tariffPlanService.selectList(null));
 		Package pack=new Package();
 		if(null!=id){
@@ -68,6 +69,7 @@ public class PackController  extends AbstractController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public @ResponseBody Map<String,String>  addOrUpdate(Model model,@RequestBody Package user) {
 		if(user.getId()==null || user.getId()==0l){
+			user.setUid(sysUserService.selectManager(user.getCid()).getId());
 			user.setCreateTime(DateUtil.getDateTime());
 		}
 		packageService.insertOrUpd(user);
@@ -75,9 +77,15 @@ public class PackController  extends AbstractController {
 	}
 	
 	@ApiOperation(value = "用户自己的套餐")
-	@RequestMapping(value = "/selfPacks", method = RequestMethod.POST)
-	public @ResponseBody List<Package> queryUserPacks(@RequestParam Long uid){
-		return packageService.selectUserPacks(uid);
+	@RequestMapping(value = "/selfAllocPacks", method = RequestMethod.POST)
+	public @ResponseBody List<CartCard> queryUserPacks(@RequestParam Long cid){
+		return cartCardService.selectUserAllocPacks(cid);
+	}
+	
+	@ApiOperation(value = "用户自己的套餐")
+	@RequestMapping(value = "/selfUserPacks", method = RequestMethod.POST)
+	public @ResponseBody List<Package> selfUserPacks(@RequestParam Long uid){
+		return packageService.selectCompanyPacks(sysUserService.selectById(uid).getCid());
 	}
 	
 	@ApiOperation(value = "删除套餐")
@@ -97,10 +105,9 @@ public class PackController  extends AbstractController {
 	@RequestMapping(value = "list", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody DataTableParameter<Package> packList() {
 		Page<Package> page=packageService.selectPage(extractFromRequest(),Package.class);
-		page.getRecords().stream().forEach(e->{
-			if(e.getUid()!=null && e.getUid()>0l){
-				SysUser su=sysUserService.selectById(e.getUid());
-				e.setUserName(su.getPhone()+"-"+su.getUserName());
+		page.getRecords().parallelStream().forEach(e->{
+			if(e.getCid()!=null && e.getCid()>0l){
+				e.setUserName(companyService.selectById(e.getCid()).getName());
 			}
 		});
 		return new DataTableParameter<Package>(page.getTotal(),

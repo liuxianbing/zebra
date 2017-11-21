@@ -99,6 +99,12 @@
 				</h1>
 			</section>
 			<section class="content">
+			
+			   <c:if test="${list==null || fn:length(list) == 0}">
+			      <div class="row" style="text-align: center;font-size:30px;color:#888;margin-top:300px">
+			        暂无流量池数据
+			      </div>
+			   </c:if>
 
 				<c:forEach var="pool" items="${list}" varStatus="cou">
 					<c:if test="${cou.count eq 1 || (cou.count-1) % 4 eq 0}">
@@ -108,7 +114,7 @@
 						<div class="info-box bg-gray">
 							<div class="info-box-content">
 								<span class="info-box-number" style="display:inline">${pool.flowName}</span>
-								<a href="${ctx }/flow/detail?flow=${pool.flow}&phone=${CURRENT_USER.phone}" class="small-box-footer" 
+								<a href="${ctx }/flow/detail?flow=${pool.flow}&cid=${CURRENT_USER.cid}" class="small-box-footer" 
 								style="float:right;font-size:10px">更多详情<i style="margin-left:5px;font-size:14px" class="fa fa-arrow-circle-right"></i>
                 				 </a>
 								 <span

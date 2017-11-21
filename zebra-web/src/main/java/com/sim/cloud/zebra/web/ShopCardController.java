@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,15 +19,9 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.CartCardEnum;
 import com.sim.cloud.zebra.model.CartCard;
 import com.sim.cloud.zebra.model.OrderGoods;
-import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SysAddress;
 import com.sim.cloud.zebra.model.SysArea;
-import com.sim.cloud.zebra.service.CartCardService;
-import com.sim.cloud.zebra.service.FinanceService;
-import com.sim.cloud.zebra.service.OrderGoodsService;
-import com.sim.cloud.zebra.service.PackageService;
-import com.sim.cloud.zebra.service.SysAddressService;
-import com.sim.cloud.zebra.service.SysUserService;
+import com.sim.cloud.zebra.model.SysUser;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,19 +36,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/cart")
 public class ShopCardController extends AbstractController{
 
-	@Autowired
-	private SysUserService sysUserService;
 	
-	
-	@Autowired
-	private FinanceService financeService;
-	
-	@Autowired
-	private SysAddressService sysAddressService;
-	@Autowired
-	private OrderGoodsService orderGoodsService;
-	@Autowired
-	private CartCardService cartCardService;
 	
 	@ApiOperation(value = "购物车列表页面")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -68,6 +50,9 @@ public class ShopCardController extends AbstractController{
 	@RequestMapping(value = "/detail", method = RequestMethod.GET)
 	public String detail(Model model,@RequestParam Long id) {
 		OrderGoods og=orderGoodsService.selectById(id);
+		if(SysUser.ROLE_MANAGER==getCurrUser().getRole() && og.getUid()!=getCurrUser().getId()){
+			return "/error/error";
+		}
 		model.addAttribute("order", og);
 		model.addAttribute("addr", sysAddressService.selectById(og.getAddrId()));
 		 List<CartCard> list=cartCardService.selectByOrderId(id);
@@ -82,10 +67,30 @@ public class ShopCardController extends AbstractController{
 	@RequestMapping(value = "/record", method = RequestMethod.GET)
 	public String recordList(Model model) {
 		Map<String,Object> params=extractFromRequest();
+		params.put("orderBy", "id");
+		if(getCurrUser().getRole()==SysUser.ROLE_MANAGER){
+			params.put("uid",getCurrUser().getId());
+		}else if(StringUtils.isNotBlank(request.getParameter("uid"))){
+			params.put("uid",Long.parseLong(request.getParameter("uid")));
+			model.addAttribute("uid", request.getParameter("uid"));
+		}
+		List<SysUser> list=sysUserService.selectCustomers().stream().
+				filter(f->f.getAuth()==1).collect(Collectors.toList());
+		list.parallelStream().filter(f->f.getCid()!=null && f.getCid()>0l).forEach(e->{
+			e.setCompanyName(companyService.selectById(e.getCid()).getName());
+		});
+		if(getCurrUser().getRole()==SysUser.ROLE_SYS){
+			model.addAttribute("userList", list);
+		}
+		Map<Long,SysUser> userMaps=list.stream().collect(Collectors.toMap(SysUser::getId, c->c));
 		Page<OrderGoods> page=
 				orderGoodsService.selectPage(params,OrderGoods.class);
+		
+		
+		
 		page.getRecords().parallelStream().forEach(e->{
 			e.setContents(cartCardService.selectByOrderId(e.getId()));
+			e.setUserInfo(userMaps.get(e.getUid()).getUserName());
 		});
 		model.addAttribute("page", page);
 		return "purchase/buy_record";
@@ -93,10 +98,9 @@ public class ShopCardController extends AbstractController{
 	
 	@ApiOperation(value = "更改订单状态")
 	@RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
-	public @ResponseBody Map<String, String> updateStatus(@RequestParam Long id,
-			@RequestParam Integer type){
+	public @ResponseBody Map<String, String> updateStatus(@RequestBody OrderGoods og){
 		Map<String, String> map=new HashMap<>();
-		map.put("res", orderGoodsService.updateOrderStatus(id,type)+"");
+		map.put("res", orderGoodsService.updateOrderStatus(og)+"");
 		return map;
 	}
 	
@@ -113,7 +117,10 @@ public class ShopCardController extends AbstractController{
 	@RequestMapping(value = "/pay", method = RequestMethod.POST)
 	public @ResponseBody Map<String, String> pay(@RequestParam Long id){
 		Map<String, String> map=new HashMap<>();
-		map.put("res", orderGoodsService.updateOrderStatus(id,CartCardEnum.PAYOK_ORDER.getStatus())+"");
+		OrderGoods og=new OrderGoods();
+		og.setType(CartCardEnum.PAYOK_ORDER.getStatus());
+		og.setId(id);
+		map.put("res", orderGoodsService.updateOrderStatus(og)+"");
 		return map;
 	}
 	
@@ -190,7 +197,12 @@ public class ShopCardController extends AbstractController{
 	@ApiOperation(value = "购买页面")
 	@RequestMapping(value = "/buy", method = RequestMethod.GET)
 	public String toBuy(Model model) {
-		model.addAttribute("userList", sysUserService.selectCustomers());
+		List<SysUser> list=sysUserService.selectCustomers().stream().
+				filter(f->f.getAuth()==1).collect(Collectors.toList());
+		list.parallelStream().filter(f->f.getCid()!=null && f.getCid()>0l).forEach(e->{
+			e.setCompanyName(companyService.selectById(e.getCid()).getName());
+		});
+		model.addAttribute("userList", list);
 	//	model.addAttribute("packageList", packageService.selectSystemPacks());
 		return "purchase/buy";
 	}
@@ -207,6 +219,7 @@ public class ShopCardController extends AbstractController{
 	@ApiOperation(value = "购买卡片")
 	@RequestMapping(value = "/buy", method = RequestMethod.POST)
 	public @ResponseBody Map<String, String> buyCard(@RequestBody CartCard cc) {
+		cc.setCid(sysUserService.selectById(cc.getUid()).getCid());
 		cartCardService.insert(cc);
 		return SUCCESS;
 	}

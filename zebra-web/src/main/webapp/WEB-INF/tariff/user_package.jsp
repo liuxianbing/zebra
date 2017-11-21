@@ -23,7 +23,7 @@
 			<!-- Main content -->
 			<section class="content">
 				<form:form onsubmit="return false" action="${ctx}/user/packlist" method="post" id="searchform">
-				    <input type="hidden" name="id" value="${id }"/>
+				    <input type="hidden" name="uid" value="${user.id }"/>
 				    <div class="row" style="padding: 10px">
 						<div class="col-sm-4 col-md-4">
 							<select id="planId" class="form-control select2" name="planId"
@@ -37,8 +37,8 @@
 						<div class="col-sm-2 col-md-2">
 						<select id="status" class="form-control select2" name="status"
 								style="float: left;" >
-								<option value="0">有效</option>
-								<option value="1">无效</option>
+								<option value="1">有效</option>
+								<option value="0">无效</option>
 								</select>
 						</div>
 					</div>

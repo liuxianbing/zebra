@@ -76,6 +76,14 @@
 		<filter-name>LoginFilter</filter-name>
 		<filter-class>com.sim.cloud.zebra.filter.LoginFilter</filter-class>
 		<async-supported>true</async-supported>
+		<init-param>
+			<param-name>managerCheck</param-name>
+			<param-value>/cart/detail,/cart/record,/finance/list,/user/,/flow/detail,/flow/cardlist,/flow/self,/simcard/list,/index,/pack/selfAllocPacks,/simcard/dist,/simcard/detail,/simcard/flow</param-value>
+		</init-param>
+				<init-param>
+			<param-name>userCheck</param-name>
+			<param-value>/user/,/flow/detail,/flow/cardlist,/index,/user/account,/user/add,/user/modifyPwd,/flow/self,/simcard/list,/index,/pack/selfAllocPacks,/simcard/detail,/simcard/flow</param-value>
+		</init-param>
 	</filter>
 	<filter-mapping>
 		<filter-name>LoginFilter</filter-name>

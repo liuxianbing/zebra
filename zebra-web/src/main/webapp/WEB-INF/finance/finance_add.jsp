@@ -69,7 +69,7 @@
 </body>
 </html>
 <script>
-$('#remark').val('${user.remark}')
+$(".select2").select2({ allowClear:false})
 $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	overflownDIV: ".form", promptPosition:"bottomRight" });
 var options={};

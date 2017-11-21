@@ -1,8 +1,8 @@
 package com.sim.cloud.zebra.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +27,22 @@ public class SysUserService extends AbstractService<SysUserMapper, SysUser> {
 	
 	public void addSysUserTransaction(SysUser users){
 		super.insert(users);
-		//throw new RuntimeException("roll back");
+	}
+	
+	/**
+	 * 批量更新客户的认证信息
+	 * @param su
+	 */
+	public void batchUpdateUserAuth(SysUser su){
+		    updateById(su);
+			EntityWrapper<SysUser> en=new EntityWrapper<>();
+			en.eq("cid", su.getCid());
+			updateBatchById(selectList(en).stream().map(m->{
+				SysUser tmp=new SysUser();
+				tmp.setId(m.getId());
+				tmp.setAuth(su.getAuth());
+				return tmp;
+			}).collect(Collectors.toList()));
 	}
 	
 	/**
@@ -40,12 +55,23 @@ public class SysUserService extends AbstractService<SysUserMapper, SysUser> {
 		return selectList(wrapper);
 	}
 	
+	/**
+	 * 根据cid查询用户
+	 * @return
+	 */
+	public SysUser selectManager(Long cid) {
+		EntityWrapper<SysUser> wrapper=new EntityWrapper<>();
+		wrapper.eq("role", SysUser.ROLE_MANAGER);
+		wrapper.eq("cid", cid);
+		return selectOne(wrapper);
+	}
+	
 	public List<SysUser> selectCommonUser(Long cid) {
 		EntityWrapper<SysUser> wrapper=new EntityWrapper<>();
-		wrapper.eq("role", SysUser.ROLE_USER);
 		wrapper.eq("cid", cid);
 		return selectList(wrapper);
 	}
+	
 	
 	public SysUser selectByPhone(String phone){
 		EntityWrapper<SysUser> wrapper=new EntityWrapper<>();

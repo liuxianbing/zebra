@@ -1,9 +1,12 @@
 package com.sim.cloud.zebra.service;
 
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.sim.cloud.zebra.core.AbstractService;
 import com.sim.cloud.zebra.mapper.CompanyMapper;
 import com.sim.cloud.zebra.mapper.SysUserMapper;
@@ -20,14 +23,13 @@ import com.sim.cloud.zebra.model.SysUser;
 public class CompanyService  extends AbstractService<CompanyMapper, Company> {
 
 	@Autowired
-	private SysUserMapper sysUserMapper;
+	private SysUserService sysUserService;
 	
 	/**
 	 * 认证企业信息
 	 * @param company
 	 */
 	public void saveAuthInfo(Company company){
-	//	boolean isupd=company.getId()!=null && company.getId()>0l;
 		this.insertOrUpdate(company);
 			SysUser su=new SysUser();
 			su.setId(company.getUid());
@@ -38,7 +40,6 @@ public class CompanyService  extends AbstractService<CompanyMapper, Company> {
 			} catch (Exception e) {
 				su.setAuth(0);
 			}
-			
-			sysUserMapper.updateById(su);
+			sysUserService.batchUpdateUserAuth(su);
 	}
 }

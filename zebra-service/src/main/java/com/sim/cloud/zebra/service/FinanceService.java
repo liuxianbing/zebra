@@ -13,6 +13,7 @@ import com.sim.cloud.zebra.common.util.NumberUtils;
 import com.sim.cloud.zebra.core.AbstractService;
 import com.sim.cloud.zebra.mapper.FinanceMapper;
 import com.sim.cloud.zebra.model.Finance;
+import com.sim.cloud.zebra.model.OrderGoods;
 
 /** 
 * @author liuxianbing: 
@@ -47,17 +48,19 @@ public class FinanceService   extends AbstractService<FinanceMapper, Finance>{
 	 * @param money
 	 * @return
 	 */
-	public boolean insertFinance(Long uid,int type,float money){
-		float maxMoney=selectBance(uid);
+	public boolean insertFinance(OrderGoods og,int type){
+		float maxMoney=selectBance(og.getUid());
 		Finance fa=new Finance();
-		fa.setUid(uid);
+		fa.setUid(og.getUid());
 		fa.setType(type);
-		fa.setMoney(money);
+		fa.setMoney(og.getTotalCost());
 		fa.setCreateTime(DateUtil.getDateTime());
 		if(type==FinanceEnum.CHONGZHI.getType()){
-			fa.setBalance(NumberUtils.formatFloatNum(money+maxMoney));
+			fa.setBalance(NumberUtils.formatFloatNum(og.getTotalCost()+maxMoney));
 		}else{
-			fa.setBalance(NumberUtils.formatFloatNum(maxMoney-money));
+			fa.setOrderCode(og.getOrderCode());
+			fa.setOrderId(og.getId());
+			fa.setBalance(NumberUtils.formatFloatNum(maxMoney-og.getTotalCost()));
 			if(fa.getBalance()<0.0f){
 				return false;
 			}

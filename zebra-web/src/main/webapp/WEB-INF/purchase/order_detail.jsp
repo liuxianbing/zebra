@@ -256,8 +256,8 @@ color:#666
 							<div class="el-step__title is-wait">完成</div>
 							<div class="el-step__description is-wait">
 								<div class="step__description--content">
-									<div><c:if test="${order.type>=8 }">${ fn:substring( order.sucTime ,0 ,10)}</c:if></div>
-									<div><c:if test="${order.type>=8 }">${ fn:substring( order.sucTime,10,fn:length(order.sucTime)-2)}</c:if></div>
+									<div><c:if test="${order.type>=9 }">${ fn:substring( order.sucTime ,0 ,10)}</c:if></div>
+									<div><c:if test="${order.type>=9 }">${ fn:substring( order.sucTime,10,fn:length(order.sucTime)-2)}</c:if></div>
 								</div>
 							</div>
 						</div>
@@ -268,6 +268,7 @@ color:#666
                  <p>订单号码： ${order.orderCode }</p>
                  <p> &nbsp;</p>
                  <p id="myst">订单状态： ${order.orderNextStatus }</p>
+                 <c:if test="${order.type>=7 }"> <p> &nbsp;</p> <p >运单号： ${order.deliverCode }</p></c:if>
               </div>
                <div class="row" style="padding:20px;border-bottom:1px solid #ccc">
                <p>收货人信息： ${addr.area }&nbsp;&nbsp;&nbsp; ${addr.location }&nbsp;&nbsp;&nbsp; ${addr.userName }&nbsp;&nbsp;&nbsp; ${addr.phone }</p>
@@ -339,7 +340,7 @@ color:#666
 					     <button type="button"  lang="7" class="btn btn-primary">发货完成</button>
 					    </c:if>
 					     <c:if test="${order.type==7 }">
-					     <button type="button"  lang="8" class="btn btn-warning">确认收货</button>
+					     <button type="button"  lang="9" class="btn btn-warning">确认收货</button>
 					    </c:if>
 					  </div>
 				</div>
@@ -352,6 +353,53 @@ color:#666
 	</div>
 
 <form action="" id='form' method="post"></form>
+
+<div id="distDiv" class="modal" data-keyboard="true"
+		data-backdrop="static">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true"></button>
+			<h4 class="modal-title">发货信息</h4>
+		</div>
+		<div class="modal-body" style="overflow: hidden;">
+			<form:form onsubmit="return false" action="${ctx}/cart/updateStatus"
+				method="post" class="validationform form-horizontal"
+				id="validationform3">
+				<div class="row">
+					<div class="col-md-3">
+						<label for="inputEmail3" class="control-label">运单号</label>
+					</div>
+					<div class="col-md-5">
+					 <input type="text" class="form-control" 
+			                    name="deliverCode" id="deliverCode"  placeholder="订单号">
+					</div>
+				</div>
+				<input type="hidden" name="id" value="${order.id }" />
+				<input type="hidden" name="type" id="otype" />
+				<div class="row" style="margin-top:15px">
+					<div class="col-md-3">
+						<label for="inputEmail3" class="control-label">订单备注</label>
+					</div>
+					<div class="col-md-5">
+					<textarea rows="3" cols="10" style="height: 80px"
+							class="form-control" value="" name="remark" id="remark">
+							${order.remark }
+							     </textarea>
+					</div>
+				</div>
+			</form:form>
+		</div>
+		<div class="modal-footer">
+			<button type="button" id="submitDist" class="btn btn-primary">提交</button>
+
+			<button type="button" data-dismiss="modal" id="closeupload3"
+				class="btn btn-default">关闭</button>
+		</div>
+	</div>
+	
+	
+	<button class="btn blue" id="hb" data-target="#distDiv"
+		data-toggle="modal" type='button' style="float: right; display: none">rr</button>
 
 	<jsp:include page="../fragments/footer.jsp" />
 	<script
@@ -417,24 +465,37 @@ $('.btnList').on(
 			}
 			var con=$(this).text();
 			var mtype=$(this).attr("lang");
-			bootbox.confirm('是否确认'+con, function(result) {
-				  if(result){
-					  var opt = {}
-						opt.url="${ctx}/cart/updateStatus?id=${order.id}&type="+mtype
-						opt.success = function(e) {
-							if(e.res=='false'){
-								toastr.error('账户余额不足!');
-							}else{
-								toastr.success('操作成功');
-								 window.location.reload();
-							}
-						}
-						$(this).addClass('disabled')
-						SP.ajax($("#form"),opt);
-				  }
-				});
+			if(mtype==7){
+				$("#hb").trigger('click')
+				return;
+			}
+			doPost(con,mtype);
 	
 });
+
+$("#submitDist").click(function(){
+	doPost("发货",7)
+})
+
+function doPost(con,mtype){
+	bootbox.confirm('是否确认'+con, function(result) {
+		  if(result){
+			  var opt = {}
+				//opt.url="${ctx}/cart/updateStatus?id=${order.id}&type="+mtype
+				opt.success = function(e) {
+					if(e.res=='false'){
+						toastr.error('账户余额不足!');
+					}else{
+						console.log(e)
+						toastr.success('操作成功');
+						 window.location.reload();
+					}
+				}
+				$("#otype").val(mtype);
+				SP.ajax($("#validationform3"),opt,false);
+		  }
+		});
+}
 
 
 </script>

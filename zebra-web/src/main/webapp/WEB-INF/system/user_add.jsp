@@ -70,9 +70,9 @@
 			                </div>
 			            <div class="row" >
 						  	 <div class="form-group">
-			                  <label for="inputEmail3" class="col-sm-2 control-label">备注&nbsp;&nbsp; </label>
+			                  <label for="inputEmail3" class="col-sm-2 control-label">备注 </label>
 			                  <div class="col-sm-6">
-			                     <textarea rows="3" cols="10" style="height:80px" 
+			                     <textarea rows="3" cols="10" style="height:80px;margin-left:10px" 
 								   class="form-control"  name="remark" id="remark">
 							     </textarea>
 			                  </div>

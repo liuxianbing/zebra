@@ -19,9 +19,24 @@ public class SimcardPackageView extends SimCard{
 	private Float externalQuote;//对外价格
 	
 	private Long planId;//
+	private Integer cardType;
+	
+	private Integer realFlow;//对联通的流量
 	
 	
 	
+	public Integer getRealFlow() {
+		return realFlow;
+	}
+	public void setRealFlow(Integer realFlow) {
+		this.realFlow = realFlow;
+	}
+	public Integer getCardType() {
+		return cardType;
+	}
+	public void setCardType(Integer cardType) {
+		this.cardType = cardType;
+	}
 	public Long getPlanId() {
 		return planId;
 	}

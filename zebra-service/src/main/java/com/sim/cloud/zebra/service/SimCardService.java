@@ -15,10 +15,12 @@ import com.sim.cloud.zebra.common.util.DateUtil;
 import com.sim.cloud.zebra.common.util.JasperUtils;
 import com.sim.cloud.zebra.common.util.ZebraConfig;
 import com.sim.cloud.zebra.core.AbstractService;
+import com.sim.cloud.zebra.mapper.CartCardMapper;
 import com.sim.cloud.zebra.mapper.PackageMapper;
 import com.sim.cloud.zebra.mapper.SimCardMapper;
 import com.sim.cloud.zebra.mapper.SysUserMapper;
 import com.sim.cloud.zebra.mapper.TariffPlanMapper;
+import com.sim.cloud.zebra.model.CartCard;
 import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SimCard;
 import com.sim.cloud.zebra.model.SysUser;
@@ -39,6 +41,8 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 	private TariffPlanMapper tariffPlanMapper;
 	@Autowired
 	private SysUserMapper sysUserMapper;
+	@Autowired
+	private CartCardMapper cartCardMapper;
 
 	/**
 	 * 根据iccid查询记录的Bean
@@ -58,14 +62,31 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 	}
 	
 	/**
+	 * 查询当天或之前 过期的卡片列表
+	 * @param day
+	 * @return
+	 */
+	public List<SimCard> selectNearlyExpireCards(String day){
+		EntityWrapper<SimCard> wrapper = new EntityWrapper<>();
+		wrapper.le("expire_time", day);
+		return selectList(wrapper);
+	}
+	
+	/**
 	 * 卡片总数统计
 	 * @param uid
 	 * @return
 	 */
-	public int statisCardCount(Long uid){
+	public int statisCardCount(Long uid,Long cid,Integer objType){
 		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
 		if(null!=uid){
-			wrapper.ge("uid", uid);
+			wrapper.eq("uid", uid);
+		}
+		if(null!=cid){
+			wrapper.eq("cid", cid);
+		}
+		if(null!=objType){
+			wrapper.eq("obj_type", objType);
 		}
 		return selectCount(wrapper);
 	}
@@ -75,11 +96,14 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 	 * @param uid
 	 * @return
 	 */
-	public List<Map<String,Object>> statisDevice(Long uid){
+	public List<Map<String,Object>> statisDevice(Long uid,Long cid){
 		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
 		wrapper.setSqlSelect("cast(obj_type as signed) as name ","count(1) as value");
 		if(null!=uid){
-			wrapper.ge("uid", uid);
+			wrapper.eq("uid", uid);
+		}
+		if(null!=cid){
+			wrapper.eq("cid", cid);
 		}
 		wrapper.groupBy("obj_type");
 		List<Map<String,Object>> list= selectMaps(wrapper);
@@ -93,30 +117,20 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 	 * @param uid
 	 * @return
 	 */
-	public List<Map<String,Object>> statisNet(Long uid){
+	public List<Map<String,Object>> statisNet(Long uid,Long cid){
 		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
 		wrapper.setSqlSelect(" (case when net_type=1 then '开启' else '关闭' end) as name ","count(1) as value");
 		if(null!=uid){
-			wrapper.ge("uid", uid);
+			wrapper.eq("uid", uid);
+		}
+		if(null!=cid){
+			wrapper.eq("cid", cid);
 		}
 		wrapper.groupBy("net_type");
 		return selectMaps(wrapper);
 	}
 	
-	/**
-	 * 卡片类型统计
-	 * @param uid
-	 * @return
-	 */
-	public List<Map<String,Object>> statisType(Long uid){
-		EntityWrapper<SimCard> wrapper=new EntityWrapper<>();
-		wrapper.setSqlSelect(" (case when type=1 then '共享卡' else '独卡' end) as name ","count(1) as value");
-		if(null!=uid){
-			wrapper.ge("uid", uid);
-		}
-		wrapper.groupBy("type");
-		return selectMaps(wrapper);
-	}
+	
 
 //	/**
 //	 * 根据流量池名称查询Bean ID
@@ -164,7 +178,7 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 //	}
 	
 	/**
-	 * 卡片分配
+	 * 卡片分配和重置
 	 * @param idsList
 	 * @param uid
 	 */
@@ -173,25 +187,58 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 			SimCard card = new SimCard();
 			card.setId(Long.parseLong(id));
 			card.setUid(uid);
+			if(uid==0l){//如果是重置操作 重置 cid和订单数量还原
+				card.setCid(0l);
+				if(null!=card.getCartCardId() && card.getCartCardId()>0){
+					CartCard cc=cartCardMapper.selectById(card.getCartCardId());
+					int allocNum=cc.getAllocNum();
+					if(allocNum-1>=0){
+						CartCard tmp=new CartCard();
+						tmp.setId(cc.getId());
+						tmp.setAllocNum(allocNum-1);
+						cartCardMapper.updateById(tmp);
+					}
+				}
+			}
 			super.updateById(card);
 		}
+	}
+	
+	/**
+	 * 延期卡片
+	 * @param idsList
+	 * @param term
+	 */
+	public void delayCards(List<String> idsList,int term){
+		String endDay=DateUtil.addMonth(DateUtil.getDate().substring(0,7)+"-01", term);
+		List<SimCard> tmpUpdate=new ArrayList<>();
+		for (String id : idsList) {
+			SimCard card = new SimCard();
+			card.setId(Long.parseLong(id));
+			card.setExpireTime(endDay);
+			tmpUpdate.add(card);
+		}
+		super.updateBatchById(tmpUpdate);  
 	}
 
 	/**
 	 * 划拨物联卡
 	 * @return
 	 */
-	public List<String> saveCardPlanRel(List<String> iccidsList, List<String> idsList, Long packId,
+	public List<String> saveCardPlanRel(List<String> iccidsList, List<String> idsList, Long cartCardId,
 			Long uid) {
-	    Package pack=	packageMapper.selectById(packId);
+		CartCard cc=cartCardMapper.selectById(cartCardId);
+		if((cc.getNum()-cc.getAllocNum())<idsList.size()){
+			throw new RuntimeException("订单卡片剩余分配数量"+(cc.getNum()-cc.getAllocNum())+"个,不足"+idsList.size());
+		}
+	    Package pack=	packageMapper.selectById(cc.getPackageId());
 	    String planName=tariffPlanMapper.selectById(pack.getPlanId()).getName();
 		SysUser user = sysUserMapper.selectById(uid);
 		// 保存用户套餐
-
 		String nowDate = DateUtil.getDate();
-		
-
+		String endDay=DateUtil.addMonth(nowDate.substring(0,7)+"-01", cc.getTerm());
 		List<SimCard> allCardList = new ArrayList<SimCard>();
+		List<SimCard> tmpUpdate=new ArrayList<>();
 		// 更新物联卡关联的用户和套餐信息
 		for (String id : idsList) {
 			allCardList.add(super.selectById(Long.parseLong(id)));
@@ -200,16 +247,19 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 			card.setUid(uid);
 			card.setCid(user.getCid());
 			card.setOpenTime(nowDate);
-			card.setPackageId(packId);
-			super.updateById(card);
+			card.setExpireTime(endDay);
+			card.setPackageId(cc.getPackageId());
+			card.setCartCardId(cc.getId());
+			tmpUpdate.add(card);
 		}
+		super.updateBatchById(tmpUpdate);
 
 		// 逻辑删除历史套餐
 		allCardList.stream().filter(f -> f.getPackageId() != null && f.getPackageId() > 0).map(m -> m.getPackageId())
 				.collect(Collectors.toSet()).stream().forEach(p -> {
 					com.sim.cloud.zebra.model.Package tmpPack = new com.sim.cloud.zebra.model.Package();
 					tmpPack.setId(new Long(p.intValue()));
-					tmpPack.setStatus(1);// 删除
+					tmpPack.setStatus(0);// 删除
 					packageMapper.updateById(tmpPack);
 				});
 
@@ -217,7 +267,6 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 		
 		// 更新jasper
 		String accountInfo = ZebraConfig.getAccounts().get(pack.getAccount());
-		System.out.println(accountInfo+"&&&&&&&&"+pack.getAccount());
 		JasperClient jasperClient = JasperClient.getInstance(accountInfo);
 		errorIccids.addAll(jasperClient.changeRatePlan(iccidsList, planName));
 		
@@ -230,6 +279,11 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
+		//更新订单分配的卡片数量
+		CartCard tmpCard=new CartCard();
+		tmpCard.setId(cc.getId());
+		tmpCard.setAllocNum(cc.getAllocNum()+(idsList.size()-errorIccids.size()));
+		cartCardMapper.updateById(tmpCard);
 		return errorIccids;
 	}
 

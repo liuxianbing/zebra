@@ -36,9 +36,22 @@ public class SysUser extends BaseModel {
 
 	@TableField(exist = false)
 	private String authStr;
+	
+	@TableField(exist = false)
+	private String companyName;
 
 	
 	
+	public String getCompanyName() {
+		return companyName;
+	}
+
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+
 	public String getAuthStr() {
 		if(auth==1){
 			authStr="认证通过";

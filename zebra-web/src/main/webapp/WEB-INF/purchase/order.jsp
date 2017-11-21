@@ -99,7 +99,7 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 							<c:if test="${ad.opt==1 }">
 								<label class="default" style="color: #999">默认</label>
 							</c:if>
-							<a class="del" href="#" style="float: right; display: none">删除</a>
+							<a class="del" href="#" style="float: right;margin-right: 10px; display: none">删除</a>
 							<a href="#" class="edit"
 								style="float: right; margin-right: 30px; display: none">编辑</a>
 							<c:if test="${ad.opt==0 }">
@@ -137,7 +137,7 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 				   <td>${gl.price }</td>
 				   <td>${gl.term }月</td>
 				   <td class="num">${gl.num }</td>
-				   <td class="sum"><fmt:formatNumber value="${gl.price*gl.num }" pattern="#0.00" /></td>
+				   <td class="sum"><fmt:formatNumber value="${gl.price*gl.num*gl.term }" pattern="#0.00" /></td>
 				    </tr>
 				   </c:forEach>
 				   </tbody>
@@ -164,7 +164,7 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 			                 <span class="kcon">1-3天，12元起</span>
 			              </a>
 			              <input type="text" style="margin-left:30px;display:inline;width:180px"
-							class="form-control  validate[required,custom[number]]"
+							class="form-control  validate[required,custom[number],min[0]]"
 							name="deliverCost" onblur="changeDeliver()" id="deliverCost" placeholder="快递价格">
 							<input type="hidden" name="deliverType" id="deliverType" value="0" />
 					</div>
@@ -229,7 +229,8 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 					<div class="col-md-3">
 						<label for="inputEmail3" class="control-label">收货人</label> <input
 							type="hidden" name="uid" value="${uid }" /> <input type="hidden"
-							name="area" id="area" value="" />
+							name="area" id="area" value="" /><input type="hidden" name="id" id="addId"  />
+							
 					</div>
 					<div class="col-md-8">
 						<input type="text"
@@ -324,6 +325,7 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 </body>
 </html>
 <script>
+var nowOptId=-1;
 function initTotalPrice(){
 	  var tao=0;
 	  $.each($(".sum"),function(i,n){
@@ -337,13 +339,30 @@ function initTotalPrice(){
 		$("#cardCount").val(num)
 		$("#cardSpend").html(tao.toFixed(2))
 		$("#totalSpend").html(tao.toFixed(2))
+		return tao.toFixed(2);
 }
-initTotalPrice();
+var totalSpend=initTotalPrice();
 function changeDeliver(){
-	var tot=parseFloat($("#totalSpend").text())+parseFloat($("#deliverCost").val())
-	$("#totalSpend").html(tot.toFixed(2))
-	$("#deliverSpend").html($("#deliverCost").val())
+	if($("#deliverCost").val()=='' || $("#deliverCost").val()==null){
+		$("#totalSpend").html(totalSpend)
+		$("#deliverSpend").html('0.00')
+	}else{
+		var a=toDecimal(totalSpend+"")
+		var b=toDecimal($("#deliverCost").val())
+		var tot=parseFloat(a)+parseFloat(b)
+		$("#totalSpend").html(tot)
+		$("#deliverSpend").html($("#deliverCost").val())
+	}
 }
+
+function toDecimal(x) {    
+    var val = Number(x)   
+   if(!isNaN(parseFloat(val))) {    
+      val = val.toFixed(2);    
+   }    
+   return  val;     
+}  
+
 $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	overflownDIV: ".form", promptPosition:"bottomRight" });
 	
@@ -455,8 +474,12 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 				opt.success = function(e) {
 					$(".btn-default").trigger('click');
 					if (e.id > 0) {
+						if(e.opt==1){
+							nowOptId=e.id;
+						}
 						toastr.success('操作成功');
-						appendAddr(e)
+						//appendAddr(e)
+						window.location.reload();
 					} else {
 						toastr.error(data.msg);
 						bootbox.alert(data.msg);
@@ -532,12 +555,13 @@ $(".validationform").validationEngine({ relative: true, relativePadding:false,
 
 	$('.content').on('click', 'a.edit', function() {
 		var obj = JSON2.parse($(this).parent().find('span').text())
+		$("#addId").val(obj.id)
 		$("#userName").val(obj.userName)
 		$("#province").val(obj.provinceId)
 		$("#phone").val(obj.phone)
 		initCity(obj.provinceId, obj.cityId, obj.disId);
 		$("#location").val(obj.location)
-		if (obj.opt == 1) {
+		if (obj.opt == 1 && (nowOptId==-1 || nowOptId==obj.id)) {
 			$("#opt").attr('checked', true)
 		}
 		$("#editBtn").trigger('click')

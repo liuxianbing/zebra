@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,21 +48,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/simcard")
 public class SimCardController extends AbstractController {
 
-	@Autowired
-	private SimcardPackViewService simCardServiceView;
-	@Autowired
-	private SimCardService simcardService;
-	@Autowired
-	private SysUserService sysUserService;
-	@Autowired
-	private TariffPlanService tariffPlanService;
-	@Autowired
-	private CompanyService companyService;
-	@Autowired
-	private PackageService packageService;
-	@Autowired
-	private StatisCardFlowService statisCardFlowService;
-
 	/**
 	 * 物联网卡列表页面
 	 * 
@@ -77,9 +63,15 @@ public class SimCardController extends AbstractController {
 		}else{
 			list=sysUserService.selectCommonUser(getCurrUser().getCid());
 		}
+		
+		list.parallelStream().filter(f->f.getCid()!=null && f.getCid()>0l).forEach(e->{
+			e.setCompanyName(companyService.selectById(e.getCid()).getName());
+		});
+		
 		model.addAttribute("userList",list );
 		model.addAttribute("planList", tariffPlanService.selectList(null));
 		model.addAttribute("termList", Constants.TERM_LIST);
+		model.addAttribute("termList2", Arrays.asList("1,3,6,12,24,36".split(",")));
 		 model.addAttribute("deviceStatus",CardDeviceStatusEnum.values());
 		return "simcard/card_list";
 	}
@@ -100,6 +92,9 @@ public class SimCardController extends AbstractController {
 		}
 		if (card.getPackageId() != null) {
 			pack = packageService.selectById(card.getPackageId());
+			if(card.getCartCardId()!=null){
+				pack.setTerm(cartCardService.selectById(card.getCartCardId()).getTerm());
+			}
 		}
 		model.addAttribute("company", company);
 		model.addAttribute("user", user);
@@ -188,6 +183,13 @@ public class SimCardController extends AbstractController {
 		return SUCCESS;
 	}
 	
+	@ApiOperation(value = "延期")
+	@RequestMapping(value = "delay", method = RequestMethod.POST, produces = { "application/json" })
+	public @ResponseBody Map<String, String> delay(@RequestBody Map<String, Object> params) {
+		List<String> ids = Arrays.asList(params.get("ids").toString().split(","));
+		simcardService.delayCards(ids, Integer.parseInt(params.get("term").toString()));
+		return SUCCESS;
+	}
 	
 	
 
@@ -195,11 +197,12 @@ public class SimCardController extends AbstractController {
 	@RequestMapping(value = "alloc", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody Map<String, String> alloc(@RequestBody Map<String, Object> params) {
 		if(!checkIfManager()){
-			//throw new RuntimeException("无权限操作!");
+			throw new RuntimeException("无权限操作!");
 		}
-		List<String> iccidsList = Arrays.asList(params.get("iccid").toString());
-		List<String> list = simcardService.saveCardPlanRel(iccidsList, Arrays.asList(params.get("ids").toString()),
-				Long.parseLong(params.get("packageId").toString()), Long.parseLong(params.get("uid").toString()));
+		List<String> iccidsList = Arrays.asList(params.get("iccid").toString().split(","));
+		Long uid=sysUserService.selectManager(Long.parseLong(params.get("cid").toString())).getId();
+		List<String> list = simcardService.saveCardPlanRel(iccidsList, Arrays.asList(params.get("ids").toString().split(",")),
+				Long.parseLong(params.get("cartCardId").toString()),uid );
 		Map<String, String> map = new HashMap<>();
 		if (null != list && list.size() > 0) {
 			String msg = list.stream().collect(Collectors.joining(","));
@@ -212,13 +215,28 @@ public class SimCardController extends AbstractController {
 	
 	
 	
-	@ApiOperation(value = "卡片分配")
+	@ApiOperation(value = "卡片分配和重置")
 	@RequestMapping(value = "dist", method = RequestMethod.POST, produces = { "application/json" })
-	public @ResponseBody Map<String, String> distribute(@RequestParam String ids,Long uid) {
+	public @ResponseBody Map<String, String> distribute(@RequestParam String ids,@RequestParam Long uid) {
+		if((null==uid || uid==0l) && getCurrUser().getRole()==SysUser.ROLE_MANAGER ){
+			throw new RuntimeException("请选择用户");
+		}
 		simcardService.allocCardToUsers( Arrays.asList(ids.split(",")),uid);
 		return SUCCESS;
 	}
 	
+	@ApiOperation(value = "批量物联网卡请求")
+	@RequestMapping(value = "batch", method = RequestMethod.POST, produces = { "application/json" })
+	public @ResponseBody List<Map<String,Object>> allocBatchCards(@RequestBody  Map<String,Object> params){
+		return simCardServiceView.queryList(extractFromRequest(params)).stream().map(m->{
+			Map<String,Object> mm=new HashMap<>();
+			mm.put("id", m.getId());
+			mm.put("iccid", m.getIccid());
+			mm.put("type", m.getType());
+			mm.put("objType", m.getObjType());
+			return mm;
+		}).collect(Collectors.toList());
+	}
 	
 
 	/**
@@ -231,25 +249,22 @@ public class SimCardController extends AbstractController {
 	@RequestMapping(value = "list", method = RequestMethod.POST, produces = { "application/json" })
 	public @ResponseBody DataTableParameter<SimcardPackageView> list() {
 		Map<String,Object> params=extractFromRequest();
-		Map<Long, SysUser> userMap =new HashMap<>();
+		Map<Long, Company> companyMap =companyService.selectList(null).stream()
+				.collect(Collectors.toMap(Company::getId, c -> c));;
 		boolean ismana=checkIfManager();
 		if(!ismana){
 			if(getCurrUser().getRole()==SysUser.ROLE_USER){
 				params.put("uid", getCurrUser().getId());
 			}
 			params.put("cid", getCurrUser().getCid());
-		}else{
-			userMap.putAll(sysUserService.selectCustomers().stream()
-					.collect(Collectors.toMap(SysUser::getId, c -> c)));
 		}
 		Page<SimcardPackageView> page = simCardServiceView.query(params);
 		page.getRecords().stream().forEach(e -> {// 设置用户信息
-			if(!ismana){
-				e.setUserInfo(getCurrUser().getUserName());
-			}else{
-				if (e.getUid() != null && e.getUid() > 0l && userMap.get(e.getUid()) != null) {
-					e.setUserInfo(userMap.get(e.getUid()).getUserName());
-				}
+//			if(!ismana){
+//				e.setUserInfo(getCurrUser().getUserName());
+//			}else{
+				if (e.getCid() != null && e.getCid() > 0l && companyMap.get(e.getCid()) != null) {
+					e.setUserInfo(companyMap.get(e.getCid()).getName());
 			}
 		});
 		return new DataTableParameter<SimcardPackageView>(page.getTotal(), request.getParameter("sEcho"),

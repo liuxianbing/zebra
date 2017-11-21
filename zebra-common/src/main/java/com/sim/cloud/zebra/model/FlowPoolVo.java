@@ -16,7 +16,7 @@ public class FlowPoolVo implements Serializable {
 	private int leftPercent;
 	private Integer flow;
 	
-	private String phone;
+	private Long cid;
 	private String userName;
 	
 	private String flowName;
@@ -36,9 +36,18 @@ public class FlowPoolVo implements Serializable {
 	private String companyName;
 	
 	
+	
 
 	
 	
+	public Long getCid() {
+		return cid;
+	}
+
+	public void setCid(Long cid) {
+		this.cid = cid;
+	}
+
 	public void setAllNum(long allNum) {
 		this.allNum = allNum;
 	}
@@ -150,13 +159,6 @@ public class FlowPoolVo implements Serializable {
 		this.flow = flow;
 	}
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
 
 	public String getUserName() {
 		return userName;

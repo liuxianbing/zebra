@@ -15,6 +15,8 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mysql.fabric.xmlrpc.base.Array;
+import com.sim.cloud.zebra.common.util.CardDeviceStatusEnum;
+import com.sim.cloud.zebra.common.util.DateUtil;
 import com.sim.cloud.zebra.common.util.JackSonUtil;
 import com.sim.cloud.zebra.common.util.JasperUtils;
 import com.sim.cloud.zebra.common.util.ZebraConfig;
@@ -45,6 +47,71 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	private CompanyService companyService;
 	
 	
+	public List<Map<String,Object>> statisCardsNum(String account){
+		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
+		wrapper.setSqlSelect("cast(real_flow as signed) as name ","count(1) as value");
+			wrapper.eq("type", 2);//流量卡
+			wrapper.eq("obj_type", CardDeviceStatusEnum.ACTIVATED_NAME.getStatus());//已经激活
+			wrapper.eq("account", account);
+			wrapper.like("last_sync_time", DateUtil.getDate().substring(0,7));//当月
+			
+		wrapper.groupBy("real_flow");
+		return selectMaps(wrapper);
+	}
+	
+	public Map<String,Object> statisCardsFlow(String account){
+		
+		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
+		wrapper.setSqlSelect("cast(real_flow as signed) as name ","sum(used_flow) as used,sum(real_flow) as total");
+		wrapper.eq("type", 2);//流量卡
+		wrapper.eq("obj_type", CardDeviceStatusEnum.ACTIVATED_NAME.getStatus());//已经激活
+		wrapper.eq("account", account);
+		wrapper.like("last_sync_time", DateUtil.getDate().substring(0,7));//当月
+		
+		wrapper.groupBy("real_flow").orderBy("real_flow");
+		List<Map<String,Object>> list=selectMaps(wrapper);
+		
+		List<Map<String, Object>> series = new ArrayList<Map<String, Object>>();
+		List<String> xName = new LinkedList<String>();
+		 List<Object> data = new LinkedList<Object>();
+		list.stream().forEach(e->{
+			Map<String, Object>  dataVal = new HashMap<String, Object>();
+			      dataVal.put("name",e.get("name").toString()+"MB");
+			      dataVal.put("value", e.get("used"));
+			      xName.add(e.get("name").toString()+"MB");
+			      data.add(dataVal);
+		});
+		
+		Map<String, Object>  dataVal = new HashMap<String, Object>();
+	    dataVal.put("data", data);
+	    dataVal.put("name", "已使用");
+	    dataVal.put("type", "bar");
+	    dataVal.put("stack", "stack1");
+	    series.add(dataVal);
+	    
+	    List<Object> data2 = new LinkedList<Object>();
+		list.stream().forEach(e->{
+			Map<String, Object>  dataVal2 = new HashMap<String, Object>();
+			dataVal2.put("name",e.get("name").toString()+"MB");
+			dataVal2.put("value", e.get("total"));
+			data2.add(dataVal2);
+		});
+		
+		Map<String, Object>  dataVal2 = new HashMap<String, Object>();
+		dataVal2.put("data", data2);
+		dataVal2.put("name", "总流量");
+		dataVal2.put("type", "bar");
+		dataVal2.put("stack", "stack2");
+	    series.add(dataVal2);
+	    
+	    Map<String,Object> res=new HashMap<>();
+	    res.put("xName", xName);
+	    res.put("series", series);
+		return res;
+		
+	}
+	
+	
 	/**
 	 * 查询某个客户的流量池的卡片列表
 	 * @param uid
@@ -52,11 +119,16 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	 * @param iccid
 	 * @return
 	 */
-	public List<SimcardPackageView> selectFlowCards(Long uid,Integer flow,final String iccid){
+	public List<SimcardPackageView> selectFlowCards(Long uid,Long cid,Integer flow,final String iccid){
 		Map<String,Object> map=new HashMap<>();
-		map.put("uid", uid);
+		if(null!=uid){
+			map.put("uid", uid);
+		}
+		if(null!=cid){
+			map.put("cid", cid);
+		}
 		map.put("flow", flow);
-		map.put("type", TariffPlan.SHARE);//共享卡
+		map.put("card_type", TariffPlan.SHARE);//共享卡
 		List<SimcardPackageView> list=selectByMap(map);
 		if(org.apache.commons.lang3.StringUtils.isNotBlank(iccid)){
 			return list.stream().filter(f->f.getIccid().contains(iccid)).collect(Collectors.toList());
@@ -76,7 +148,6 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 		map.put("package_id", packId);
 		return selectByMap(map);
 	}
-	
 	/**
 	 * 查询指定客户、指定套餐的卡片列表
 	 * @param cid
@@ -96,31 +167,38 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	 * @param flow
 	 * @return
 	 */
-	public SimcardPackageView statisFlowPool(String phone,Integer flow){
-		SysUser user=sysUserService.selectByPhone(phone);
-		Long uid=user.getId();
+	public SimcardPackageView statisFlowPool(Long uid,Long cid,Integer flow){
 		Map<String,Object> map=new HashMap<>();
-		map.put("uid", uid);
+		if(uid!=null){
+			map.put("uid", uid);
+		}
+		if(cid!=null){
+			map.put("cid", cid);
+		}
 		map.put("flow", flow);
-		map.put("type", TariffPlan.SHARE);//共享卡
+		map.put("card_type", TariffPlan.SHARE);//共享卡
 		List<SimcardPackageView> list=selectByMap(map);
 		Map<Integer,List<SimcardPackageView>> cards=list.stream().collect(Collectors.groupingBy(SimcardPackageView::getNetType));
 		SimcardPackageView cardFlow=new SimcardPackageView();
 		cardFlow.setUid(uid);
+		cardFlow.setCid(cid);
 		
 		String companyName="";
-		if(user.getCid()>0l){
-			companyName=companyService.selectById(user.getCid()).getName();
+		if(cid!=null){
+			companyName=companyService.selectById(cid).getName();
+		}
+		if(null!=uid){
+			companyName=companyService.selectById(sysUserService.selectById(uid).getCid()).getName();
 		}
 		
 		cardFlow.setPackageUsed((float) list.stream().mapToDouble(m->m.getPackageUsed()).sum());
 		cardFlow.setPackageLeft( (float) list.stream().mapToDouble(m->m.getPackageLeft()).sum());
 		cardFlow.setFlow(list.stream().mapToInt(m->m.getFlow()).sum());
 		cardFlow.setLastSyncTime(list.stream().max((a,b)-> a.getLastSyncTime().compareTo(b.getLastSyncTime())).get().getLastSyncTime());
-		cardFlow.setPhone(user.getPhone()+"-"+user.getUserName()+"-"+companyName);
+		cardFlow.setPhone(companyName);
 		Map<String,Integer> mapCard=new HashMap<>();
 		cards.entrySet().stream().forEach(e->{
-			mapCard.put(JasperUtils.getStatusStringMap().get("STATUS_"+e), e.getValue().size());
+			mapCard.put(CardDeviceStatusEnum.getEnumByStatus(e.getKey()).getSimStatus(), e.getValue().size());
 		});
 		try {
 			cardFlow.setRemark(JackSonUtil.getObjectMapper().writeValueAsString(mapCard));
@@ -136,10 +214,15 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	 * @param uid
 	 * @return
 	 */
-	public  List<FlowPoolVo> selectSelfPoolList(Long uid){
+	public  List<FlowPoolVo> selectSelfPoolList(Long uid,Long cid){
 		Map<String,Object> map=new HashMap<>();
-		map.put("uid", uid);
-		map.put("type", TariffPlan.SHARE);//共享卡
+		if(uid!=null){
+			map.put("uid", uid);
+		}
+		if(cid!=null){
+			map.put("cid", cid);
+		}
+		map.put("card_type", TariffPlan.SHARE);//共享卡
 		Map<Integer,List<SimcardPackageView>> mapList=selectByMap(map).stream().
 		collect(Collectors.groupingBy(s->s.getFlow()));
 		return mapList.entrySet().stream().map(e->{
@@ -165,42 +248,44 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	 * 管理员查询所有的流量池
 	 * @return
 	 */
-	public List<FlowPoolVo> selectAllPoolList(List<Long> userIdList,Integer flowSize){
+	public List<FlowPoolVo> selectAllPoolList(List<Long> cidList,Integer flowSize){
 		Map<String,Object> map=new HashMap<>();
-		map.put("type", TariffPlan.SHARE);//共享卡
+		map.put("card_type", TariffPlan.SHARE);//共享卡
 		map.put("flow", flowSize);
 		Map<String,List<SimcardPackageView>> mapList=selectByMap(map).stream().
 		filter(f->{
 			if(f.getPackageId()==0l){
 				return false;
 			}
-			if(userIdList.size()==0 || (userIdList.size()>0 && userIdList.contains(f.getUid()))){
+			if(f.getCid()==null || f.getCid()==0l){
+			return false;	
+			}
+			if(cidList.size()==0 || (cidList.size()>0 && cidList.contains(f.getCid()))){
 				return true;
 			}else{
 				return false;
 			}
-		}).collect(Collectors.groupingBy(s->s.getFlow()+"-"+s.getUid()));
+		}).collect(Collectors.groupingBy(s->s.getFlow()+"-"+s.getCid()));
 		
 		
-		return mapList.entrySet().stream().map(e->{
-			Integer flow=Integer.parseInt(e.getKey().split("-")[0]);
-			FlowPoolVo fpv=new FlowPoolVo();
-			fpv.setFlow(flow);
-			SysUser user=sysUserService.selectById(Long.parseLong(e.getKey().split("-")[1]));
-			if(user.getCid()>0l){
+		return mapList.entrySet().stream().filter(f->f.getKey()!=null && f.getKey().split("-")!=null).map(e->{
+				Integer flow=Integer.parseInt(e.getKey().split("-")[0]);
+				FlowPoolVo fpv=new FlowPoolVo();
+				fpv.setFlow(flow);
+				SysUser user=sysUserService.selectManager(Long.parseLong(e.getKey().split("-")[1]));
 				fpv.setCompanyName(companyService.selectById(user.getCid()).getName());
-			}
-			fpv.setUserName(user.getUserName());
-			fpv.setPhone(user.getPhone());
-			Map<Integer,List<SimcardPackageView>> mapInner=
-					e.getValue().stream().collect(Collectors.groupingBy(SimcardPackageView::getObjType));
-			fpv.setUsePool(Float.parseFloat(e.getValue().stream().mapToDouble(m->m.getPackageUsed()).sum()+""));
-			fpv.setTotalPool(e.getValue().size()*flow);
-			fpv.setActiveNum(mapInner.get(SimCard.ACTIVATED_NAME)==null?0:mapInner.get(SimCard.ACTIVATED_NAME).size());
-			fpv.setStockNum(mapInner.get(SimCard.INVENTORY_NAME)==null?0:mapInner.get(SimCard.INVENTORY_NAME).size());
-			fpv.setBlockNum(mapInner.get(SimCard.RETIRED_NAME)==null?0:mapInner.get(SimCard.INVENTORY_NAME).size());
-			fpv.setLastSyncTime(e.getValue().stream().max((a,b)-> a.getLastSyncTime().compareTo(b.getLastSyncTime())).get().getLastSyncTime());
-		    return fpv;
+				fpv.setUserName(user.getUserName());
+				fpv.setCid(user.getCid());
+				Map<Integer,List<SimcardPackageView>> mapInner=
+						e.getValue().stream().collect(Collectors.groupingBy(SimcardPackageView::getObjType));
+				fpv.setUsePool(Float.parseFloat(e.getValue().stream().mapToDouble(m->m.getPackageUsed()).sum()+""));
+				fpv.setTotalPool(e.getValue().size()*flow);
+				fpv.setAllNum(e.getValue().size());
+				fpv.setActiveNum(mapInner.get(SimCard.ACTIVATED_NAME)==null?0:mapInner.get(SimCard.ACTIVATED_NAME).size());
+				fpv.setStockNum(mapInner.get(SimCard.INVENTORY_NAME)==null?0:mapInner.get(SimCard.INVENTORY_NAME).size());
+				fpv.setBlockNum(mapInner.get(SimCard.RETIRED_NAME)==null?0:mapInner.get(SimCard.INVENTORY_NAME).size());
+				fpv.setLastSyncTime(e.getValue().stream().max((a,b)-> a.getLastSyncTime().compareTo(b.getLastSyncTime())).get().getLastSyncTime());
+				  return fpv;
 		}).collect(Collectors.toList());
 		
 	}
@@ -210,12 +295,12 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	 * @param params
 	 * @return
 	 */
-	public Page<FlowPoolVo> selectPoolByPage(Map<String, Object> params,List<Long> userIdList){
+	public Page<FlowPoolVo> selectPoolByPage(Map<String, Object> params,List<Long> cidList){
 		 Page<SimcardPackageView> page=getPage(params);
 		 Page<FlowPoolVo> pageRes = new Page<FlowPoolVo>(page.getCurrent(), page.getSize());
 		 
 		 Map<String,Object> map=new HashMap<>();
-			map.put("type", TariffPlan.SHARE);
+			map.put("card_type", TariffPlan.SHARE);
 			if(null!=params.get("flow") && params.get("flow").toString().trim().length()>0)
 			map.put("flow", params.get("flow"));
 			Map<String,List<SimcardPackageView>> mapList=selectByMap(map).stream().
@@ -223,7 +308,7 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 				if(f.getPackageId()==0l){
 					return false;
 				}
-				if(userIdList.size()==0 || (userIdList.size()>0 && userIdList.contains(f.getUid()))){
+				if(cidList.size()==0 || (cidList.size()>0 && cidList.contains(f.getUid()))){
 					return true;
 				}else{
 					return false;
@@ -236,13 +321,14 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 				Integer flow=Integer.parseInt(m.split("-")[0]);
 				FlowPoolVo fpv=new FlowPoolVo();
 				fpv.setFlow(flow);
-				SysUser user=sysUserService.selectById(Long.parseLong(m.split("-")[1]));
+				SysUser user=sysUserService.selectManager(Long.parseLong(m.split("-")[1]));
 				fpv.setUserName(user.getUserName());
-				fpv.setPhone(user.getPhone());
+				fpv.setCid(user.getCid());
 				Map<Integer,List<SimcardPackageView>> mapInner=
 						mapList.get(m).stream().collect(Collectors.groupingBy(SimcardPackageView::getObjType));
 				fpv.setUsePool(Float.parseFloat(mapList.get(m).stream().mapToDouble(s1->s1.getPackageUsed()).sum()+""));
 				fpv.setTotalPool(mapList.get(m).size()*flow);
+				fpv.setAllNum(mapList.get(m).size());
 				fpv.setActiveNum(mapInner.get(SimCard.ACTIVATED_NAME)==null?0:mapInner.get(SimCard.ACTIVATED_NAME).size());
 				fpv.setStockNum(mapInner.get(SimCard.INVENTORY_NAME)==null?0:mapInner.get(SimCard.INVENTORY_NAME).size());
 				fpv.setBlockNum(mapInner.get(SimCard.RETIRED_NAME)==null?0:mapInner.get(SimCard.INVENTORY_NAME).size());
@@ -255,14 +341,17 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	}
 	
 	
-	public List<Map<String,Object>> statisSingleCards(Long uid){
+	public List<Map<String,Object>> statisSingleCards(Long uid,Long cid){
 		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
 		wrapper.setSqlSelect("iccid","flow","used_flow as usedFlow");
 		if(null!=uid){
-			wrapper.ge("uid", uid);
+			wrapper.eq("uid", uid);
+		}
+		if(null!=cid){
+			wrapper.eq("cid", cid);
 		}
 		wrapper.gt("flow", 0);
-		wrapper.eq("type", 0);//单卡
+		wrapper.eq("card_type", 0);//单卡
 		List<SimcardPackageView> list=selectList(wrapper);
 		Map<Integer,List<SimcardPackageView>>  maps=list.stream().collect(Collectors.groupingBy(p->(int)(p.getUsedFlow()*100/p.getFlow())));
 		
@@ -276,19 +365,54 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	}
 	
 	/**
+	 * 卡片类型统计
+	 * @param uid
+	 * @return
+	 */
+	public List<Map<String,Object>> statisCardType(Long uid,Long cid){
+		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
+		wrapper.setSqlSelect(" (case when card_type=1 then '流量池卡' else '单卡'  end) as name ","count(1) as value");
+		if(null!=uid){
+			wrapper.eq("uid", uid);
+		}
+		if(null!=cid){
+			wrapper.eq("cid", cid);
+		}
+		wrapper.ge("card_type", 0);
+		wrapper.groupBy("card_type");
+		return selectMaps(wrapper);
+	}
+	
+	/**
+	 * 卡片类型统计
+	 * @param uid
+	 * @return
+	 */
+	public List<Map<String,Object>> statisType(){
+		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
+		wrapper.setSqlSelect(" (case when type=2 then '流量池卡' else '单卡'  end) as name ","count(1) as value");
+		wrapper.ge("type", 0);
+		wrapper.groupBy(" (case when type=2 then '流量池卡' else '单卡'  end) ");
+		return selectMaps(wrapper);
+	}
+	
+	/**
 	 * 卡片数量统计
 	 * @param uid
 	 * @param type
 	 * @return
 	 */
-	public List<Map<String,Object>> statisCardOfFlow(Long uid,Integer type){
+	public List<Map<String,Object>> statisCardOfFlow(Long uid,Long cid,Integer type){
 		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
 		wrapper.setSqlSelect("cast(flow as signed) as name ","count(1) as value");
 		if(null!=uid){
-			wrapper.ge("uid", uid);
+			wrapper.eq("uid", uid);
+		}
+		if(null!=cid){
+			wrapper.eq("cid", cid);
 		}
 		if(null!=type){
-			wrapper.ge("type", type);
+			wrapper.eq("card_type", type);
 		}
 		wrapper.gt("flow", 0);
 		wrapper.groupBy("flow");
@@ -306,14 +430,17 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	 * @param type
 	 * @return
 	 */
-	public Map<String,Object> statisShareFlow(Long uid){
+	public Map<String,Object> statisShareFlow(Long uid,Long cid){
 		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
 		wrapper.setSqlSelect("cast(flow as signed) as name ",
-				"sum(package_used) as used","sum(package_left) as left1");
+				"sum(package_used) as used","sum(flow) as total");
 		if(null!=uid){
-			wrapper.ge("uid", uid);
+			wrapper.eq("uid", uid);
 		}
-		wrapper.gt("flow", 0).eq("type", TariffPlan.SHARE).groupBy("flow").orderBy("flow");
+		if(null!=cid){
+			wrapper.eq("cid", cid);
+		}
+		wrapper.gt("flow", 0).eq("card_type", TariffPlan.SHARE).groupBy("flow").orderBy("flow");
 		List<Map<String,Object>> list=selectMaps(wrapper);
 		
 		List<Map<String, Object>> series = new ArrayList<Map<String, Object>>();
@@ -321,7 +448,7 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 		 List<Object> data = new LinkedList<Object>();
 		list.stream().forEach(e->{
 			Map<String, Object>  dataVal = new HashMap<String, Object>();
-			      dataVal.put("name",e.get("name").toString());
+			      dataVal.put("name",e.get("name").toString()+"MB");
 			      dataVal.put("value", e.get("used"));
 			      xName.add(e.get("name").toString()+"MB");
 			      data.add(dataVal);
@@ -337,14 +464,14 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	    List<Object> data2 = new LinkedList<Object>();
 		list.stream().forEach(e->{
 			Map<String, Object>  dataVal2 = new HashMap<String, Object>();
-			dataVal2.put("name",e.get("name").toString());
-			dataVal2.put("value", e.get("left1"));
+			dataVal2.put("name",e.get("name").toString()+"MB");
+			dataVal2.put("value", e.get("total"));
 			data2.add(dataVal2);
 		});
 		
 		Map<String, Object>  dataVal2 = new HashMap<String, Object>();
 		dataVal2.put("data", data2);
-		dataVal2.put("name", "剩余流量");
+		dataVal2.put("name", "总流量");
 		dataVal2.put("type", "bar");
 		dataVal2.put("stack", "stack2");
 	    series.add(dataVal2);

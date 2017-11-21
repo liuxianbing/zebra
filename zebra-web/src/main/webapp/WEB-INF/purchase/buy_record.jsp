@@ -52,18 +52,36 @@ text-align:center;height:100%;border-bottom:1px solid #a4bfce
 			</section>
 			<!-- Main content -->
 			<section class="content" style="padding: 20px">
-				<div class="row otitle" style="margin-bottom: 15px">
+			 <c:if test="${CURRENT_USER.role==0 }">
+			     <div class="row">
+			        <div class="col-md-3">
+			        	 <select id="uid" class="form-control select2 " name="uid"
+								style="float: left;" data-placeholder="选择客户">
+								  <option value=" ">全部</option>
+									  <c:forEach items="${userList }" var="ul" >
+									 <option value="${ul.id }" <c:if test="${ul.id==uid }">
+									   selected </c:if>>${ul.userName }-${ul.companyName }</option>
+								  </c:forEach>
+								</select>
+			        </div>
+			     </div>
+			     </c:if>
+			     <c:if test="${CURRENT_USER.role>=1 }">
+			       <input type="hidden" name="uid" id="uid" value="${CURRENT_USER.id }" />
+			     </c:if>
+				<div class="row otitle" style="margin-bottom: 15px;margin-top:15px">
 					<div class="col-md-3">订单类型</div>
 					<div class="col-md-2">套餐价格</div>
 					<div class="col-md-1">订购周期</div>
-					<div class="col-md-1">单张卡费</div>
+					<div class="col-md-1">已划拨数</div>
 					<div class="col-md-1">卡片数量</div>
 					<div class="col-md-2">订单价格</div>
 					<div class="col-md-1">订单状态</div>
 					<div class="col-md-1">操作</div>
 				</div>
 				<c:forEach items="${page.records }" var="pr">
-				<div class="row ordertitle">${pr.createTime } 订单号:${pr.orderCode }</div>
+				<div class="row ordertitle">${pr.createTime } 订单号:${pr.orderCode }
+				 客户名称:${pr.userInfo }</div>
 				<div class="row"  style="height:${fn:length(pr.contents)*46}px">
 					<div class="col-md-8 ">
 					  <c:forEach items="${pr.contents}" var="pc"> 
@@ -71,14 +89,14 @@ text-align:center;height:100%;border-bottom:1px solid #a4bfce
 					     <div class="col-md-4" style="width:40%">${pc.name }</div>
 						<div class="col-md-2" style="width:19%">${pc.price }</div>
 						<div class="col-md-2" style="width:19%">${pc.term }</div>
-						<div class="col-md-2" style="width:6%">0</div>
+						<div class="col-md-2" style="width:6%">${pc.allocNum }</div>
 						<div class="col-md-2" style="width:16%;padding-left:40px">${pc.num }</div>
 						</div>
 					  </c:forEach>
 					</div>
 					<div class="col-md-2 otherdivr" >
 					<p>${pr.totalCost }</p>
-					<p>
+					<p style="margin-top:-10px">
 					<c:if test="${pr.deliverCost>0.0 }">
 					(含运费：￥${pr.deliverCost})
 					</c:if>
@@ -109,12 +127,12 @@ text-align:center;height:100%;border-bottom:1px solid #a4bfce
 									href="#"  data-dt-idx="0" tabindex="0">前页</a></li>
 								<c:if test="${page.current<=6 }">
 								   <c:forEach var="i" begin="1" end="${page.pages}" step="1">  
-								       <li class="paginate_button"> <a href="#" id="btn_${i }"  tabindex="${i }">${i }</a></li>
+								       <li class="paginate_button" tabindex="${i }"> <a href="#" id="btn_${i }"  >${i }</a></li>
 								   </c:forEach>
 								</c:if>
 								<c:if test="${page.current>6 }">
 								   <c:forEach var="i" begin="${page.current-5 }" end="${page.current}" step="1">  
-								       <li class="paginate_button"> <a href="#" id="btn_${i }"  tabindex="${i }">${i }</a></li>
+								       <li class="paginate_button" tabindex="${i }"> <a href="#" id="btn_${i }"  >${i }</a></li>
 								   </c:forEach>
 								</c:if>
 								<li class="paginate_button next" id="order_list_next"><a
@@ -134,6 +152,10 @@ text-align:center;height:100%;border-bottom:1px solid #a4bfce
 </body>
 </html>
 <script>
+$(".select2").select2({ allowClear:false}).on("change", function(e) {
+	window.location.href="${ctx}/cart/record?uid="+$("#uid").val()
+})
+
 $("#btn_${page.current}").parent().addClass('active')
 	if('${page.current}'==1){
 		$("#order_list_previous").addClass('disabled')
@@ -145,12 +167,13 @@ $("#btn_${page.current}").parent().addClass('active')
 		if($(this).hasClass('disabled')){
 			return;  
 		}
+		var ind=parseInt($(this).attr("tabindex"))*10
 		if($(this).hasClass('previous')){
-			window.location.href="${ctx}/cart/record?iDisplayStart=${(page.current-1)*10}"
+			window.location.href="${ctx}/cart/record?iDisplayStart=${(page.current-1)*10}&uid="+$("#uid").val()
 		}else if($(this).hasClass('next')){
-			window.location.href="${ctx}/cart/record?iDisplayStart=${page.current*10}"
+			window.location.href="${ctx}/cart/record?iDisplayStart=${page.current*10}&uid="+$("#uid").val()
 		}else{
-			
+			window.location.href="${ctx}/cart/record?iDisplayStart="+ind+"&uid="+$("#uid").val()
 		}
 	})
 </script>
