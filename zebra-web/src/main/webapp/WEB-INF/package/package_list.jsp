@@ -18,6 +18,12 @@
 		      <h1>
 		      	 套餐管理	
 		        <small>套餐列表</small>
+		         <a href="Javascript:history.go(-1);void(0);" style="float:right;font-size:12px">
+		       <button type="button" class="btn btn-box-tool" >
+             		 <i class="btn fa fa-chevron-left" style="font-size:16px"></i>
+             		 <font style="font-size:14px;margin-left:-12px">后退</font> 
+             		 </button>
+           		 </a>
 		      </h1>
 		    </section>
 			<!-- Main content -->
@@ -36,7 +42,7 @@
 						</div>
 						<input type="hidden" name="status" value="1" />
 						<div class="col-sm-2 col-md-2">
-							<select id="planId" class="form-control select2" name="planId"
+							<select id="cid" class="form-control select2" name="cid"
 								style="float: left;" data-placeholder="">
 								     <option value=" ">全部企业</option>
 								  <c:forEach items="${companyList }" var="pl" >

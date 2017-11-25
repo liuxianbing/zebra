@@ -48,7 +48,14 @@ text-align:center;height:100%;border-bottom:1px solid #a4bfce
 		<div class="content-wrapper">
 			<!-- Content Header (Page header)-->
 			<section class="content-header">
-				<h1>购卡记录</h1>
+				<h1>购卡记录
+				 <a href="Javascript:history.go(-1);void(0);" style="float:right;font-size:12px">
+		       <button type="button" class="btn btn-box-tool" >
+             		 <i class="btn fa fa-chevron-left" style="font-size:16px"></i>
+             		 <font style="font-size:14px;margin-left:-12px">后退</font> 
+             		 </button>
+           		 </a>
+				</h1>
 			</section>
 			<!-- Main content -->
 			<section class="content" style="padding: 20px">
@@ -167,9 +174,10 @@ $("#btn_${page.current}").parent().addClass('active')
 		if($(this).hasClass('disabled')){
 			return;  
 		}
-		var ind=parseInt($(this).attr("tabindex"))*10
+		var ind=parseInt($(this).attr("tabindex"))*10-10;
+		
 		if($(this).hasClass('previous')){
-			window.location.href="${ctx}/cart/record?iDisplayStart=${(page.current-1)*10}&uid="+$("#uid").val()
+			window.location.href="${ctx}/cart/record?iDisplayStart=${(page.current-2)*10}&uid="+$("#uid").val()
 		}else if($(this).hasClass('next')){
 			window.location.href="${ctx}/cart/record?iDisplayStart=${page.current*10}&uid="+$("#uid").val()
 		}else{

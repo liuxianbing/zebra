@@ -11,7 +11,7 @@
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg">Sign in to start your session</p>
+    <p class="login-box-msg"></p>
 
     <form:form onsubmit="return subForm()" action="${ctx }/login" method="post">
       <div class="form-group has-feedback">
@@ -32,7 +32,7 @@
         </div>
         <!-- /.col -->
         <div class="col-xs-4">
-          <button type="submit" onclick="subForm()" class="btn btn-primary btn-block btn-flat">Sign In</button>
+          <button type="submit" onclick="subForm()" class="btn btn-primary btn-block btn-flat">登录</button>
         </div>
         <!-- /.col -->
       </div>

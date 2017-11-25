@@ -18,6 +18,12 @@
 		      <h1>
 		      	  资费计划管理	
 		        <small>资费计划列表</small>
+		        <a href="Javascript:history.go(-1);void(0);" style="float:right;font-size:12px">
+		       <button type="button" class="btn btn-box-tool" >
+             		 <i class="btn fa fa-chevron-left" style="font-size:16px"></i>
+             		 <font style="font-size:14px;margin-left:-12px">后退</font> 
+             		 </button>
+           		 </a>
 		      </h1>
 		    </section>
 			<!-- Main content -->

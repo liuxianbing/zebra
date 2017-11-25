@@ -45,6 +45,12 @@
 			<!-- Content Header (Page header)-->
 			<!-- Main content -->
 			<section class="content">
+			<div class="row"> <a href="Javascript:history.go(-1);void(0);" style="float:right;font-size:12px">
+		       <button type="button" class="btn btn-box-tool" >
+             		 <i class="btn fa fa-chevron-left" style="font-size:16px"></i>
+             		 <font style="font-size:14px;margin-left:-12px">后退</font> 
+             		 </button>
+           		 </a></div>
 				<form action="" id='form' method="post"></form>
 				<div class="row" style="margin-top: 30px; text-align: center;">
 					

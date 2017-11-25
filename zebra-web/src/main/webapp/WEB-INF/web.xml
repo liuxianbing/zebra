@@ -78,7 +78,7 @@
 		<async-supported>true</async-supported>
 		<init-param>
 			<param-name>managerCheck</param-name>
-			<param-value>/cart/detail,/cart/record,/finance/list,/user/,/flow/detail,/flow/cardlist,/flow/self,/simcard/list,/index,/pack/selfAllocPacks,/simcard/dist,/simcard/detail,/simcard/flow</param-value>
+			<param-value>/user/packlist,/cart/detail,/cart/record,/finance/list,/user/,/flow/detail,/flow/cardlist,/flow/self,/simcard/list,/index,/pack/selfAllocPacks,/simcard/dist,/simcard/detail,/simcard/flow</param-value>
 		</init-param>
 				<init-param>
 			<param-name>userCheck</param-name>

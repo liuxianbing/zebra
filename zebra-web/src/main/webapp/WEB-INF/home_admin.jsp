@@ -96,9 +96,9 @@
 								<h3 class="box-title">联通流量卡统计</h3>
 								<div style="float:right">
 								 <select id="account" class="form-control select2 " name="account"
-								style="float: left;" >
+								style="float: left;width:400px" >
 								 <c:forEach items="${accounts }" var="ul" >
-								     <option value="${ul }" >${ul }</option>
+								     <option value="${ul.flow }" >${ul.name }</option>
 								  </c:forEach>
 								</select>
 								</div>
@@ -212,11 +212,14 @@ $(".select2").select2({ allowClear:false}).on("change", function(e) {
 	drawCardNums($(this).val())
 	drawCardFlow($(this).val())
 });
-drawCardNums($("#account").val())
-drawCardFlow($("#account").val())
+if($("#account").val()!=null){
+	drawCardNums($("#account").val())
+	drawCardFlow($("#account").val())
+}
+
 function drawCardNums(account){
 	 var options={}
-	 options.url="${ctx}/adminStatis?account="+account+"&type=0"
+	 options.url="${ctx}/adminStatis?flow="+account+"&type=0"
 	  options.success = function(e) {
 		  cardOption.title.text="流量卡激活数量统计";
 		  cardOption.series[0].name="激活数量卡片";
@@ -291,7 +294,7 @@ var narmalLable={
 
 function drawCardFlow(account){
 	 var options={}
-	  options.url="${ctx}/adminStatis?account="+account+"&type=1"
+	  options.url="${ctx}/adminStatis?flow="+account+"&type=1"
 	  options.success = function(e) {
 		  flowOption.xAxis[0].data=e.xName
 		  $.each(e.series, function(key, value) {

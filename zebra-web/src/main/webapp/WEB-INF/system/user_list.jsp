@@ -31,12 +31,24 @@
 		      <h1>
 		      	  客户管理
 		        <small>客户列表</small>
+		        <a href="Javascript:history.go(-1);void(0);" style="float:right;font-size:12px">
+		       <button type="button" class="btn btn-box-tool" >
+             		 <i class="btn fa fa-chevron-left" style="font-size:16px"></i>
+             		 <font style="font-size:14px;margin-left:-12px">后退</font> 
+             		 </button>
+           		 </a>
 		      </h1>
 		      </c:if>
 		        <c:if test="${CURRENT_USER.role==1 }">
 		      <h1>
 		      	  用户管理
 		        <small>用户列表</small>
+		        <a href="Javascript:history.go(-1);void(0);" style="float:right;font-size:12px">
+		       <button type="button" class="btn btn-box-tool" >
+             		 <i class="btn fa fa-chevron-left" style="font-size:16px"></i>
+             		 <font style="font-size:14px;margin-left:-12px">后退</font> 
+             		 </button>
+           		 </a>
 		      </h1>
 		      </c:if>
 		    </section>
@@ -53,16 +65,16 @@
 						  <c:if test="${CURRENT_USER.role==1 }">
 						  <input type="hidden" name="cid" value="${CURRENT_USER.cid }" />
 						  </c:if>
-						<!-- 
+						  <c:if test="${CURRENT_USER.role==0 }">
 						<div class="col-sm-2 col-md-2">
-							<select id="state" class="form-control select2" name="state"
-								style="float: left;" data-placeholder="用户状态">
+							<select id="auth" class="form-control select2" name="auth"
+								style="float: left;" data-placeholder="企业认证状态">
 								<option value=" " selected="selected">全部</option>
-								<option value="1">启用</option>
-								<option value="0">禁用</option>
+								<option value="1">已认证</option>
+								<option value="0">未认证</option>
 							</select>
 						</div>
-						 -->
+						 </c:if>
 				<div class="col-sm-2 col-md-2">
 					 <button type="button" id="searchButton" onclick="loadTable()" class="btn btn-primary">查询</button>
                 </div>
@@ -102,7 +114,7 @@
 </html>
 <script>
 
-     $("#state").select2({ allowClear:false}).on("select2-selecting", function(e) {
+     $(".select2").select2({ allowClear:false}).on("select2-selecting", function(e) {
 		}).on("change", function(e) {
 			loadTable();
 		})
@@ -121,12 +133,15 @@
 	   { "sTitle": "邮箱",  "sClass": "center","sWidth":"80","mDataProp": "email"}
 		];
 	
+	var comname={ "sTitle": "企业名称",  "sClass": "center","sWidth":"80","mDataProp": "companyName"}
+	
 	var ope={ "sTitle": "操作", "sClass": "center" ,"sWidth":"90","mDataProp": "status","mRender": function ( data, type, full ) {
 		   return '<a href="${ctx}/user/packlist?id='+full.id+'">查看套餐</a>';
 	   }
 }
 	var auth= { "sTitle": "是否认证",  "sClass": "center","sWidth":"80","mDataProp": "authStr"}
 	  <c:if test="${CURRENT_USER.role==0 }">
+	  options.aoColumns.push(comname)
 	  options.aoColumns.push(ope)
 	   options.aoColumns.push(auth)
 	  </c:if>
