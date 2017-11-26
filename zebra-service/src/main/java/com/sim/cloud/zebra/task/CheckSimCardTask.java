@@ -35,8 +35,8 @@ public class CheckSimCardTask extends AbstractService<SimCardMapper, SimCard> {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Scheduled(cron="0 30 0 * * *") // 00:30:00 every day
-	//@Scheduled(initialDelay=1000 * 60 * 10, fixedRate=1000 * 60 * 30) // 30 minutes
-	public void syncUnicomSimCards() {
+	//@Scheduled(fixedRate=1000 * 60 * 3) // 30 minutes
+	public void checkSimCard() {
 		log.info("############## Start check simcard status. #######################");
 		
 		// get users
