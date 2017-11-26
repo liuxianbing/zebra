@@ -304,6 +304,13 @@ public class JasperClient {
     /**
 	 * change SimCard status
 	 */
+	public Boolean changeStatus(String iccid, String status) {
+		return this.editTerminal(iccid, "3", status);
+	}
+    
+    /**
+	 * change SimCard status
+	 */
 	public List<String> changeStatus(List<String> iccids, String status) {
 		List<String> failList = new ArrayList<String>();
 		
