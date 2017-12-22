@@ -43,7 +43,7 @@ public class SimCardTask extends AbstractService<SimCardMapper, SimCard> {
 		Map<String, String> accounts = ZebraConfig.getAccounts();
 		
 		// start time
-		String startTime = null;
+		//String startTime = null;
 //		if (lastSyncTime != null) {
 //			startTime = this.getStartTime(lastSyncTime);
 //		} 
@@ -54,8 +54,8 @@ public class SimCardTask extends AbstractService<SimCardMapper, SimCard> {
 			try {
 				JasperClient jasperClient = JasperClient.getInstance(value);
 				
-				List<SimCard> sims = jasperClient.getTerminals(startTime);
-				System.out.println("sim card number:" + sims.size() + "   ################################");
+				List<SimCard> sims = jasperClient.getTerminals(null);
+				System.out.println(value + ": sim card number:" + sims.size() + "   ################################");
 				
 				// save to db
 				for (SimCard sim : sims) {
