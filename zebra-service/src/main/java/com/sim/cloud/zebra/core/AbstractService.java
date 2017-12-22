@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.druid.util.StringUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -32,7 +31,7 @@ import com.sim.cloud.zebra.common.util.PropertiesUtil;
  * @param <T>
  */
 public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<BaseMapper<T>, T> {
-	protected Logger logger = LogManager.getLogger();
+	public final Logger logger = LogManager.getLogger(this.getClass());
 
 	public M getBaseMapper() {
 		return (M) baseMapper;

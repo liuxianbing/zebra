@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import com.sim.cloud.zebra.service.BillService;
 import com.sim.cloud.zebra.service.PackageService;
 import com.sim.cloud.zebra.service.SimcardPackViewService;
 import com.sim.cloud.zebra.service.SysUserService;
-import com.sim.cloud.zebra.service.TariffPlanService;
 import com.simclouds.unicom.jasper.JasperClient;
 
 /**
@@ -37,8 +35,6 @@ import com.simclouds.unicom.jasper.JasperClient;
 @Transactional
 public class MonthBillTask {
 
-	private static Logger log = Logger.getLogger(MonthBillTask.class);
-	
 	@Autowired
 	private SimcardPackViewService simCardPackViewService;
 	

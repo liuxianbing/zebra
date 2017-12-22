@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,6 @@ import com.simclouds.unicom.jasper.JasperClient;
 @Transactional
 public class SimCardTask extends AbstractService<SimCardMapper, SimCard> {
 
-	private static Logger log = Logger.getLogger(SimCardTask.class);
-	
 	@Autowired
 	private SimCardService simCardService;
 	
@@ -37,7 +37,7 @@ public class SimCardTask extends AbstractService<SimCardMapper, SimCard> {
 	
 	@Scheduled(initialDelay=1000 * 60 * 1, fixedRate=1000 * 60 * 30) // 30 minutes
 	public void syncUnicomSimCards() {
-		log.info("############## Start sync simcard data. #######################");
+		logger.info("############## Start sync simcard data. #######################");
 		
 		// get users
 		Map<String, String> accounts = ZebraConfig.getAccounts();
@@ -79,7 +79,7 @@ public class SimCardTask extends AbstractService<SimCardMapper, SimCard> {
 			}
 		}
 		
-		log.info("############## End sync simcard data. #######################");
+		logger.info("############## End sync simcard data. #######################");
 	}
 	
 	/**

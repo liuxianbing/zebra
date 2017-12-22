@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,6 @@ import com.simclouds.unicom.jasper.JasperClient;
 @Transactional
 public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisCardFlow> {
 	
-	private static Logger log = Logger.getLogger(DataStatsTask.class);
-	
 	@Autowired
 	private SimCardService simCardService;
 
@@ -42,7 +39,7 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 	
 	@Scheduled(cron="0 10 0 * * *") // 00:10:00 every day
 	public void syncDayData() {
-		log.info("############## Start sync day data. #######################");
+		logger.info("############## Start sync day data. #######################");
 		
 		// get users
 		Map<String, String> accounts = ZebraConfig.getAccounts();
@@ -80,7 +77,7 @@ public class DataStatsTask extends AbstractService<StatisCardFlowMapper, StatisC
 			}
 		}
 		
-		log.info("############## End sync day data. #######################");
+		logger.info("############## End sync day data. #######################");
 	}
 	
 	/**
