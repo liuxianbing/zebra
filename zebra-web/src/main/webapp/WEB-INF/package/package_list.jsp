@@ -63,8 +63,10 @@
 				    <button type="button"  class="btn  margin btn-primary disabled">更改套餐</button>
 				    <button type="button"  class="btn  margin btn-danger disabled">删除套餐</button>、
 				<p>
-				<table id="table_list" class="table table-bordered table-hover">
+					<div style="overflow-x: auto">
+				<table id="table_list" width="100%" class="table table-bordered table-hover">
 				</table>
+				</div>
 			</section>
 			<!-- /.content -->
 		</div>

@@ -49,7 +49,7 @@
 						</div>
 					</div>
 				</form:form>
-				<table id="table_list" class="table table-bordered table-hover">
+				<table id="table_list" width="100%" class="table table-bordered table-hover">
 				</table>
 			</section>
 			<!-- /.content -->

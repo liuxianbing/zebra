@@ -13,11 +13,17 @@
 				and (user_name like CONCAT('%',#{cm.keyword},'%') 
 				 or phone like CONCAT('%',#{cm.keyword},'%'))
 			</if>
-			<if test="cm.state !=null ">
-			  and state=#{cm.state}
+			<if test="cm.status !=null ">
+			  and status=#{cm.status}
+			</if>
+				<if test="cm.auth !=null ">
+			  and auth=#{cm.auth}
 			</if>
 			<if test="cm.cid !=null ">
 			  and cid=#{cm.cid}
+			</if>
+			<if test="cm.role !=null ">
+			  and role=#{cm.role}
 			</if>
 		</where>
 	</select>

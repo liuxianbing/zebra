@@ -230,11 +230,12 @@ color:#666
 								<div class="step__description--content">
 									<div><c:if test="${order.type>=5 }">${ fn:substring( order.auditTime ,0,10)}</c:if></div>
 									<div><c:if test="${order.type>=5 }">${ fn:substring( order.auditTime,10,fn:length(order.auditTime)-2)}</c:if></div>
+									<div><c:if test="${order.type>=5 }">${order.auditUser}</c:if></div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="el-step is-horizontal"
+						<div class="el-step is-horizontal"
 						style="width: 200px; margin-right: 0px;" id="step7">
 						<div class="el-step__head is-wait is-text">
 							<div class="el-step__line is-horizontal"
@@ -245,25 +246,47 @@ color:#666
 							<span class="el-step__icon"><div class="nums">4</div></span>
 						</div>
 						<div class="el-step__main" style="margin-left: 0px;">
-							<div class="el-step__title is-wait">包裹发出</div>
+							<div class="el-step__title is-wait">完成划拨</div>
 							<div class="el-step__description is-wait">
 								<div class="step__description--content">
-									<div><c:if test="${order.type>=7 }">${ fn:substring( order.outerTime ,0,10)}</c:if></div>
-									<div><c:if test="${order.type>=7 }">${ fn:substring( order.outerTime,10,fn:length(order.outerTime)-2)}</c:if></div>
+									<div><c:if test="${order.type>=7 }">${ fn:substring( order.allocTime ,0,10)}</c:if></div>
+									<div><c:if test="${order.type>=7 }">${ fn:substring( order.allocTime,10,fn:length(order.allocTime)-2)}</c:if></div>
+									<div><c:if test="${order.type>=7 }">${order.allocUser}</c:if></div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="el-step is-horizontal" style="width: 200px;" id="step8">
+					<div class="el-step is-horizontal"
+						style="width: 200px; margin-right: 0px;" id="step9">
 						<div class="el-step__head is-wait is-text">
+							<div class="el-step__line is-horizontal"
+								style="margin-right: 0px;">
+								<i class="el-step__line-inner"
+									style="transition-delay: -450ms; border-width: 0px; width: 0%;"></i>
+							</div>
 							<span class="el-step__icon"><div class="nums">5</div></span>
+						</div>
+						<div class="el-step__main" style="margin-left: 0px;">
+							<div class="el-step__title is-wait">包裹发出</div>
+							<div class="el-step__description is-wait">
+								<div class="step__description--content">
+									<div><c:if test="${order.type>=9 }">${ fn:substring( order.outerTime ,0,10)}</c:if></div>
+									<div><c:if test="${order.type>=9 }">${ fn:substring( order.outerTime,10,fn:length(order.outerTime)-2)}</c:if></div>
+									<div><c:if test="${order.type>=9 }">${order.outerUser}</c:if></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="el-step is-horizontal" style="width: 200px;" id="step11">
+						<div class="el-step__head is-wait is-text">
+							<span class="el-step__icon"><div class="nums">6</div></span>
 						</div>
 						<div class="el-step__main" style="margin-left: 0px;">
 							<div class="el-step__title is-wait">完成</div>
 							<div class="el-step__description is-wait">
 								<div class="step__description--content">
-									<div><c:if test="${order.type>=9 }">${ fn:substring( order.sucTime ,0 ,10)}</c:if></div>
-									<div><c:if test="${order.type>=9 }">${ fn:substring( order.sucTime,10,fn:length(order.sucTime)-2)}</c:if></div>
+									<div><c:if test="${order.type>=11 }">${ fn:substring( order.sucTime ,0 ,10)}</c:if></div>
+									<div><c:if test="${order.type>=11 }">${ fn:substring( order.sucTime,10,fn:length(order.sucTime)-2)}</c:if></div>
 								</div>
 							</div>
 						</div>
@@ -274,7 +297,6 @@ color:#666
                  <p>订单号码： ${order.orderCode }</p>
                  <p> &nbsp;</p>
                  <p id="myst">订单状态： ${order.orderNextStatus }</p>
-                 <c:if test="${order.type>=7 }"> <p> &nbsp;</p> <p >运单号： ${order.deliverCode }</p></c:if>
               </div>
                <div class="row" style="padding:20px;border-bottom:1px solid #ccc">
                <p>收货人信息： ${addr.area }&nbsp;&nbsp;&nbsp; ${addr.location }&nbsp;&nbsp;&nbsp; ${addr.userName }&nbsp;&nbsp;&nbsp; ${addr.phone }</p>
@@ -303,10 +325,43 @@ color:#666
 				   </c:forEach>
 				   </tbody>
 				</table>
+				<c:if test="${order.type>=5 }">
+					 <p class="lead" style="margin-top:15px">购卡清单</p>
+					 <div  class="row" style="max-height:400px;overflow-y:auto">
+					 <table class="table table-bordered table-hover">
+				   <thead>
+				     <tr>
+				      <th width="30%">ICCID</th>
+				       <th width="20%">运营商</th>
+				       <th width="25%">卡片类型</th>
+				        <th  width="25%">套餐规格</th>
+				         </tr>
+				   </thead>
+				   <tbody>
+				   <c:forEach items="${ cards}" var="cs">
+				   <tr>
+				   <td>${cs.iccid }</td>
+				   <td>中国联通</td>
+				   <td>
+				   <c:if test="${cs.cardType==0 }">
+				   单卡
+				   </c:if>
+				     <c:if test="${cs.cardType==1 }">
+				     流量池卡
+				   </c:if>
+				   </td>
+				   <td>${cs.flow }MB套餐</td>
+				    </tr>
+				   </c:forEach>
+				   </tbody>
+				</table>
+				</div>
+				</c:if>
 				 <div class="row" style="padding:20px;border-bottom:1px solid #ccc">
                <p>订单备注：${order.remark }</p>
                  <p> &nbsp;</p>
                   <p>快递信息：${order.deliverStr }</p>
+                   <c:if test="${order.type>=7 }"> <p> &nbsp;</p> <p >运单号： ${order.deliverCode }</p></c:if>
                </div>
                
                <div class="row" style="padding-bottom:20px;margin-top:20px; border-bottom: 1px solid #ddd;margin-right:0px;margin-left:0px">
@@ -338,15 +393,19 @@ color:#666
 					  <c:if test="${order.type==1 }">
 					   <button type="button" lang="3" class="btn btn-info">支付订单</button>
 					   </c:if>
-					   <c:if test="${CURRENT_USER.role==0 && order.type==3 }">
+					   <c:if test="${(CURRENT_USER.type==1 || CURRENT_USER.type==-1) && order.type==3 }">
 					    <button type="button" lang="5" class="btn btn-success">审核通过</button>
 					     <button type="button" lang="-1" class="btn btn-default">审核拒绝</button>
 					   </c:if>
-					    <c:if test="${CURRENT_USER.role==0 && order.type==5 }">
-					     <button type="button"  lang="7" class="btn btn-primary">发货完成</button>
+					   <c:if test="${(CURRENT_USER.type==2 || CURRENT_USER.type==-1)  && order.type==5 }">
+					     <a href="${ctx }/simcard/list" >开始划拨</a>
+					     <button type="button"  lang="7" style="margin-left:30px" class="btn btn-primary">完成划拨</button>
 					    </c:if>
-					     <c:if test="${order.type==7 }">
-					     <button type="button"  lang="9" class="btn btn-warning">确认收货</button>
+					    <c:if test="${(CURRENT_USER.type==3 || CURRENT_USER.type==-1)   && order.type==7 }">
+					     <button type="button"  lang="9" class="btn btn-primary">发货完成</button>
+					    </c:if>
+					     <c:if test="${order.type==9 }">
+					     <button type="button"  lang="11" class="btn btn-warning">确认收货</button>
 					    </c:if>
 					  </div>
 				</div>
@@ -387,10 +446,7 @@ color:#666
 						<label for="inputEmail3" class="control-label">订单备注</label>
 					</div>
 					<div class="col-md-5">
-					<textarea rows="3" cols="10" style="height: 80px"
-							class="form-control" value="" name="remark" id="remark">
-							${order.remark }
-							     </textarea>
+					<textarea rows="3" cols="10" style="height: 80px" class="form-control" value="" name="remark" id="remark">${order.remark }</textarea>
 					</div>
 				</div>
 			</form:form>
@@ -471,7 +527,7 @@ $('.btnList').on(
 			}
 			var con=$(this).text();
 			var mtype=$(this).attr("lang");
-			if(mtype==7){
+			if(mtype==9){
 				$("#hb").trigger('click')
 				return;
 			}
@@ -480,7 +536,7 @@ $('.btnList').on(
 });
 
 $("#submitDist").click(function(){
-	doPost("发货",7)
+	doPost("发货",9)
 })
 
 function doPost(con,mtype){

@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sim.cloud.zebra.common.util.WebUtil;
+import com.sim.cloud.zebra.model.SysUser;
 
 /** 
 * @author liuxianbing: 
@@ -27,12 +28,14 @@ public class LoginFilter extends HttpServlet implements Filter{
 
 	private static final long serialVersionUID = 8258422474769843246L;
 	  protected static Logger LOG = LoggerFactory.getLogger(LoginFilter.class);
-	  private String encoding = "UTF-8";
+	  
+	  protected UrlAuthCheck managerCheck;
+	  
+	  protected UrlAuthCheck userCheck;
 
 	  public LoginFilter() {}
 
 	  public void destroy() {
-	    encoding = null;
 	  }
 
 	  @Override
@@ -43,16 +46,23 @@ public class LoginFilter extends HttpServlet implements Filter{
 	    request.setCharacterEncoding("UTF-8");
 	    response.setCharacterEncoding("UTF-8");
 	    String path = req.getSession().getServletContext().getContextPath();
-	    HttpSession session = req.getSession();
 	    String url = req.getRequestURI();
-	    System.out.println(url);
-	    if (url.endsWith(".ico")  || url.contains("/druid") || url.contains("/assets/")
-	            || url.endsWith(".png") || url.endsWith("/login")|| url.contains("/swagger")  ) {
+	    if (url.endsWith(".ico")  || url.contains("/druid") || url.contains("/assets/") || url.endsWith("/logout")
+	            || url.endsWith(".png") || url.endsWith("/login") || url.endsWith("/error") ) {
 	          chain.doFilter(req, resp);
 	          return;
 	        }
-	    if( WebUtil.getCurrentUser(req)== null){
+	    SysUser user=WebUtil.getCurrentUser(req);
+	    if(user== null){
 	    	 resp.sendRedirect(path + "/login");
+	         return; 
+	    }
+	    if( user.getRole()==SysUser.ROLE_USER && !userCheck.check(url)){
+	    	 resp.sendRedirect(path + "/error");
+	         return; 
+	    }
+	    if( user.getRole()==SysUser.ROLE_MANAGER && !managerCheck.check(url)){
+	    	 resp.sendRedirect(path + "/error");
 	         return; 
 	    }
 	    chain.doFilter(req, resp);
@@ -60,6 +70,9 @@ public class LoginFilter extends HttpServlet implements Filter{
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		
+		managerCheck = new UrlAuthCheck();
+		managerCheck.setPaths(filterConfig.getInitParameter("managerCheck"));
+		userCheck = new UrlAuthCheck();
+		userCheck.setPaths(filterConfig.getInitParameter("userCheck"));
 	}
 }

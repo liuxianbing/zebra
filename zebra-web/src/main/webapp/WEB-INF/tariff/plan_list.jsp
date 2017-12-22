@@ -35,7 +35,7 @@
 				    <button type="button"  class="btn  margin btn-primary disabled">更改计划</button>
 				    <button type="button"  class="btn  margin btn-danger disabled">删除计划</button>、
 				<p>
-				<table id="table_list" class="table table-bordered table-hover">
+				<table id="table_list" width="100%" class="table table-bordered table-hover">
 				</table>
 			</section>
 			<!-- /.content -->

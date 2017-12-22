@@ -6,29 +6,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
-import com.sim.cloud.zebra.common.util.JackSonUtil;
-import com.sim.cloud.zebra.common.util.JasperUtils;
 import com.sim.cloud.zebra.model.FlowPoolVo;
 import com.sim.cloud.zebra.model.SimcardPackageView;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
-import com.sim.cloud.zebra.service.PackageService;
-import com.sim.cloud.zebra.service.SimcardPackViewService;
-import com.sim.cloud.zebra.service.SysUserService;
-import com.sim.cloud.zebra.service.TariffPlanService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
 * 类说明  流量池功能
 */
 @Controller
-@Api(value = "流量池管理")
+@Api(value = "流量池管理", description = "流量池管理处理模块")
 @RequestMapping(value = "/flow")
 public class FlowController extends AbstractController {
 

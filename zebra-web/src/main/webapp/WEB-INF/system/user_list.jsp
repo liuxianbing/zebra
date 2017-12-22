@@ -81,7 +81,9 @@
 					</div>
 				</form:form>
 				<p class="btn_table">
+				 <c:if test="${CURRENT_USER.role==0 || CURRENT_USER.auth==1  }">
 				    <button type="button"   class="btn  margin btn-success">创建用户</button>
+				    </c:if>
 				    <button type="button"  class="btn  margin btn-primary disabled">更改用户</button>
 				    <button type="button"  class="btn  margin btn-warning disabled">重置密码</button>
 				    <button type="button"  class="btn  margin btn-danger disabled">删除用户</button>
@@ -89,7 +91,7 @@
 				    <button type="button" class="btn  margin btn-info disabled">用户认证</button>
 				    </c:if>
 				<p>
-				<table id="table_list" class="table table-bordered table-hover">
+				<table id="user_list" width="100%" class="table table-bordered table-hover">
 				</table>
 			</section>
 			<!-- /.content -->
@@ -113,24 +115,45 @@
 </body>
 </html>
 <script>
-
+$("#selectAll").click(function(e) {
+	$("#user_list").find('tbody').find('tr').trigger('click')
+})
      $(".select2").select2({ allowClear:false}).on("select2-selecting", function(e) {
 		}).on("change", function(e) {
 			loadTable();
 		})
 		
-		
+	var dataTableObj;
 	var options={};
      var oTable;
      var selectData;
 	options.sAjaxSource="${ctx}/user/list";
-	options.aaSorting=[[ 0, "desc" ]];
+	options.aaSorting=[[ 1, "desc" ]];
 	options.aoColumns=[
+		{
+			"sTitle" : "选择",
+			"asSorting" : [],
+			"sClass" : "center",
+			"sWidth" : "50",
+			"mDataProp" : "id",
+			"mRender" : function(data, type, full) {
+				return '<input type="checkbox" name="sks" value='+data+' />';
+			}
+		},
 		 { "sTitle": "ID",  "sClass": "center","sWidth":"80","mDataProp": "id"},
 		 { "sTitle": "创建时间",  "sClass": "center","sWidth":"80","mDataProp": "createTime"},
 		 { "sTitle": "联系人","sClass": "center" ,"sWidth":"100","mDataProp": "userName"},
        { "sTitle": "登录手机号",  "sClass": "center" ,"sWidth":"135", "mDataProp": "phone"},
-	   { "sTitle": "邮箱",  "sClass": "center","sWidth":"80","mDataProp": "email"}
+	   { "sTitle": "邮箱",  "sClass": "center","sWidth":"80","mDataProp": "email"},
+	   { "sTitle": "用户角色", "sClass": "center" ,"sWidth":"90","mDataProp": "type","mRender": function ( data, type, full ) {
+		   if(data==-1)return '超级管理员';
+		   if(data==1) return '审核员';
+		   if(data==2) return '划拨员';
+		   if(data==3) return '发货员';
+		   if(full.role==1) return '企业管理员';
+		    return '普通用户';
+	     }
+		}
 		];
 	
 	var comname={ "sTitle": "企业名称",  "sClass": "center","sWidth":"80","mDataProp": "companyName"}
@@ -147,25 +170,46 @@
 	  </c:if>
 	function loadTable(){
 		if(oTable){
-			 $("#table_list").empty();
+			 $("#user_list").empty();
 			 oTable.fnDestroy();
 		}
-		oTable=SP.loadTableInfo($("#table_list"),options,$("#searchform"));
+		oTable=SP.loadTableInfo($("#user_list"),options,$("#searchform"));
+		dataTableObj = oTable.api();
 	}
+	
+	
+
+	$('#user_list').on('click', ' tbody tr', function() {
+		$(this).toggleClass('row_selected');
+		if ($(this).hasClass('row_selected')) {
+			$(this).find("input[name='sks']").attr("checked", "true");
+		} else {
+			$(this).find("input[name='sks']").attr("checked", false);
+		}
+		if (dataTableObj.rows('.row_selected').data().length ==1) {
+			$(".btn_table").find('button').removeClass('disabled')
+			selectData=dataTableObj.rows('.row_selected').data();
+		}else if(dataTableObj.rows('.row_selected').data().length > 1){
+			$(".btn_table").find('button').removeClass('disabled')
+			$(".btn_table").find('.btn-primary').addClass('disabled')
+			$(".btn_table").find('.btn-info').addClass('disabled')
+		}else{
+			$(".btn_table").find('button').not(".btn-success").addClass('disabled')
+		}
+	});
+	
 	
 	 $('.btn_table').find('button').on('click', function () {
 				 if($(this).hasClass('disabled')){
 					  return;
 				  }
 		        if($(this).hasClass('btn-success')){
-		        	if(selectData){
-		        		window.location.href='${ctx}/user/add?id='+selectData.id;
-		        	}else{
 		        		window.location.href='${ctx}/user/add';
-		        	}
 		        }else if($(this).hasClass('btn-primary')){
+		        	selectData=dataTableObj.rows('.row_selected').data()[0];
 		        	window.location.href='${ctx}/user/add?id='+selectData.id;
 		        } else if($(this).hasClass('btn-info')){
+		        	selectData=dataTableObj.rows('.row_selected').data()[0];
 		        	window.location.href='${ctx}/user/auth?uid='+selectData.id+"&cid="+selectData.cid;
 		        } else if($(this).hasClass('btn-warning')){
 		        	resetUser();
@@ -180,18 +224,26 @@
 	 }
 	 
 	 function resetUser(){
-			bootbox.confirm('是否确认重置密码，用户'+selectData.userName, function(result) {
+			bootbox.confirm('是否确认重置密码？', function(result) {
 				if(result){
-					options.url="${ctx}/user/reset?uid="+selectData.id;
+					var ids = "";
+					$.each(dataTableObj.rows('.row_selected').data(), function(i, n) {
+						ids = ids + n.id + ",";
+					});
+					options.url="${ctx}/user/reset?uid="+ids;
 					SP.ajax($("#searchform"),options);
 				}
 			});
 		}
 	 
 		function delUser(){
-			bootbox.confirm('是否确认删除用户'+selectData.userName, function(result) {
+			bootbox.confirm('是否确认删除用户？', function(result) {
 				if(result){
-					options.url="${ctx}/user/del?uid="+selectData.id;
+					var ids = "";
+					$.each(dataTableObj.rows('.row_selected').data(), function(i, n) {
+						ids = ids + n.id + ",";
+					});
+					options.url="${ctx}/user/del?uid="+ids;
 					SP.ajax($("#searchform"),options);
 				}
 			});

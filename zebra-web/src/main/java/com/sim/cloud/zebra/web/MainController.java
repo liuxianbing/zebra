@@ -1,10 +1,8 @@
 package com.sim.cloud.zebra.web;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +17,6 @@ import com.sim.cloud.zebra.common.util.JackSonUtil;
 import com.sim.cloud.zebra.common.util.ZebraConfig;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
-import com.sim.cloud.zebra.service.CompanyService;
-import com.sim.cloud.zebra.service.FinanceService;
-import com.sim.cloud.zebra.service.OrderGoodsService;
-import com.sim.cloud.zebra.service.SimCardService;
-import com.sim.cloud.zebra.service.SimcardPackViewService;
-import com.sim.cloud.zebra.service.SysUserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,7 +27,7 @@ import io.swagger.annotations.ApiOperation;
 * 类说明   首页控制类
 */
 @Controller
-@Api(value = "首页")
+@Api(value = "首页管理", description = "首页管理处理模块")
 public class MainController  extends AbstractController {
 	
 	/**
@@ -56,19 +48,21 @@ public class MainController  extends AbstractController {
 	
 	@ApiOperation(value = "请求")
 	@RequestMapping(value = "adminStatis", method = RequestMethod.POST, produces = { "application/json" })
-	public @ResponseBody Object queryFlow(@RequestParam String account,@RequestParam Integer type){
+	public @ResponseBody Object queryFlow(@RequestParam Integer flow,@RequestParam Integer type){
 		if(type==0){
-			return simCardServiceView.statisCardsNum(account);
+			return simCardServiceView.statisCardsNum(flow);
 		}else{
-			return simCardServiceView.statisCardsFlow(account);
+			return simCardServiceView.statisCardsFlow(flow);
 		}
 	}
 	
 	private String adminHomePage(Model model) throws JsonProcessingException{
-		
-		model.addAttribute("accounts", ZebraConfig.getAccounts().entrySet().stream().
+		List<String> shareAccounts= ZebraConfig.getAccounts().entrySet().stream().
 				filter(f->f.getValue().trim().endsWith("2")).
-				map(m->m.getKey()).collect(Collectors.toList()));
+				map(m->m.getKey()).collect(Collectors.toList());
+		model.addAttribute("accounts",tariffPlanService.selectList(null).stream().
+				filter(f-> shareAccounts.contains(f.getAccount())).collect(Collectors.toList()));
+	
 		long authSize=companyService.selectList(null).stream().
 				filter(f->f.getBusinessAuth()==1 && f.getLegalAuth()==1).count();
 		model.addAttribute("authSize", authSize);
@@ -86,6 +80,9 @@ public class MainController  extends AbstractController {
 		Long cid=null;
 		if(getCurrUser().getRole()==SysUser.ROLE_MANAGER){
 			cid=getCurrUser().getCid();
+		}
+		if(getCurrUser().getAuth()==0){
+			uid=getCurrUser().getId();
 		}
 		if(getCurrUser().getRole()==SysUser.ROLE_USER){
 			uid=getCurrUser().getId();

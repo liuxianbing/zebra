@@ -328,7 +328,6 @@ public class AbstractService<M extends BaseMapper<T>, T> extends ServiceImpl<Bas
 				wrapper.eq(BeanHump.camelToUnderline(e.getKey()), e.getValue());
 			}
 		});
-		System.out.println(pm);
 		return super.selectPage(page,wrapper);
 	}
 

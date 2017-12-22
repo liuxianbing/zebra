@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,21 +18,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.CardDeviceStatusEnum;
+import com.sim.cloud.zebra.common.util.CartCardEnum;
 import com.sim.cloud.zebra.common.util.Constants;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
+import com.sim.cloud.zebra.common.util.DateUtil;
 import com.sim.cloud.zebra.model.Company;
+import com.sim.cloud.zebra.model.LogAudit;
 import com.sim.cloud.zebra.model.Package;
 import com.sim.cloud.zebra.model.SimCard;
 import com.sim.cloud.zebra.model.SimcardPackageView;
 import com.sim.cloud.zebra.model.StatisCardFlow;
 import com.sim.cloud.zebra.model.SysUser;
-import com.sim.cloud.zebra.service.CompanyService;
-import com.sim.cloud.zebra.service.PackageService;
-import com.sim.cloud.zebra.service.SimCardService;
-import com.sim.cloud.zebra.service.SimcardPackViewService;
-import com.sim.cloud.zebra.service.StatisCardFlowService;
-import com.sim.cloud.zebra.service.SysUserService;
-import com.sim.cloud.zebra.service.TariffPlanService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,7 +38,7 @@ import io.swagger.annotations.ApiOperation;
  * @version 创建时间：2017年10月14日 下午1:15:19 类说明
  */
 @Controller
-@Api(value = "物联网卡控制")
+@Api(value = "物联网卡管理", description = "物联网卡管理处理模块")
 @RequestMapping(value = "/simcard")
 public class SimCardController extends AbstractController {
 
@@ -92,7 +86,7 @@ public class SimCardController extends AbstractController {
 		}
 		if (card.getPackageId() != null) {
 			pack = packageService.selectById(card.getPackageId());
-			if(card.getCartCardId()!=null){
+			if(card.getCartCardId()!=null && card.getCartCardId()>0l){
 				pack.setTerm(cartCardService.selectById(card.getCartCardId()).getTerm());
 			}
 		}
@@ -188,6 +182,8 @@ public class SimCardController extends AbstractController {
 	public @ResponseBody Map<String, String> delay(@RequestBody Map<String, Object> params) {
 		List<String> ids = Arrays.asList(params.get("ids").toString().split(","));
 		simcardService.delayCards(ids, Integer.parseInt(params.get("term").toString()));
+		logAuditService.insertAudit(getCurrUser(),ids.stream().collect(Collectors.joining(","))+"|延期时间:"+params.get("term"),
+				"延期");
 		return SUCCESS;
 	}
 	
@@ -204,12 +200,16 @@ public class SimCardController extends AbstractController {
 		List<String> list = simcardService.saveCardPlanRel(iccidsList, Arrays.asList(params.get("ids").toString().split(",")),
 				Long.parseLong(params.get("cartCardId").toString()),uid );
 		Map<String, String> map = new HashMap<>();
+	
 		if (null != list && list.size() > 0) {
 			String msg = list.stream().collect(Collectors.joining(","));
 			map.put("msg",
 					"成功操作卡片:" + (iccidsList.size() - list.size()) + "个,失败操作卡片:" + list.size() + "个,ICCID为:" + msg);
 			return map;
 		}
+		
+		logAuditService.insertAudit(getCurrUser(),iccidsList.stream().collect(Collectors.joining(",")),
+				"物联网卡划拨");
 		return SUCCESS;
 	}
 	
@@ -222,6 +222,7 @@ public class SimCardController extends AbstractController {
 			throw new RuntimeException("请选择用户");
 		}
 		simcardService.allocCardToUsers( Arrays.asList(ids.split(",")),uid);
+		
 		return SUCCESS;
 	}
 	
@@ -260,9 +261,6 @@ public class SimCardController extends AbstractController {
 		}
 		Page<SimcardPackageView> page = simCardServiceView.query(params);
 		page.getRecords().stream().forEach(e -> {// 设置用户信息
-//			if(!ismana){
-//				e.setUserInfo(getCurrUser().getUserName());
-//			}else{
 				if (e.getCid() != null && e.getCid() > 0l && companyMap.get(e.getCid()) != null) {
 					e.setUserInfo(companyMap.get(e.getCid()).getName());
 			}

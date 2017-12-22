@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,11 +17,6 @@ import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.DateUtil;
 import com.sim.cloud.zebra.model.CartCard;
 import com.sim.cloud.zebra.model.Package;
-import com.sim.cloud.zebra.model.SysUser;
-import com.sim.cloud.zebra.model.TariffPlan;
-import com.sim.cloud.zebra.service.PackageService;
-import com.sim.cloud.zebra.service.SysUserService;
-import com.sim.cloud.zebra.service.TariffPlanService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +27,7 @@ import io.swagger.annotations.ApiOperation;
 * 类说明 
 */
 @Controller
-@Api(value = "系统套餐")
+@Api(value = "套餐管理", description = "套餐管理处理模块")
 @RequestMapping(value = "/pack")
 public class PackController  extends AbstractController {
 	

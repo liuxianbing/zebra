@@ -28,3 +28,18 @@
 .color-666 {
     color: #666!important;
 }
+.main-sidebar {
+    width: 160px;
+}
+.content-wrapper, .main-footer {
+    margin-left: 160px;
+}
+.main-header .logo {
+    width: 160px;
+}
+.main-header .navbar {
+    margin-left: 160px;
+}
+.table th {   
+    white-space: nowrap !important;  
+}  

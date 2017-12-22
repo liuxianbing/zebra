@@ -24,10 +24,7 @@ public class UserTest {
 	SysUserService sysUserService;
 	@Test
 	public void testAdd(){
-		 SysUser user=new SysUser();
-		 user.setUserName("liuxianbing_roolback");
-		 user.setPasswd("123456a");
-		 sysUserService.addSysUserTransaction(user);
+		 System.out.println(sysUserService.selectCommonUser(14l));
 	}
 
 	 @Test

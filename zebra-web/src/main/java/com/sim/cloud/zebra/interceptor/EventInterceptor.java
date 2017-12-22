@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.web.method.HandlerMethod;
 
@@ -19,6 +20,7 @@ import com.sim.cloud.zebra.common.util.JackSonUtil;
 import com.sim.cloud.zebra.common.util.WebUtil;
 import com.sim.cloud.zebra.model.SysEvent;
 import com.sim.cloud.zebra.model.SysUser;
+import com.sim.cloud.zebra.service.SysEventService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -35,8 +37,8 @@ public class EventInterceptor extends BaseInterceptor {
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 
 	//操作日志服务类
-//	@Autowired
-//	private ISysEventService sysEventService;
+	@Autowired
+	private SysEventService sysEventService;
 
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
@@ -55,7 +57,7 @@ public class EventInterceptor extends BaseInterceptor {
 			SysUser user = WebUtil.getCurrentUser(request);
 			String userAgent = (String) request.getSession().getAttribute(Constants.USER_AGENT);
 			String clientIp = (String) request.getSession().getAttribute(Constants.USER_IP);
-			if (!path.contains("/read/") && !path.contains("/unauthorized") && !path.contains("/forbidden")) {
+			if (request.getMethod().equals("POST")) {
 				final SysEvent record = new SysEvent();
 				record.setMethod(request.getMethod());
 				record.setRequestUri(request.getServletPath());
@@ -68,6 +70,7 @@ public class EventInterceptor extends BaseInterceptor {
 				}
 				record.setStatus(response.getStatus());
 				if (user != null) {
+					record.setCreateUserId(user.getId());
 					record.setUserName(user.getUserName()+"-"+user.getPhone());
 				}
 				final String msg = (String) request.getAttribute("msg");
@@ -87,13 +90,13 @@ public class EventInterceptor extends BaseInterceptor {
 								record.setRemark(ExceptionUtil.getStackTraceAsString(ex));
 							}
 							//存储操作日志
-							//sysEventService.update(record);
+							sysEventService.insert(record);
 						} catch (Exception e) {
 							logger.error("Save event log cause error :", e);
 						}
 					}
 				});
-			} else if (path.contains("/unauthorized")) {
+			} else if (path.contains("/error")) {
 				logger.warn("用户[{}]没有登录", clientIp + "@" + userAgent);
 			} else if (path.contains("/forbidden")) {
 				//logger.warn("用户[{}]没有权限", WebUtil.getCurrentUser() + "@" + clientIp + "@" + userAgent);

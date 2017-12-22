@@ -32,7 +32,7 @@ public class OrderGoodsService extends AbstractService<OrderGoodsMapper, OrderGo
 	private FinanceService financeService;
 	
 	
-	public boolean updateOrderStatus(OrderGoods order){
+	public boolean updateOrderStatus(OrderGoods order,String userName){
 		String now=DateUtil.getDateTime();
 		if(order.getType()==CartCardEnum.PAYOK_ORDER.getStatus()){
 			order.setPayTime(now);
@@ -51,12 +51,18 @@ public class OrderGoodsService extends AbstractService<OrderGoodsMapper, OrderGo
 			}).collect(Collectors.toList()));
 		}else if(order.getType()==CartCardEnum.CHECKOK_ORDER.getStatus()){
 			order.setAuditTime(now);
+			order.setAuditUser(userName);
 		}else if(order.getType()==CartCardEnum.DELIVEROK_ORDER.getStatus()){
 			order.setOuterTime(now);
+			order.setOuterUser(userName);
 		}else if(order.getType()==CartCardEnum.SUCCESS_ORDER.getStatus()){
 			order.setSucTime(now);
 		}else if(order.getType()==CartCardEnum.CHECKFAIL_ORDER.getStatus()){
 			order.setAuditTime(now);
+			order.setAuditTime(userName);
+		}else if(order.getType()==CartCardEnum.COMP_ALLOC.getStatus()){
+			order.setAllocTime(now);
+			order.setAllocUser(userName);
 		}
 		updateById(order);
 		return true;

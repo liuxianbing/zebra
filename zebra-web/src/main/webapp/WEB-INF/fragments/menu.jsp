@@ -5,9 +5,9 @@
     <!-- Logo -->
     <a href="#" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini">SimClouds</span>
+     <span class="logo-mini"><b>S</b>DC</span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b></b>SimClouds</span>
+      <span class="logo-lg"><b>Smart</b>DC</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -27,15 +27,6 @@
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
-              <li class="user-header">
-              <!-- 
-                <img src="${ctx }/assets/img/user2-160x160.jpg" class="img-circle" alt="User Image">
- -->
-                <p>
-                  Alexander Pierce - Web Developer
-                  <small>Member since Nov. 2012</small>
-                </p>
-              </li>
               <!-- Menu Body 
               <li class="user-body">
                 <div class="row">
@@ -105,7 +96,7 @@
             <i class="fa fa-home"></i> <span>首页</span>           
           </a>
         </li>
-        <c:if test="${CURRENT_USER.auth==1 }">
+        <c:if test="${CURRENT_USER.auth==1 || CURRENT_USER.role==0 }">
           <li class="treeview">
           <a href="#">
             <i class="fa fa-cc-mastercard"></i>
@@ -172,6 +163,7 @@
             <c:if test="${CURRENT_USER.role==0 }">
             <li><a href="${ctx }/finance/add"><i class="fa fa-paper-plane"></i>账户充值</a></li>
             </c:if>
+            <li><a href="${ctx }/bill/record"><i class="fa fa-paper-plane"></i>计费账单</a></li>
           </ul>
         </li>
         </c:if>
@@ -191,6 +183,22 @@
               </c:if>
           </ul>
         </li>
+        
+         <c:if test="${CURRENT_USER.role==0 }">
+         <li class="treeview">
+          <a href="#">
+            <i class="fa fa-building-o"></i>
+            <span>审计日志</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="${ctx }/audit/list"><i class="fa fa-paper-plane"></i>日志记录</a></li>
+          </ul>
+        </li>
+        </c:if>
+        
       </ul>
     </section>
     <!-- /.sidebar -->

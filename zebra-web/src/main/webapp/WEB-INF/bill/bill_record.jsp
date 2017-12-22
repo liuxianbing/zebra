@@ -48,7 +48,7 @@ text-align:center;height:100%;border-bottom:1px solid #a4bfce
 		<div class="content-wrapper">
 			<!-- Content Header (Page header)-->
 			<section class="content-header">
-				<h1>购卡记录
+				<h1>扣费记录
 				 <a href="Javascript:history.go(-1);void(0);" style="float:right;font-size:12px">
 		       <button type="button" class="btn btn-box-tool" >
              		 <i class="btn fa fa-chevron-left" style="font-size:16px"></i>
@@ -73,50 +73,44 @@ text-align:center;height:100%;border-bottom:1px solid #a4bfce
 			        </div>
 			     </div>
 			     </c:if>
-			     
 			     <c:if test="${CURRENT_USER.role>=1 }">
 			       <input type="hidden" name="uid" id="uid" value="${CURRENT_USER.id }" />
 			     </c:if>
 				<div class="row otitle" style="margin-bottom: 15px;margin-top:15px">
-					<div class="col-md-3">订单类型</div>
-					<div class="col-md-2">套餐价格</div>
-					<div class="col-md-1">订购周期</div>
-					<div class="col-md-1">已划拨数</div>
-					<div class="col-md-1">卡片数量</div>
-					<div class="col-md-2">订单价格</div>
-					<div class="col-md-1">订单状态</div>
-					<div class="col-md-1">操作</div>
+					<div class="col-md-2">扣费类型</div>
+					<div class="col-md-3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ICCID</div>
+					<div class="col-md-3">卡片流量</div>
+					<div class="col-md-1">小计流量</div>
+					<div class="col-md-1">扣费金额</div>
+					<div class="col-md-2">操作</div>
 				</div>
 				<c:forEach items="${page.records }" var="pr">
-				<div class="row ordertitle">${pr.createTime } 订单号:${pr.orderCode }
+				<div class="row ordertitle">${pr.month }月  总流量:${pr.flow }MB 总费用:${pr.cost }元
 				 客户名称:${pr.userInfo }</div>
-				<div class="row"  style="height:${fn:length(pr.contents)*46}px">
+				<div class="row"  style="height:${pr.len*46}px">
 					<div class="col-md-8 ">
 					  <c:forEach items="${pr.contents}" var="pc"> 
 					     <div class="row sing">
-					     <div class="col-md-4" style="width:40%">${pc.name }</div>
-						<div class="col-md-2" style="width:19%">${pc.price }</div>
-						<div class="col-md-2" style="width:19%">${pc.term }</div>
-						<div class="col-md-2" style="width:6%">${pc.allocNum }</div>
-						<div class="col-md-2" style="width:16%;padding-left:40px">${pc.num }</div>
+					     <div class="col-md-3" >${pc.typeStr }</div>
+					      <c:if test="${pc.type==1 }">
+					          <div class="col-md-9">
+					            <c:forEach items="${pc.shareCards }" var="sc">
+					            <div class="col-md-6" style="width:51%" >${sc.key }</div>
+					              <div class="col-md-6"  style="width:49%" >${sc.value }MB</div>
+					            </c:forEach>
+					          </div>
+					      </c:if>
+					       <c:if test="${pc.type==0 }">
+					        <div class="col-md-5">${pc.iccid }</div>
+							<div class="col-md-4" style="width:28%" >${pc.flow }MB</div>
+					       </c:if>
+						
 						</div>
 					  </c:forEach>
 					</div>
-					<div class="col-md-2 otherdivr" >
-					<p>${pr.totalCost }</p>
-					<p style="margin-top:-10px">
-					<c:if test="${pr.deliverCost>0.0 }">
-					(含运费：￥${pr.deliverCost})
-					</c:if>
-					<c:if test="${pr.deliverCost==0.0 }">
-					 包邮
-					</c:if>
-					</p>
-					</div>
-					<div class="col-md-1 otherdivr">${pr.orderNextStatus }</div>
-					<div class="col-md-1 otherdivr">
-					<p><a href="${ctx }/cart/detail?id=${pr.id}">查看详情</a></p>
-					</div>
+					<div class="col-md-1 otherdivr" >${pr.flow }MB</div>
+					<div class="col-md-1 otherdivr" >${pr.cost }元</div>
+					<div class="col-md-2 otherdivr" > 操作 </div>
 					</div>
 					
 				</c:forEach>
@@ -161,7 +155,7 @@ text-align:center;height:100%;border-bottom:1px solid #a4bfce
 </html>
 <script>
 $(".select2").select2({ allowClear:false}).on("change", function(e) {
-	window.location.href="${ctx}/cart/record?uid="+$("#uid").val()
+	window.location.href="${ctx}/bill/record?uid="+$("#uid").val()
 })
 
 $("#btn_${page.current}").parent().addClass('active')
@@ -178,11 +172,11 @@ $("#btn_${page.current}").parent().addClass('active')
 		var ind=parseInt($(this).attr("tabindex"))*10-10;
 		
 		if($(this).hasClass('previous')){
-			window.location.href="${ctx}/cart/record?iDisplayStart=${(page.current-2)*10}&uid="+$("#uid").val()
+			window.location.href="${ctx}/bill/record?iDisplayStart=${(page.current-2)*10}&uid="+$("#uid").val()
 		}else if($(this).hasClass('next')){
-			window.location.href="${ctx}/cart/record?iDisplayStart=${page.current*10}&uid="+$("#uid").val()
+			window.location.href="${ctx}/bill/record?iDisplayStart=${page.current*10}&uid="+$("#uid").val()
 		}else{
-			window.location.href="${ctx}/cart/record?iDisplayStart="+ind+"&uid="+$("#uid").val()
+			window.location.href="${ctx}/bill/record?iDisplayStart="+ind+"&uid="+$("#uid").val()
 		}
 	})
 </script>

@@ -2,9 +2,11 @@ package com.sim.cloud.zebra.web;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +27,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.DateUtil;
-import com.sim.cloud.zebra.common.util.PropertiesUtil;
 import com.sim.cloud.zebra.common.util.DateUtil.DATE_PATTERN;
 import com.sim.cloud.zebra.common.util.PropertiesFileReader;
 import com.sim.cloud.zebra.model.Company;
@@ -46,7 +47,7 @@ import io.swagger.annotations.ApiOperation;
 * 类说明 
 */
 @Controller
-@Api(value = "客户管理")
+@Api(value = "客户管理", description = "客户管理处理模块")
 @RequestMapping(value = "/user")
 public class CustomerController  extends AbstractController {
 
@@ -107,32 +108,32 @@ public class CustomerController  extends AbstractController {
 	
 	  @ApiOperation(value = "重置密码")
 	  @RequestMapping(value = "reset", produces = {"application/json"}, method = RequestMethod.POST)
-	  public @ResponseBody Map<String, String> resetPasswd(@RequestParam Long uid){
-		  SysUser user=sysUserService.selectById(uid);
-		  if(getCurrUser().getRole()==SysUser.ROLE_MANAGER && getCurrUser().getId().longValue()!=user.getCreateUserId().longValue()){
-			  throw new RuntimeException();
-		  }
-		  SysUser su=new SysUser();
-		  su.setId(uid);
-		  su.setPasswd(DigestUtils.md5Hex(user.getPhone().substring(6)+"_sim"));
-		  sysUserService.updateById(su);
+	  public @ResponseBody Map<String, String> resetPasswd(@RequestParam String uid){
+		  checkAuth(uid);
+		  sysUserService.batchSetUserPasswd(Arrays.asList(uid.split(",")));
 		  return SUCCESS;
+	  }
+	  
+	  private void checkAuth(String uid){
+		  if(getCurrUser().getRole()!=SysUser.ROLE_SYS){
+			  if(getCurrUser().getRole()==SysUser.ROLE_MANAGER){
+				 List<Long> uidsList= sysUserService.selectUserByCreator(getCurrUser().getId()).stream()
+				  .map(m->m.getId()).collect(Collectors.toList());
+				 if(Arrays.asList(uid.split(",")).stream()
+				 .anyMatch(f->uidsList.contains(Long.parseLong(f))==false)){
+					 throw new RuntimeException("无权限");
+				 }
+			  }else{
+				  throw new RuntimeException("无权限");
+			  }
+		  }
 	  }
 	  
 	  @ApiOperation(value = "删除用户")
 	  @RequestMapping(value = "del", produces = {"application/json"}, method = RequestMethod.POST)
-	  public @ResponseBody Map<String, String> delUser(@RequestParam Long uid){
-		  SysUser user=sysUserService.selectById(uid);
-		  if(getCurrUser().getRole()==SysUser.ROLE_MANAGER && getCurrUser().getId().longValue()!=user.getCreateUserId().longValue()){
-			  throw new RuntimeException();
-		  }
-		  SysUser su=new SysUser();
-		  su.setId(uid);
-		  su.setCid(0l);
-		  su.setRole(100);//删除
-		  su.setPhone(user.getPhone()+"-"+DateUtil.getDateTime());
-		  su.setStatus(SysUser.disable);
-		  sysUserService.updateById(su);
+	  public @ResponseBody Map<String, String> delUser(@RequestParam String uid){
+		  checkAuth(uid);
+		  sysUserService.batchDelUser(Arrays.asList(uid.split(",")));
 		  return SUCCESS;
 	  }
 	
@@ -154,6 +155,7 @@ public class CustomerController  extends AbstractController {
 	@ApiOperation(value = "添加客户")
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public @ResponseBody Map<String,String>  addOrUpdate(Model model,@RequestBody SysUser user) {
+		Map<String, String> suc = new HashMap<String, String>();
 		SysAddress sa=new SysAddress();
 		if(user.getId()==null || user.getId()==0l){
 			sa=new SysAddress();
@@ -163,8 +165,12 @@ public class CustomerController  extends AbstractController {
 			user.setCreateTime(DateUtil.getDateTime());
 			user.setCreateUserId(getCurrUser().getId());
 			user.setPasswd(DigestUtils.md5Hex(user.getPhone().substring(6)+"_sim"));
+			suc.put("passwd", user.getPhone().substring(6)+"_sim");
 		}
-		if(checkIfManager()){
+		if(user.getType()!=null && user.getType()>0){
+			user.setRole(SysUser.ROLE_SYS);
+			user.setAuth(1);
+		}else if(checkIfManager()){
 			user.setRole(SysUser.ROLE_MANAGER);
 		}else{
 			user.setRole(SysUser.ROLE_USER);
@@ -176,7 +182,8 @@ public class CustomerController  extends AbstractController {
 			sa.setUid(user.getId());
 			sysAddressService.insert(sa);
 		}
-		return SUCCESS;
+		suc.put("result", "success");
+		return suc;
 	}
 	
 	/**
@@ -194,6 +201,14 @@ public class CustomerController  extends AbstractController {
 			map.put("role", SysUser.ROLE_USER);
 		}
 		Page<SysUser> page=sysUserService.query(map);
+		page.getRecords().parallelStream().forEach(e->{
+			try {
+				if(null!=e.getCid() && e.getCid()>0l){
+					e.setCompanyName(companyService.selectById(e.getCid()).getName());
+				}
+			} catch (Exception e2) {
+			}
+		});
 		return new DataTableParameter<SysUser>(page.getTotal(),
 				request.getParameter("sEcho"),page.getRecords());
 	}

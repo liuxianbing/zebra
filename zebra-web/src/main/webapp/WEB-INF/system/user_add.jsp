@@ -90,6 +90,22 @@
 			                  </div>
 			                </div>
 					</div>
+					<c:if test="${CURRENT_USER.role==0 }">
+					   <div class="row" >
+						  	 <div class="form-group">
+			                  <label for="inputEmail3" class="col-sm-2 control-label">角色权限 </label>
+			                  <div class="col-sm-6" style="float: left;margin-left:10px">
+			                    <select id="mtype" class="form-control select2" name="type"
+								style="float: left;margin-left:10px" >
+								<option value="0" selected="selected">企业管理员</option>
+								<option value="1">系统审核员</option>
+								<option value="2">卡片划拨员</option>
+								<option value="3">发货员</option>
+							</select>
+			                  </div>
+			                </div>
+					</div>
+					</c:if>
 					<div class="row" >
 					    <!-- 
 						  <div class="col-md-5">
@@ -133,11 +149,18 @@
 </body>
 </html>
 <script>
+$(".select2").select2({ allowClear:false})
 $('#remark').val('${user.remark}')
 $(".validationform").validationEngine({ relative: true, relativePadding:false,
 	overflownDIV: ".form", promptPosition:"bottomRight" });
 var options={};
 $('#submit').click(function(){
+	options.success=function(e){
+		 toastr.success('操作成功');
+		 if(e.passwd){
+			 bootbox.alert("默认登录密码:"+e.passwd);
+		 }
+	}
 	SP.ajax($("#validationform"),options);
 });
 </script>

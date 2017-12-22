@@ -62,7 +62,7 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 	}
 	
 	/**
-	 * 查询当天或之前 过期的卡片列表
+	 * 查询当天 过期的卡片列表
 	 * @param day
 	 * @return
 	 */
@@ -210,12 +210,14 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 	 * @param term
 	 */
 	public void delayCards(List<String> idsList,int term){
-		String endDay=DateUtil.addMonth(DateUtil.getDate().substring(0,7)+"-01", term);
+	//	String endDay=DateUtil.addMonth(DateUtil.getDate().substring(0,7)+"-01", term);
 		List<SimCard> tmpUpdate=new ArrayList<>();
 		for (String id : idsList) {
 			SimCard card = new SimCard();
 			card.setId(Long.parseLong(id));
-			card.setExpireTime(endDay);
+			String expireTime=selectById(card.getId()).getExpireTime();
+			expireTime=DateUtil.addMonth(expireTime.substring(0,7)+"-01", term)+expireTime.substring(8,10);
+			card.setExpireTime(expireTime);
 			tmpUpdate.add(card);
 		}
 		super.updateBatchById(tmpUpdate);  
@@ -255,13 +257,14 @@ public class SimCardService extends AbstractService<SimCardMapper, SimCard> {
 		super.updateBatchById(tmpUpdate);
 
 		// 逻辑删除历史套餐
-		allCardList.stream().filter(f -> f.getPackageId() != null && f.getPackageId() > 0).map(m -> m.getPackageId())
-				.collect(Collectors.toSet()).stream().forEach(p -> {
-					com.sim.cloud.zebra.model.Package tmpPack = new com.sim.cloud.zebra.model.Package();
-					tmpPack.setId(new Long(p.intValue()));
-					tmpPack.setStatus(0);// 删除
-					packageMapper.updateById(tmpPack);
-				});
+//		allCardList.stream().filter(f -> f.getPackageId() != null && f.getPackageId() > 0).
+//		map(m -> m.getPackageId())
+//				.collect(Collectors.toSet()).stream().forEach(p -> {
+//					com.sim.cloud.zebra.model.Package tmpPack = new com.sim.cloud.zebra.model.Package();
+//					tmpPack.setId(new Long(p.intValue()));
+//					tmpPack.setStatus(0);// 删除
+//					//packageMapper.updateById(tmpPack);
+//				});
 
 		List<String> errorIccids = new ArrayList<>();
 		

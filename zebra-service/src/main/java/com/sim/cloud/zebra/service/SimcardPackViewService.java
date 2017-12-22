@@ -47,28 +47,26 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	private CompanyService companyService;
 	
 	
-	public List<Map<String,Object>> statisCardsNum(String account){
+	public List<Map<String,Object>> statisCardsNum(Integer flow){
 		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
 		wrapper.setSqlSelect("cast(real_flow as signed) as name ","count(1) as value");
 			wrapper.eq("type", 2);//流量卡
 			wrapper.eq("obj_type", CardDeviceStatusEnum.ACTIVATED_NAME.getStatus());//已经激活
-			wrapper.eq("account", account);
+			wrapper.eq("real_flow", flow);
 			wrapper.like("last_sync_time", DateUtil.getDate().substring(0,7));//当月
 			
-		wrapper.groupBy("real_flow");
 		return selectMaps(wrapper);
 	}
 	
-	public Map<String,Object> statisCardsFlow(String account){
+	public Map<String,Object> statisCardsFlow(Integer flow){
 		
 		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
 		wrapper.setSqlSelect("cast(real_flow as signed) as name ","sum(used_flow) as used,sum(real_flow) as total");
 		wrapper.eq("type", 2);//流量卡
 		wrapper.eq("obj_type", CardDeviceStatusEnum.ACTIVATED_NAME.getStatus());//已经激活
-		wrapper.eq("account", account);
+		wrapper.eq("real_flow", flow);
 		wrapper.like("last_sync_time", DateUtil.getDate().substring(0,7));//当月
 		
-		wrapper.groupBy("real_flow").orderBy("real_flow");
 		List<Map<String,Object>> list=selectMaps(wrapper);
 		
 		List<Map<String, Object>> series = new ArrayList<Map<String, Object>>();
@@ -404,7 +402,7 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	 */
 	public List<Map<String,Object>> statisCardOfFlow(Long uid,Long cid,Integer type){
 		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
-		wrapper.setSqlSelect("cast(flow as signed) as name ","count(1) as value");
+		wrapper.setSqlSelect("CONCAT(flow,'MB') as name ","count(1) as value");
 		if(null!=uid){
 			wrapper.eq("uid", uid);
 		}
@@ -480,6 +478,12 @@ public class SimcardPackViewService extends AbstractService<SimcardPackViewMappe
 	    res.put("xName", xName);
 	    res.put("series", series);
 		return res;
+	}
+	
+	public List<SimcardPackageView> selectByOrderCarts(List<Long> cartIds){
+		EntityWrapper<SimcardPackageView> wrapper=new EntityWrapper<>();
+		wrapper.in("cart_card_id", cartIds);
+		return selectList(wrapper);
 	}
 	
 	

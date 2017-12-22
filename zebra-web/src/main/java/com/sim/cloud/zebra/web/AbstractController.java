@@ -21,9 +21,12 @@ import com.sim.cloud.zebra.common.util.HttpCode;
 import com.sim.cloud.zebra.common.util.InstanceUtil;
 import com.sim.cloud.zebra.common.util.WebUtil;
 import com.sim.cloud.zebra.model.SysUser;
+import com.sim.cloud.zebra.service.BillRecordService;
+import com.sim.cloud.zebra.service.BillService;
 import com.sim.cloud.zebra.service.CartCardService;
 import com.sim.cloud.zebra.service.CompanyService;
 import com.sim.cloud.zebra.service.FinanceService;
+import com.sim.cloud.zebra.service.LogAuditService;
 import com.sim.cloud.zebra.service.OrderGoodsService;
 import com.sim.cloud.zebra.service.PackageService;
 import com.sim.cloud.zebra.service.SimCardService;
@@ -70,6 +73,12 @@ public abstract class AbstractController {
 	protected OrderGoodsService orderGoodsService;
 	@Autowired
 	protected CartCardService cartCardService;
+	@Autowired
+	protected BillService billService;
+	@Autowired
+	protected BillRecordService billRecordService;
+	@Autowired
+	protected LogAuditService logAuditService;
 	
 	static{
 		SUCCESS.put("result", "success");

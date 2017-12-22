@@ -129,9 +129,9 @@ text-align:center;display:block;font-size:10px;color:#999;margin-top:10px
 				<table class="table table-bordered table-hover">
 				   <thead>
 				     <tr>
-				      <th width="30%">商品详情</th>
-				       <th width="10%">套餐价格</th>
-				        <th  width="20%">订购周期</th>
+				      <th width="20%">商品详情</th>
+				       <th width="15%">套餐价格</th>
+				        <th  width="25%">订购周期</th>
 				         <th  width="20%">卡片数量</th>
 				         <th  width="20%">小计</th>
 				         </tr>

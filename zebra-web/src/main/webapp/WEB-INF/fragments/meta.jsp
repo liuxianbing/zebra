@@ -29,7 +29,7 @@
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/plugins/tipso/tipso.min.css" />
 	
   
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css?v=1.0.3">
   
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->

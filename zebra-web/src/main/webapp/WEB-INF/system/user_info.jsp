@@ -53,7 +53,7 @@
 											<div class="col-sm-10">
 												<input type="text"
 													class="form-control validate[required,custom[mobile]]"
-													name="phone" id="phone" placeholder="手机号"
+													name="phone" readonly="readonly" id="phone" placeholder="手机号"
 													value="${user.phone }">
 													<input type="hidden" name="id"
 													value="${user.id }">

@@ -14,6 +14,7 @@ import com.sim.cloud.zebra.common.util.WebUtil;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.service.SysUserService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /** 
@@ -22,12 +23,13 @@ import io.swagger.annotations.ApiOperation;
 * 类说明 
 */
 @Controller
+@Api(value = "登录管理", description = "登录管理处理模块")
 public class LoginController extends AbstractController {
 
 	@Autowired
 	private SysUserService sysUserService;
 
-	@ApiOperation(value = "登录页面")
+	  @ApiOperation(value = "登录页面")
 	  @RequestMapping(value = "/login", method = RequestMethod.GET)
 	  public String initLoginPage() {
 	    if (getCurrUser() != null) {

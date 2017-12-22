@@ -50,7 +50,7 @@
                			<p>当前余额 ：${bance }</p>
                </div>
 				 <p class="lead" style="margin-top:15px">交易记录</p>
-				<table id="table_list" class="table table-bordered table-hover">
+				<table id="table_list" width="100%" class="table table-bordered table-hover">
 				</table>
 			</section>
 			<!-- /.content -->

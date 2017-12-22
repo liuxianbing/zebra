@@ -142,11 +142,16 @@ var cardOption = {
 	        trigger: 'item',
 	        formatter: "{a} <br/>{b} : {c} ({d}%)"
 	    },
+	    legend: {
+	        orient: 'horizontal',
+	        left: 'center',
+	        data: []
+	    },
 	    grid: {
 	    	left: '1%',
 	        right: '0%',
 	        bottom: '1%',
-	        containLabel: true
+	        containLabel: false
 	    },
 	    series : [
 	        {
@@ -157,29 +162,29 @@ var cardOption = {
 	            data:[],
 	            lableLine: {
 	                normal: {
-	                    show: true
+	                    show: false
 	                },
 	                emphasis: {
-	                    show: true
+	                    show: false
 	                }
 	            },
 	            itemStyle: {
 	            	normal: {label:{  
-	                    show:true,  
+	                    show:false,  
 	                    formatter:'{b}\n{c} ({d}%)'  
 	                },  
 	                color: function(params) {
 	                	 var colorList = [
-	                          '#FCCE10','#E87C25','#27727B',
-	                           '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+	                          '#f39c12','#00c0ef','#00a65a',
+	                           '#dd4b39','#9BCA63','#FAD860','#F3A43B','#60C0DD',
 	                           '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
 	                        ];
 	                        return colorList[params.dataIndex]
 	                },
-	                labelLine:{show:true}},  
+	                labelLine:{show:false}},  
 	                  emphasis: {  
 	                      label: {  
-	                          show: true,  
+	                          show: false,  
 	                          formatter: "{b}\n{c} ({d}%)",  
 	                          position: 'center',  
 	                          textStyle: {  
@@ -195,16 +200,25 @@ var cardOption = {
 cardOption.title.text="卡片类型统计";
 cardOption.series[0].name="卡片类型";
 cardOption.series[0].data=JSON2.parse('${cardType}')
+ $.each(JSON2.parse('${cardType}'), function(key, value) {
+	 cardOption.legend.data.push(value);
+			})
 echarts.init(document.getElementById("cardType")).setOption(cardOption);
 
 cardOption.title.text="卡片网络状态统计"; 
 cardOption.series[0].name="卡片网络状态";
-cardOption.series[0].data=JSON2.parse('${cardNet}')
+ $.each(JSON2.parse('${cardNet}'), function(key, value) {
+	 cardOption.legend.data.push(value);
+			})
+			
 echarts.init(document.getElementById("cardNet")).setOption(cardOption);
 
 cardOption.title.text="卡片设备状态统计";
 cardOption.series[0].name="卡片设备状态";
 cardOption.series[0].data=JSON2.parse('${cardDevice}')
+ $.each(JSON2.parse('${cardDevice}'), function(key, value) {
+	 cardOption.legend.data.push(value);
+			})
 echarts.init(document.getElementById("cardDevice")).setOption(cardOption);
 
 

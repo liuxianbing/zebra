@@ -10,16 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.FinanceEnum;
-import com.sim.cloud.zebra.model.Company;
 import com.sim.cloud.zebra.model.Finance;
 import com.sim.cloud.zebra.model.OrderGoods;
-import com.sim.cloud.zebra.model.SimcardPackageView;
 import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.service.FinanceService;
 import com.sim.cloud.zebra.service.SysUserService;
@@ -33,7 +30,7 @@ import io.swagger.annotations.ApiOperation;
 * 类说明 
 */
 @Controller
-@Api(value = "管理")
+@Api(value = "财务管理", description = "财务管理处理模块")
 @RequestMapping(value = "/finance")
 public class FinanceController  extends AbstractController{
 

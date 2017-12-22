@@ -3,7 +3,6 @@ package com.sim.cloud.zebra.web;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,12 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.sim.cloud.zebra.common.util.Constants;
 import com.sim.cloud.zebra.common.util.DataTableParameter;
 import com.sim.cloud.zebra.common.util.DateUtil;
 import com.sim.cloud.zebra.common.util.ZebraConfig;
-import com.sim.cloud.zebra.model.SysUser;
 import com.sim.cloud.zebra.model.TariffPlan;
 import com.sim.cloud.zebra.service.TariffPlanService;
 
@@ -32,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
 * 类说明 
 */
 @Controller
-@Api(value = "资费计划控制")
+@Api(value = "资费计划管理", description = "资费计划管理处理模块")
 @RequestMapping(value = "/tariffplan")
 public class TariffPlanController extends AbstractController {
 	@Autowired
