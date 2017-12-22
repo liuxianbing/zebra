@@ -28,11 +28,11 @@ import com.sun.xml.wss.XWSSecurityException;
 public class JasperClient {
 	private static Logger log = Logger.getLogger(JasperClient.class);
 	
-	private static TerminalClient terminalClient = null;
+	private TerminalClient terminalClient = null;
 	
-	private static SmsClient smsClient = null;
+	private SmsClient smsClient = null;
 	
-	private static BillingClient billingClient = null;
+	private BillingClient billingClient = null;
 	
     private static Map<String, JasperClient> jasperClientMap = new HashMap<String, JasperClient>();
     
