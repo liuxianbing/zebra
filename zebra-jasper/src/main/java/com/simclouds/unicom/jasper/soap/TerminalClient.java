@@ -17,6 +17,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,7 +31,8 @@ import com.sun.xml.wss.XWSSecurityException;
  *
  */
 public class TerminalClient extends AbstractClient {
-	private static Logger log = Logger.getLogger(TerminalClient.class);
+	//private static Logger log = Logger.getLogger(TerminalClient.class);
+	public static Logger log = LogManager.getLogger(TerminalClient.class);
 	
     /**
      * Constructor which initializes Soap Connection, messagefactory and ProcessorFactory
@@ -199,6 +201,7 @@ public class TerminalClient extends AbstractClient {
         	response.writeTo(System.out);
             SOAPFault fault = response.getSOAPBody().getFault();
             log.error("Method: getTerminalDetails Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
+            System.out.println("Method: getTerminalDetails Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
         
         return null;
@@ -285,6 +288,7 @@ public class TerminalClient extends AbstractClient {
         } else {
             SOAPFault fault = response.getSOAPBody().getFault();
             log.error("Method: getSessionInfo Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
+            System.out.println("Method: getSessionInfo Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
         
         return null;
@@ -340,6 +344,7 @@ public class TerminalClient extends AbstractClient {
         } else {
             SOAPFault fault = response.getSOAPBody().getFault();
             log.error("Method: editTerminal Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
+            System.out.println("Method: editTerminal Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
         
         return false;

@@ -2,9 +2,7 @@ package com.simclouds.unicom.jasper.soap;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBodyElement;
@@ -15,9 +13,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.sun.xml.wss.XWSSecurityException;
 
@@ -28,7 +25,8 @@ import com.sun.xml.wss.XWSSecurityException;
  *
  */
 public class BillingClient extends AbstractClient {
-	private static Logger log = Logger.getLogger(BillingClient.class);
+	//private static Logger log = Logger.getLogger(BillingClient.class);
+	private static Logger log = LogManager.getLogger(BillingClient.class);
 	
     /**
      * Constructor which initializes Soap Connection, messagefactory and ProcessorFactory
@@ -153,6 +151,7 @@ public class BillingClient extends AbstractClient {
             } else {
                 SOAPFault fault = response.getSOAPBody().getFault();
                 log.error("Method: getTerminalUsageDataDetails Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
+                System.out.println("Method: getTerminalUsageDataDetails Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
                 
                 break;
             }
@@ -233,6 +232,7 @@ public class BillingClient extends AbstractClient {
         } else {
             SOAPFault fault = response.getSOAPBody().getFault();
             log.error("Method: getSessionInfo Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
+            System.out.println("Method: getSessionInfo Received SOAP Fault, Code:" + fault.getFaultCode() + ", String: " + fault.getFaultString());
         }
         
         return null;

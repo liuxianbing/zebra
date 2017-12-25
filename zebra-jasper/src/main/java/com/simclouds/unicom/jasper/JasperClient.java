@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.xml.soap.SOAPException;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.sim.cloud.zebra.common.util.Constants;
@@ -26,7 +27,8 @@ import com.sun.xml.wss.XWSSecurityException;
  * @since 2017-09-26 10:58
  */
 public class JasperClient {
-	private static Logger log = Logger.getLogger(JasperClient.class);
+	//private static Logger log = Logger.getLogger(JasperClient.class);
+	private static Logger log = LogManager.getLogger(JasperClient.class);
 	
 	private TerminalClient terminalClient = null;
 	
@@ -68,6 +70,7 @@ public class JasperClient {
     			
     			jasperClientMap.put(licenseKey, jasperClient);
         	} catch (Exception e) {
+        		e.printStackTrace();
         		log.error("create jasper client failed", e);
         	}
     	}
@@ -120,6 +123,7 @@ public class JasperClient {
     	try {
 			return terminalClient.getModifiedTerminals(startTime);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("get terminal list failed", e);
 		}
     	
@@ -159,6 +163,7 @@ public class JasperClient {
     			simCards = getTerminalDetails(iccids);
     		}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("get terminal list failed", e);
 		}
     	
@@ -179,6 +184,7 @@ public class JasperClient {
     		
     		return simCards.get(0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("get terminal detail failed", e);
 		}
     	
@@ -221,6 +227,7 @@ public class JasperClient {
     			simCards.add(simCard);
     		}
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("get terminal detail failed");
 			log.error("get terminal detail failed", e);
 		}
@@ -237,6 +244,7 @@ public class JasperClient {
     		
     		return terminalList.get(0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("getTerminalDetailMap failed", e);
 		}
     	
@@ -276,6 +284,7 @@ public class JasperClient {
     	try {
     		return terminalClient.getSessionInfo(iccid);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("get terminal session info failed", e);
 		}
     	
@@ -295,6 +304,7 @@ public class JasperClient {
     	try {
     		return terminalClient.editTerminal(iccid, changeType, targetValue);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("edit terminal failed", e);
 		}
     	
@@ -350,6 +360,7 @@ public class JasperClient {
 		try {
 			data = billingClient.getTerminalUsageDataDetails(iccid, cycleStartDate);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("getTerminalUsageDataDetails failed", e);
 		}
 		
@@ -368,6 +379,7 @@ public class JasperClient {
 		try {
 			data = billingClient.getTerminalUsage(iccid, cycleStartDate);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("getTerminalUsageDataDetails failed", e);
 		}
 		
