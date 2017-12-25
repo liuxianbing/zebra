@@ -26,6 +26,7 @@ public class Package extends BaseModel {
 	private Integer cardType;
 	private Integer realFlow;// 实际流量
 	private Long cid;
+	private Integer status;
 	
 	
 
@@ -34,6 +35,14 @@ public class Package extends BaseModel {
 	private String userName;
 	
 	
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 
 	public Long getCid() {
 		return cid;

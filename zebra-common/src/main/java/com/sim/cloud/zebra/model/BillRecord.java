@@ -6,6 +6,13 @@ package com.sim.cloud.zebra.model;
 */
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.sim.cloud.zebra.common.util.JackSonUtil;
 
 public class BillRecord  implements Serializable{
 
@@ -23,6 +30,43 @@ public class BillRecord  implements Serializable{
 	private Long billId;
 	private String month;
 	private String iccid;
+	
+	@TableField(exist = false)
+	private String typeStr;
+	
+	@TableField(exist = false)
+	private Map<String,String> shareCards=new HashMap<>();
+	
+	
+	
+	public Map<String, String> getShareCards() {
+		if(type==TariffPlan.SHARE && StringUtils.isNotBlank(detail)){
+			shareCards=JackSonUtil.readValueAsObjFromStr(detail, Map.class);
+		}
+		return shareCards;
+	}
+	
+	
+	
+
+
+
+
+	public String getTypeStr() {
+		if(type==TariffPlan.SHARE){
+			typeStr="流量池扣费";
+		}else{
+			typeStr="单卡扣费";
+		}
+		return typeStr;
+	}
+
+
+
+
+
+
+
 	public Long getId() {
 		return id;
 	}

@@ -19,9 +19,14 @@ public enum CartCardEnum {
 	PAYOK_ORDER(3,"支付成功"),
 	WAITCHECK_ORDER(4,"待审核"),
 	CHECKOK_ORDER(5,"审核成功"),
-	WAITDELIVER_ORDER(6,"待发货 "),
-	DELIVEROK_ORDER(7,"发货 "),
-	SUCCESS_ORDER(8,"完成 ");
+	
+	WAIT_ALLOC(6,"等待划拨"),
+	COMP_ALLOC(7,"完成划拨"),
+	
+	WAITDELIVER_ORDER(8,"待发货 "),
+	DELIVEROK_ORDER(9,"发货 "),
+	WAITSHOUHUO_ORDER(10,"待收货 "),
+	SUCCESS_ORDER(11,"完成 ");
 	
 	
 	

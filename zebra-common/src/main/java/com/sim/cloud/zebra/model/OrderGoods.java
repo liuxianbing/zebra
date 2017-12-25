@@ -28,6 +28,7 @@ public class OrderGoods  extends BaseModel{
 	private Integer deliverType;
 	private String deliverCode;//
 	private String orderTime,payTime,auditTime,outerTime,sucTime;
+	private String outerUser,auditUser,allocUser,allocTime;
 	
 	@TableField(exist = false)
 	private String deliverStr;
@@ -36,6 +37,33 @@ public class OrderGoods  extends BaseModel{
 	
 	
 	
+	public String getOuterUser() {
+		return outerUser;
+	}
+	public void setOuterUser(String outerUser) {
+		this.outerUser = outerUser;
+	}
+	public String getAuditUser() {
+		return auditUser;
+	}
+	public void setAuditUser(String auditUser) {
+		this.auditUser = auditUser;
+	}
+	public String getAllocUser() {
+		return allocUser;
+	}
+	public void setAllocUser(String allocUser) {
+		this.allocUser = allocUser;
+	}
+	public String getAllocTime() {
+		return allocTime;
+	}
+	public void setAllocTime(String allocTime) {
+		this.allocTime = allocTime;
+	}
+	public void setDeliverStr(String deliverStr) {
+		this.deliverStr = deliverStr;
+	}
 	public String getUserInfo() {
 		return userInfo;
 	}

@@ -2,6 +2,8 @@ package com.sim.cloud.zebra.common.util;
 
 import java.io.IOException;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -33,5 +35,6 @@ public class JackSonUtil {
 	}
 
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+		System.out.println(DigestUtils.md5Hex("123"));
 	}
 }

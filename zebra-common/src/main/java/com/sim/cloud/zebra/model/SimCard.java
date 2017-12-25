@@ -65,7 +65,7 @@ public class SimCard extends BaseModel {
 
 	public String getTypeStr() {
 		if(type==2){
-			typeStr= "流量卡";
+			typeStr= "流量池卡";
 		}else{
 			typeStr= "单卡";
 		}

@@ -24,10 +24,7 @@ public class SysEvent extends BaseModel {
 	private String clientHost;
 	private String userAgent;
 
-	@TableField("status")
-	private Integer status;
 
-	@TableField(exist = false)
 	private String userName;
 	
 	
@@ -131,20 +128,6 @@ public class SysEvent extends BaseModel {
 		this.userAgent = userAgent == null ? null : userAgent.trim();
 	}
 
-	/**
-	 * @return the value of sys_event.status_
-	 */
-	public Integer getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status
-	 *            the value for sys_event.status_
-	 */
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
 
 	/**
 	 * @return the userName

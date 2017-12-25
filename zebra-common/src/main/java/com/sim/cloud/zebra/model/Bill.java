@@ -1,6 +1,10 @@
 package com.sim.cloud.zebra.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.baomidou.mybatisplus.annotations.TableField;
 
 /** 
 * @author liuxianbing: 
@@ -9,6 +13,7 @@ import java.io.Serializable;
 */
 public class Bill  implements Serializable {
 
+	private static final long serialVersionUID = -3527423161526763111L;
 	private Long id;
 	private String month;
 	private Float cost;
@@ -16,6 +21,37 @@ public class Bill  implements Serializable {
 	private Long uid;
 	private Long cid;
 	private Float flow;
+	
+	@TableField(exist = false)
+	private String userInfo;
+	
+	@TableField(exist = false)
+	private List<BillRecord> contents=new ArrayList<>();
+	
+	@TableField(exist = false)
+	private Integer len;//
+	
+	
+	
+	
+	public Integer getLen() {
+		if(getContents().size()>0){
+			len=getContents().stream().mapToInt(m->{return m.getShareCards().size()>0?m.getShareCards().size():1;}).sum();
+		}
+		return len;
+	}
+	public String getUserInfo() {
+		return userInfo;
+	}
+	public void setUserInfo(String userInfo) {
+		this.userInfo = userInfo;
+	}
+	public List<BillRecord> getContents() {
+		return contents;
+	}
+	public void setContents(List<BillRecord> contents) {
+		this.contents = contents;
+	}
 	public Long getId() {
 		return id;
 	}

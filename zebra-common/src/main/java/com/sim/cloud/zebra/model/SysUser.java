@@ -34,6 +34,9 @@ public class SysUser extends BaseModel {
 	private Integer status = SysUser.able;// 用户的状态
 	private Long cid;
 
+	private Integer type;
+	
+	
 	@TableField(exist = false)
 	private String authStr;
 	
@@ -42,6 +45,16 @@ public class SysUser extends BaseModel {
 
 	
 	
+	public Integer getType() {
+		return type;
+	}
+
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+
 	public String getCompanyName() {
 		return companyName;
 	}
